@@ -1,12 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import "./styles/main.css"
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { HashRouter } from "react-router-dom";
+import { ContextProvider } from './Context';
 
 ReactDOM.render(
   <React.StrictMode>
+    <ContextProvider>
+    <HashRouter>
     <App />
+    </HashRouter>
+    </ContextProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

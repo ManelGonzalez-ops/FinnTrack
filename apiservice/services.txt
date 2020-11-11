@@ -1,0 +1,73 @@
+news: {
+
+    last news: {
+        target: whatever last new tiingo considers, can show any stock/country
+        url: "https://api.tiingo.com/tiingo/news"
+
+    },
+
+    news-by-market: finhub visit here https://finnhub.io/docs/api#market-news 
+
+}
+
+
+prices : {
+
+    1. We need to get from which date we have available price data of the company. We can check it by requesting "https://api.tiingo.com/tiingo/daily/ticker" 
+
+    
+}
+
+company overview : {
+
+    general: used to feed the dashboard with general information, 
+    
+    interesting fields: {
+        sector,
+        industry,
+        fullTimeEmployees
+    },
+    company peers: https://finnhub.io/docs/api#company-peers
+    }
+
+company predictions : {
+    recomendation trends: https://finnhub.io/docs/api#recommendation-trends or ratings https://financialmodelingprep.com/developer/docs/#Company-Rating
+    price target: https://finnhub.io/docs/api#price-target
+}
+
+indices : {
+    //finhub has index contituents but lacks prices..,
+    *encontrado!!
+    https://financialmodelingprep.com/api/v3/symbol/available-indexes?apikey=651d720ba0c42b094186aa9906e307b4 good for short general info
+
+    https://financialmodelingprep.com/developer/docs/#Historical-stock-index-prices good for getting historical prices to make chart
+}
+countries: {
+    may be interesting in case we make a country view
+}
+
+financial statements: {
+    use material ui tables
+}
+
+company financial ratio section : {
+
+}
+
+sectores:{
+    https://financialmodelingprep.com/developer/docs/#Stock-Market-Sectors-Performance
+}
+
+vista principal: {
+
+sectores
+indices
+
+}
+
+make big table like this https://financialmodelingprep.com/market-indexes
+but as an overflown table of 90vh and with integrated search filter, thats the combo
+
+acciones europeas{
+    https://financialmodelingprep.com/developer/docs/#Historical-EuroNext-prices
+}

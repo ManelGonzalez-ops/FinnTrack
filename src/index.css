@@ -1,13 +1,75 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.body {
+  padding: 2rem;
+}
+
+.grida {
+  display: grid;
+  /* grid-template-columns: 50% 50%; */
+  gap: 2.5rem;
+  row-gap: 2rem;
+  padding: 1.5rem;
+  padding-top: 0;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: auto 120px;
+  grid-template-areas:
+    "chart chart chart chart general general"
+    "detaila detaila detailb detailb detailc detailc";
+}
+
+.grida-p {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.chart {
+  grid-area: chart;
+}
+.general {
+  grid-area: general;
+}
+.detail1 {
+  grid-area: detaila;
+}
+.detail2 {
+  grid-area: detailb;
+}
+.detail3 {
+  grid-area: detailc;
+}
+/* .chart {
+  grid-column: content;
+  grid-row: body;
+}
+
+.item1{
+  grid-column: addon1;
+  grid-row: list;
+}
+.item2{
+  grid-column: addon2;
+  grid-row: list;
+}
+.item3{
+  grid-column: addon3;
+  grid-row: list;
+} */
+
+/* .details {
+  grid-column: aside;
+  grid-row: body;
+} */
