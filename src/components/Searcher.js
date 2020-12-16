@@ -1,11 +1,12 @@
-import { Button, TextField } from "@material-ui/core";
+import { Button, Chip, TextField } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import { useDataLayer } from "../Context";
 
 
-export const Searcher = ({setSelection, selection}) => {
+export const Searcher = ({ setSelection }) => {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
 
@@ -15,13 +16,14 @@ export const Searcher = ({setSelection, selection}) => {
     error: "",
   });
 
-  
+  const { state, dispatch } = useDataLayer()
   const fetchar = async (query) => {
     try {
       setRequest((prev) => ({ ...prev, loading: true }));
       const rawData = await fetch(`http://localhost:8001/search/${query}`);
       const { data } = await rawData.json();
-      setRequest((prev) => ({ ...prev, data, loading: false }));
+      const dataOnlyStocks = data.filter(item => item.assetType === "Stock")
+      setRequest((prev) => ({ ...prev, data: dataOnlyStocks, loading: false }));
     } catch (err) {
       setRequest((prev) => ({
         ...prev,
@@ -39,31 +41,29 @@ export const Searcher = ({setSelection, selection}) => {
 
   const handleAutocomplete = (e) => {
     console.log(e.key, "va o que");
-    if (query && e.key === " ") fetchar(query.slice(0, query.length - 1));
+    // if (query && e.key === " ")
+    if (query) fetchar(query.slice(0, query.length - 1));
   };
 
   const handleSelection = (value, reason) => {
     if (reason === "select-option") {
+      console.log(value, "valueeee")
       setSelection(value);
     }
   };
 
   return (
     <>
-      <div className="grida">
-        <div>
-          <TextField
-            onChange={(e) => {
-              setQuery(e.target.value);
-            }}
-            value={query}
-            onKeyUp={handleAutocomplete}
-          />
-          <Button onClick={handleSearch}>Search</Button>
-          {loading && <p>cargando...</p>}
-          {data && data.map((item) => <p>{item.name}</p>)}
-          {error && <p>{error}</p>}
-        </div>
+      <div className="search-section">
+        {loading && <p>cargando...</p>}
+        {data && data.map((item) => <p>{item.name}</p>)}
+        {error && <p>{error}</p>}
+        {/* <Chip
+        size="medium"
+        label={<h3>Search for company</h3>}
+    style={{marginBottom: "0.5rem"}}
+      /> */}
+      <h2>Search company data</h2>
         <Autocomplete
           id="asynchronous-demo"
           style={{ width: 300 }}
@@ -75,10 +75,10 @@ export const Searcher = ({setSelection, selection}) => {
             setOpen(false);
           }}
           noOptionsText
-          getOptionSelected={(option, value) => {
-            console.log(value.name, option.name, "hooolabeeeeeeee");
-            return (value.name = option.name);
-          }}
+          // getOptionSelected={(option, value) => {
+          //   console.log(value.name, option.name, "hooolabeeeeeeee");
+          //   return (value.name = option.name);
+          // }}
           getOptionLabel={(option) => option.name}
           options={data}
           loading={loading}
@@ -111,8 +111,8 @@ export const Searcher = ({setSelection, selection}) => {
           )}
         />
       </div>
-      {selection && JSON.stringify(selection, null, 2)}
-      
+      {/* {selection && JSON.stringify(selection, null, 2)} */}
+
     </>
   );
 };

@@ -1,24 +1,24 @@
- /* tslint:disable */
+/* tslint:disable */
 
 import {
+  Box,
   Divider,
   Drawer,
   IconButton,
   List,
   makeStyles,
+  Typography,
   useTheme,
 } from "@material-ui/core";
 import clsx from "clsx";
-import React from "react";
+import React, { useEffect } from "react";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
-import { CSSProperties } from "@material-ui/styles";
 import { TreeItem, TreeView } from "@material-ui/lab";
 import { StyledTreeItem } from "./components/treeItem";
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -27,8 +27,11 @@ import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import InfoIcon from '@material-ui/icons/Info';
 import ForumIcon from '@material-ui/icons/Forum';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import { useHistory } from "react-router-dom";
+import SearchIcon from '@material-ui/icons/Search';
+import { useUILayer } from "../ContextUI";
+import { useDataLayer } from "../Context";
+import { useViewport } from "../utils/useViewport";
 
 const drawerWidth = 240;
 
@@ -53,6 +56,9 @@ const useStyles = makeStyles((theme) => ({
     }),
     overflowX: "hidden",
     width: theme.spacing(7) + 1,
+    [theme.breakpoints.down("sm")]:{
+      width: 0
+    },
     [theme.breakpoints.up("sm")]: {
       width: theme.spacing(9) + 1,
     },
@@ -63,137 +69,184 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "flex-end",
     padding: theme.spacing(0, 1),
     // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
+    height: "112px"
   },
+  listItemText: {
+    width: "100%",
+    overflow: "hidden"
+    //necesary to make textOverflow work
+  },
+  textSpan: {
+    display: "block",
+    whiteSpace: "nowrap",
+    width: "100%",
+    textOverflow: "ellipsis",
+    overflow: "hidden"
+  }
 }));
 
-export const Sidebar = ({ open, handleDrawerClose }) => {
-  const classes = useStyles();
+//ad open if not works
+export const Sidebar = ({ handleDrawerClose, handleDrawerOpen, expanded, handleSidebarToggle }) => {
+  const history = useHistory()
+  
   const theme = useTheme();
+  const {viewport} = useViewport()
+  const { sidebarOpen } = useUILayer()
+  const { state } = useDataLayer()
+  const classes = useStyles({viewport});
+
+  const [selected, setSelected] = React.useState("");
+
+  const handleSelect = (event, nodeIds) => {
+    setSelected(nodeIds);
+  };
+
 
   return (
     <Drawer
-      variant="permanent"
+    variant={viewport > 600 ? "permanent":"temporary"}
       className={clsx(classes.drawer, {
-        [classes.drawerOpen]: open,
-        [classes.drawerClose]: !open,
+        [classes.drawerOpen]: sidebarOpen,
+        [classes.drawerClose]: !sidebarOpen,
       })}
       classes={{
         paper: clsx({
-          [classes.drawerOpen]: open,
-          [classes.drawerClose]: !open,
+          [classes.drawerOpen]: sidebarOpen,
+          [classes.drawerClose]: !sidebarOpen,
         }),
       }}
+      //this is for the movile version
+      open={sidebarOpen}
     >
       <div className={classes.toolbar}>
         <IconButton onClick={handleDrawerClose}>
           {theme.direction === "rtl" ? (
             <ChevronRightIcon />
           ) : (
-            <ChevronLeftIcon />
-          )}
+              <ChevronLeftIcon />
+            )}
         </IconButton>
       </div>
       <Divider />
       <TreeView
-      style={{margin: "1rem 0"}}
-      defaultExpanded={['3']}
-      // defaultCollapseIcon={<ArrowDropDownIcon />}
-      // defaultExpandIcon={<ArrowRightIcon />}
-      defaultEndIcon={<div style={{ width: 24 }} />}
-    >
-      <StyledTreeItem nodeId="1" labelText="Markets" labelIcon={MailIcon} isTitle>
-      <StyledTreeItem
-          nodeId="5"
-          labelText="Europe"
-          labelIcon={SupervisorAccountIcon}
-          labelInfo="90"
-          color="#1a73e8"
-          bgColor="#e8f0fe"
+        style={{ margin: "1rem 0" }}
+
+        // defaultCollapseIcon={<ArrowDropDownIcon />}
+        // defaultExpandIcon={<ArrowRightIcon />}
+        defaultEndIcon={<div style={{ width: 24 }} />}
+        expanded={expanded}
+        selected={selected}
+        onClick={handleDrawerOpen}
+        onNodeToggle={handleSidebarToggle}
+        onNodeSelect={handleSelect}
+      >
+        <StyledTreeItem nodeId="13" labelText="Search" labelIcon={SearchIcon} isTitle
+          ariaLabel="search"
+          onLabelClick={() => { history.push("/search") }}
         />
-        <StyledTreeItem
-          nodeId="6"
-          labelText="Asia"
-          labelIcon={InfoIcon}
-          labelInfo="2,294"
-          color="#e3742f"
-          bgColor="#fcefe3"
-        />
-        <StyledTreeItem
-          nodeId="7"
-          labelText="EE.UU"
-          labelIcon={ForumIcon}
-          labelInfo="3,566"
-          color="#a250f5"
-          bgColor="#f3e8fd"
-        />
-        <StyledTreeItem
-          nodeId="8"
-          labelText="Latam"
-          labelIcon={LocalOfferIcon}
-          labelInfo="733"
-          color="#3c8039"
-          bgColor="#e6f4ea"
-        />
-        <StyledTreeItem
-          nodeId="8"
-          labelText="Africa"
-          labelIcon={LocalOfferIcon}
-          labelInfo="733"
-          color="#3c8039"
-          bgColor="#e6f4ea"
-        />
+        <StyledTreeItem nodeId="1" labelText="Indexes" labelIcon={MailIcon} isTitle
+
+        >
+          <StyledTreeItem
+            nodeId="2"
+            labelText="S&P 500"
+            labelIcon={SupervisorAccountIcon}
+            labelInfo="90"
+            color="#1a73e8"
+            bgColor="#e8f0fe"
+            onLabelClick={() => { history.push("/indexes/sp500") }}
+
+          />
+          <StyledTreeItem
+            nodeId="3"
+            labelText="NASDAQ"
+            labelIcon={InfoIcon}
+            labelInfo="2,294"
+            color="#e3742f"
+            bgColor="#fcefe3"
+            onLabelClick={() => { history.push("/indexes/nasdaq") }}
+
+          />
+          <StyledTreeItem
+            nodeId="4"
+            labelText="Major INDEXES"
+            labelIcon={ForumIcon}
+            labelInfo="3,566"
+            color="#a250f5"
+            bgColor="#f3e8fd"
+            onLabelClick={() => { history.push("/indexes/general") }}
+          />
         </StyledTreeItem>
 
-      <StyledTreeItem nodeId="2" labelText="Sectors" labelIcon={DeleteIcon} isTitle/>
-      <StyledTreeItem nodeId="3" labelText="News" labelIcon={Label} isTitle>
-        <StyledTreeItem
-          nodeId="5"
-          labelText="Social"
-          labelIcon={SupervisorAccountIcon}
-          labelInfo="90"
-          color="#1a73e8"
-          bgColor="#e8f0fe"
+        {/* <StyledTreeItem nodeId="7" labelText="Sectors" labelIcon={DeleteIcon} isTitle /> */}
+        <StyledTreeItem nodeId="8" labelText="News" labelIcon={Label} isTitle>
+          <StyledTreeItem
+            nodeId="9"
+            labelText="General"
+            labelIcon={SupervisorAccountIcon}
+            labelInfo="90"
+            color="#1a73e8"
+            bgColor="#e8f0fe"
+            onLabelClick={() => { history.push("/news/general") }}
+          />
+          <StyledTreeItem
+            nodeId="10"
+            labelText="Forex"
+            labelIcon={InfoIcon}
+            labelInfo="2,294"
+            color="#e3742f"
+            bgColor="#fcefe3"
+            onLabelClick={() => { history.push("/news/forex") }}
+          />
+          <StyledTreeItem
+            nodeId="11"
+            labelText="Crypto"
+            labelIcon={ForumIcon}
+            labelInfo="3,566"
+            color="#a250f5"
+            bgColor="#f3e8fd"
+            onLabelClick={() => { history.push("/news/crypto") }}
+          />
+          <StyledTreeItem
+            nodeId="12"
+            labelText="Merger"
+            labelIcon={LocalOfferIcon}
+            labelInfo="733"
+            color="#3c8039"
+            bgColor="#e6f4ea"
+            onLabelClick={() => { history.push("/news/merger") }}
+          />
+        </StyledTreeItem>
+        <StyledTreeItem nodeId="14" labelText="Covid-19" labelIcon={DeleteIcon}
+          isTitle
+          onClick={(e) => { history.push("/covid19") }}
         />
-        <StyledTreeItem
-          nodeId="6"
-          labelText="Updates"
-          labelIcon={InfoIcon}
-          labelInfo="2,294"
-          color="#e3742f"
-          bgColor="#fcefe3"
-        />
-        <StyledTreeItem
-          nodeId="7"
-          labelText="Forums"
-          labelIcon={ForumIcon}
-          labelInfo="3,566"
-          color="#a250f5"
-          bgColor="#f3e8fd"
-        />
-        <StyledTreeItem
-          nodeId="8"
-          labelText="Promotions"
-          labelIcon={LocalOfferIcon}
-          labelInfo="733"
-          color="#3c8039"
-          bgColor="#e6f4ea"
-        />
-        
-      </StyledTreeItem>
-      <StyledTreeItem nodeId="4" labelText="History" labelIcon={Label} isTitle />
-      <StyledTreeItem nodeId="9" labelText="Covid-19" labelIcon={DeleteIcon} isTitle/>
-    </TreeView>
+      </TreeView>
       <Divider />
-      <List>
-        {["All mail", "Trash", "Spam"].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
+      <List
+      >
+
+        {state.visitedCompanies.length > 0 && state.visitedCompanies.map((company, index) => (
+          <ListItem button key={company.ticker}
+          >
+            {/* <ListItemIcon>
               {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+            </ListItemIcon> */}
+            <ListItemIcon>
+              <Typography>{company.ticker}</Typography>
             </ListItemIcon>
-            <ListItemText primary={text} />
+
+            <ListItemText
+              primary={company.name}
+              classes={{
+                root: classes.listItemText,
+                primary: classes.textSpan
+              }}
+            />
           </ListItem>
+
         ))}
+
       </List>
     </Drawer>
   );

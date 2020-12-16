@@ -12,6 +12,7 @@ import ForumIcon from '@material-ui/icons/Forum';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import { IconButton } from '@material-ui/core';
 
 const useTreeItemStyles = makeStyles((theme) => ({
     root: {
@@ -70,13 +71,16 @@ const useTreeItemStyles = makeStyles((theme) => ({
 
   export const StyledTreeItem =(props)=>{
     const classes = useTreeItemStyles({isTitle: props.isTitle});
-    const { labelText, labelIcon: LabelIcon, labelInfo, color, bgColor, ...other } = props;
+    const { labelText, labelIcon: LabelIcon, labelInfo, color, bgColor, ariaLabel="", ...other } = props;
   
     return (
       <TreeItem
+      aria-label={ariaLabel}
         label={
           <div className={classes.labelRoot}>
+           
             <LabelIcon color="inherit" className={classes.labelIcon} />
+            
             <Typography variant="body1" className={classes.labelText}>
               {labelText}
             </Typography>

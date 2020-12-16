@@ -30,6 +30,8 @@ company overview : {
     company peers: https://finnhub.io/docs/api#company-peers
     }
 
+    company news 
+
 company predictions : {
     recomendation trends: https://finnhub.io/docs/api#recommendation-trends or ratings https://financialmodelingprep.com/developer/docs/#Company-Rating
     price target: https://finnhub.io/docs/api#price-target
@@ -71,3 +73,16 @@ but as an overflown table of 90vh and with integrated search filter, thats the c
 acciones europeas{
     https://financialmodelingprep.com/developer/docs/#Historical-EuroNext-prices
 }
+
+keyratios section : {
+    growth
+}
+
+top performers
+
+searcher {
+
+    if wee look for a ETF instead of stock, we can serve it with finnhub data
+}
+
+sentiment => gauge charts

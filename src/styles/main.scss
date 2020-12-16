@@ -1,1 +1,19 @@
-@import "./principal/principal.scss"
+@import "./principal/principal.scss";
+@import "./covid/covid.scss";
+@import "./company/carousel.scss";
+@import "./company/financials.scss";
+@import "./indexes/indexes.scss";
+@import "./news/news.scss";
+@import "./dashboard/usermain.scss";
+
+.wrapper-reference {
+    position: relative;
+    height: 80vh;
+    .loader-wrapper {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,50%)
+    }    
+}
+

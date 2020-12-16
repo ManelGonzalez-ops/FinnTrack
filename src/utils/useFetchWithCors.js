@@ -1,27 +1,36 @@
 import React, { useEffect, useState } from 'react'
-import { Sectors } from '../views/principal/elements/Sectors'
+import { useDataLayer } from '../Context'
 
-//this is made to search directly to resourse without requesting to server
-export const useFetchWithCors = (url, topic) => {
+//esto es para fechar data general, (no por ticker)
+//tenemos ue renombrarlo a fetchGeneralData
+export const useFetchWithCors = (url, topic, fromOwnServer = false) => {
+
+    const { state, dispatch } = useDataLayer()
     const [{ data, loading, error }, setRequest] = useState({ data: [], loading: false, error: "" })
 
     useEffect(() => {
         const fetcharb = async (dir) => {
-            const isInStore = isInLocalStorage(topic)
+            // const isInStore = isInLocalStorage(topic)
+            const isInStore = isInState(topic)
+            console.log(isInLocalStorage(topic), topic, "esta o no")
             if (!isInStore) {
                 try {
                     setRequest(prev => ({
                         ...prev,
                         loading: true
                     }))
+                    console.log(dir, "fetch start")
                     const rawdata = await fetch(dir)
                     const data = await rawdata.json()
+                    console.log(data, "fooooooooo")
+                    console.log(dir, "fetch finished")
                     setRequest(prev => ({
                         ...prev,
                         loading: false,
-                        data
+                        data: fromOwnServer? data.data : data
                     }))
-                    localStorage.setItem(topic, JSON.stringify(data))
+                    console.log(fromOwnServer, "sevidor propi")
+                    dispatch({ type: "STORE_GENERAL_DATA", payload: { field: topic, value: fromOwnServer? data.data : data } })
                 }
                 catch (err) {
                     setRequest(prev => ({
@@ -36,6 +45,21 @@ export const useFetchWithCors = (url, topic) => {
             fetcharb(url)
         }
     }, [])
+
+    const isInState =(field)=>{
+        //here field will be inside generalData
+        if(state.generalData[field]){
+            setRequest(prev=>({
+                ...prev, 
+                loading: false,
+                data: state.generalData[field]
+            }))
+            return true
+        }
+
+        return false
+    }
+
 
     const isInLocalStorage = (item) => {
         //check if we have this data already in localStorage

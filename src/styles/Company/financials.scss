@@ -1,0 +1,16 @@
+// .grid-financial-menu{
+//     display: grid;
+//     grid-column: 1fr 1fr 1fr;
+// }
+
+.navigation-right {
+    ul {
+        display: flex;
+        justify-content: flex-end;
+
+        li{
+            list-style: none;
+            margin: 0 0.5rem;
+        }
+    }
+}

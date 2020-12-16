@@ -1,0 +1,23 @@
+.grid--indexes {
+    display: grid;
+    width: 100%;
+    gap: 1rem;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-template-areas:
+        "chart chart components components components components";
+    .chart {
+        grid-area: chart;
+        height: 400px;
+    }
+    .constituents {
+        grid-area: components;
+    }
+}
+
+// .grid--indexes{
+
+// }
+// .chart{
+//     display: grid;
+// }

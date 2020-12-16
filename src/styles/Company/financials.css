@@ -1,0 +1,9 @@
+.navigation-right ul {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.navigation-right ul li {
+  list-style: none;
+  margin: 0 0.5rem;
+}

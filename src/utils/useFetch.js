@@ -1,29 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { useDataLayer } from "../Context";
 
-export const useFetch = (url, ticker, field) => {
+//ticker can refer as a category
+export const useFetch = (url, ticker, field, options) => {
 
   const { state, dispatch } = useDataLayer()
 
   const [{ datos, loading, error }, setRequest] = useState({
     datos: "",
     loading: false,
-    error: "",
+    error: ""
   });
 
   useEffect(() => {
+    console.log(datos, "daaaatooos")
     const fetchar = async (query) => {
-      console.log(isInLocalStorage(field), "ceeeeeeee")
-      if (!isInLocalStorage(field)) {
+      console.log(isInState(field), "ceeeeeeee")
+      if (!isInState(field)) {
         try {
           setRequest((prev) => ({ ...prev, loading: true }));
           let dir;
-          query === null ?
+          if(options.explicitUrl){
+            dir = url
+          }else{
+            query === null ?
             dir = url
             :
             dir = `${url}/${query}`
+          }
           const rawData = await fetch(dir);
-          const { data } = await rawData.json();
+          const data = await rawData.json();
           dispatch({ type: "STORE_DATA", payload: { ticker: ticker, field: field, value: data } })
 
         } catch (err) {
@@ -34,11 +40,13 @@ export const useFetch = (url, ticker, field) => {
           }));
         }
       }
-      // else{
-      //   const dataAll = JSON.parse(localStorage.getItem(field))
-      //   setRequest((prev) => ({ ...prev, datos: dataAll[ticker], loading: false }));
-        
-      // }
+      else{
+        setRequest(prev => ({
+          ...prev,
+          loading: false,
+          datos: state[field][ticker]
+        }))
+      }
     }
     fetchar(ticker);
 
@@ -46,39 +54,36 @@ export const useFetch = (url, ticker, field) => {
 
   useEffect(() => {
     console.log("ahora", state)
-    if (state[field][ticker]) {
+    if ( state[field] && state[field][ticker]) {
       setRequest(prev => ({
         ...prev,
         loading: false,
         datos: state[field][ticker]
       }))
-      try{
-        localStorage.setItem(field, JSON.stringify(state[field]))
+      if (field !== "prices") {
+        try {
+          localStorage.setItem(field, JSON.stringify(state[field]))
+        }
+        catch (e) {
+          console.log(e, "eeeee")
+        }
       }
-      catch(e){
-        console.log(e, "eeeee")
-      }
-      
     }
   }, [state])
 
-  const isInLocalStorage = (field) => {
+
+  const isInState = (field) => {
     //check if we have this data already in localStorage
-    if (localStorage.getItem(field)) {
-      const dataAll = JSON.parse(localStorage.getItem(field))
-      if (dataAll[ticker]) {
-        setRequest(prev => ({
-          ...prev,
-          loading: false,
-          datos: dataAll[ticker]
-        }))
-        console.log("nowwww")
+    console.log(field, "campo")
+    if (state[field]) {
+      console.log(field, ticker, "esta en mayuscula o que")
+      if (state[field][ticker]) {
         //we won't make additional request
         return true
       }
       return false
     }
-    else{
+    else {
 
       return false
     }

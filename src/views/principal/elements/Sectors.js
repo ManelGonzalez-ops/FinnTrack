@@ -1,3 +1,4 @@
+import { List, ListItem, ListItemText } from '@material-ui/core'
 import React from 'react'
 import { useFetchWithCors } from '../../../utils/useFetchWithCors'
 
@@ -8,14 +9,14 @@ export const Sectors = () => {
     const { data, loading, error } = useFetchWithCors(url, "sectors")
 
     return (
-        <ul>
+        <List>
             {loading && <p>loading...</p>}
             {error && <p>{error}</p>}
             {data.length > 0 && data.map(item =>
-                <li>
-                    <div>{item.sector}</div>
-                    <div>{item.changesPercentage}</div>
-                </li>)}
-        </ul>
+                <ListItem>
+                    <ListItemText>{item.sector}</ListItemText>
+                    <ListItemText style={{textAlign: "right"}}>{item.changesPercentage}</ListItemText>
+                </ListItem>)}
+        </List>
     )
 }

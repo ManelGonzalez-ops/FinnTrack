@@ -8,13 +8,18 @@ import {
 } from "@material-ui/core";
 import React, { useEffect, useRef, useState } from "react";
 import { Cell } from "../../components/Cell";
+import {useParams} from "react-router-dom"
 
-export const TableUI = ({ data }) => {
+export const TableUI = ({income}) => {
   const [readyData, setReadyData] = useState("");
   let anualdata= useRef({});
+  
+ 
+
   useEffect(() => {
-    if (data) {
-      data.annualReports.forEach((item) => {
+    if (income) {
+      console.log(income, "error tabla")
+      income.annualReports.forEach((item) => {
         anualdata.current = {
           ...anualdata.current,
           [item.fiscalDateEnding]: item,
@@ -24,7 +29,7 @@ export const TableUI = ({ data }) => {
       console.log(anualdata.current, "first step");
       let structuredData = {};
       //every year has the same fields, so we take first index as a template
-      Object.keys(data.annualReports[0]).forEach((field) => {
+      Object.keys(income.annualReports[0]).forEach((field) => {
         console.log(field, "campo");
         structuredData[field] = {};
         Object.keys(anualdata.current).forEach((year) => {
@@ -34,7 +39,7 @@ export const TableUI = ({ data }) => {
       });
       setReadyData(structuredData);
     }
-  }, [data]);
+  }, [income]);
 
   useEffect(() => {
     console.log(readyData, "ready");

@@ -3,7 +3,9 @@ import { useDataLayer } from "../../Context"
 export const KeyMetrics = ({ ticker }) => {
     const [data, setData] = useState({})
     const { state } = useDataLayer()
+    
     useEffect(() => {
+        console.log(ticker, "ka concha")
         console.log(state, "hooola")
         if (state.keymetrics[ticker]) {
             Object.keys(state.keymetrics[ticker]).length > 0 && setData(state.keymetrics[ticker])

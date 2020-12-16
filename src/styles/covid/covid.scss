@@ -1,0 +1,28 @@
+.nn-wrapper {
+    display: grid;
+    height: 100%;
+    align-items: center;
+    grid-template-areas:
+        "map map map map slider slider"
+        "map map map map slider slider";
+    grid-template-rows: 300px 300px;
+    grid-template-columns: repeat(6, 1fr);
+}
+
+.covid-map{
+    grid-area: map;
+}
+
+.sliders-container {
+    //grid-area: slider;
+    //margin-left: 5rem;
+    padding: 2rem;
+    border-radius: 20px;
+    background: coral;
+    height: 300px;
+    width: fit-content;
+    position: absolute;
+    top: 70%;
+}
+
+

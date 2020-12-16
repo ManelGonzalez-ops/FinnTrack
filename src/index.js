@@ -4,19 +4,26 @@ import './index.css';
 import "./styles/main.css"
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { HashRouter } from "react-router-dom";
+import { BrowserRouter, Route } from "react-router-dom";
 import { ContextProvider } from './Context';
+import { UIProvider } from './ContextUI';
+import { AppWithRouterAccess } from './AppWithRouterAccess';
 
+ //hasrouter won't work with okta
 ReactDOM.render(
   <React.StrictMode>
     <ContextProvider>
-    <HashRouter>
-    <App />
-    </HashRouter>
+      <UIProvider>
+        <BrowserRouter>
+            <AppWithRouterAccess />
+        </BrowserRouter>
+      </UIProvider>
     </ContextProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
+
+{/*</Security> */ }
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

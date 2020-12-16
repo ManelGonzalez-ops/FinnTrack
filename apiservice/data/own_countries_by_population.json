@@ -1,0 +1,942 @@
+[
+    {
+        "country": "India",
+        "population": "1382345085"
+    },
+    {
+        "country": "China",
+        "population": "1393345085"
+    },
+    {
+        "country": "US",
+        "population": "331341050"
+    },
+    {
+        "country": "Indonesia",
+        "population": "274021604"
+    },
+    {
+        "country": "Pakistan",
+        "population": "221612785"
+    },
+    {
+        "country": "Brazil",
+        "population": "212821986"
+    },
+    {
+        "country": "Nigeria",
+        "population": "206984347"
+    },
+    {
+        "country": "Bangladesh",
+        "population": "164972348"
+    },
+    {
+        "country": "Russia",
+        "population": "145945524"
+    },
+    {
+        "country": "Mexico",
+        "population": "129166028"
+    },
+    {
+        "country": "Japan",
+        "population": "126407422"
+    },
+    {
+        "country": "Ethiopia",
+        "population": "115434444"
+    },
+    {
+        "country": "Philippines",
+        "population": "109830324"
+    },
+    {
+        "country": "Egypt",
+        "population": "102659126"
+    },
+    {
+        "country": "Vietnam",
+        "population": "97490013"
+    },
+    {
+        "country": "Congo (Kinshasa)",
+        "population": "90003954"
+    },
+    {
+        "country": "Turkey",
+        "population": "84495243"
+    },
+    {
+        "country": "Iran",
+        "population": "84176929"
+    },
+    {
+        "country": "Germany",
+        "population": "83830972"
+    },
+    {
+        "country": "Thailand",
+        "population": "69830779"
+    },
+    {
+        "country": "United Kingdom",
+        "population": "67948282"
+    },
+    {
+        "country": "France",
+        "population": "65298930"
+    },
+    {
+        "country": "Italy",
+        "population": "60446035"
+    },
+    {
+        "country": "Tanzania",
+        "population": "60012400"
+    },
+    {
+        "country": "South Africa",
+        "population": "59436725"
+    },
+    {
+        "country": "Myanmar",
+        "population": "54473253"
+    },
+    {
+        "country": "Kenya",
+        "population": "53968739"
+    },
+    {
+        "country": "Korea, South",
+        "population": "51276977"
+    },
+    {
+        "country": "Colombia",
+        "population": "50976248"
+    },
+    {
+        "country": "Spain",
+        "population": "46757980"
+    },
+    {
+        "country": "Uganda",
+        "population": "45974931"
+    },
+    {
+        "country": "Argentina",
+        "population": "45267449"
+    },
+    {
+        "country": "Algeria",
+        "population": "43984569"
+    },
+    {
+        "country": "Sudan",
+        "population": "44019263"
+    },
+    {
+        "country": "Ukraine",
+        "population": "43686577"
+    },
+    {
+        "country": "Iraq",
+        "population": "40372771"
+    },
+    {
+        "country": "Afghanistan",
+        "population": "39074280"
+    },
+    {
+        "country": "Poland",
+        "population": "37839255"
+    },
+    {
+        "country": "Canada",
+        "population": "37799407"
+    },
+    {
+        "country": "Morocco",
+        "population": "36985624"
+    },
+    {
+        "country": "Saudi Arabia",
+        "population": "34905942"
+    },
+    {
+        "country": "Uzbekistan",
+        "population": "33551824"
+    },
+    {
+        "country": "Peru",
+        "population": "33050211"
+    },
+    {
+        "country": "Angola",
+        "population": "33032075"
+    },
+    {
+        "country": "Malaysia",
+        "population": "32436963"
+    },
+    {
+        "country": "Mozambique",
+        "population": "31398811"
+    },
+    {
+        "country": "Ghana",
+        "population": "31181428"
+    },
+    {
+        "country": "Yemen",
+        "population": "29935468"
+    },
+    {
+        "country": "Nepal",
+        "population": "29225196"
+    },
+    {
+        "country": "Venezuela",
+        "population": "28421581"
+    },
+    {
+        "country": "Madagascar",
+        "population": "27808395"
+    },
+    {
+        "country": "Cameroon",
+        "population": "26655083"
+    },
+    {
+        "country": "Cote d'Ivoire",
+        "population": "26486282"
+    },
+    {
+        "country": "North Korea",
+        "population": "25798588"
+    },
+    {
+        "country": "Australia",
+        "population": "25550683"
+    },
+    {
+        "country": "Niger",
+        "population": "24346468"
+    },
+    {
+        "country": "Taiwan*",
+        "population": "23824369"
+    },
+    {
+        "country": "Sri Lanka",
+        "population": "21428970"
+    },
+    {
+        "country": "Burkina Faso",
+        "population": "20997293"
+    },
+    {
+        "country": "Mali",
+        "population": "20346106"
+    },
+    {
+        "country": "Romania",
+        "population": "19214608"
+    },
+    {
+        "country": "Malawi",
+        "population": "19211425"
+    },
+    {
+        "country": "Chile",
+        "population": "19144605"
+    },
+    {
+        "country": "Kazakhstan",
+        "population": "18815231"
+    },
+    {
+        "country": "Zambia",
+        "population": "18468257"
+    },
+    {
+        "country": "Guatemala",
+        "population": "17971382"
+    },
+    {
+        "country": "Ecuador",
+        "population": "17688599"
+    },
+    {
+        "country": "Syria",
+        "population": "17571053"
+    },
+    {
+        "country": "Netherlands",
+        "population": "17141544"
+    },
+    {
+        "country": "Senegal",
+        "population": "16816539"
+    },
+    {
+        "country": "Cambodia",
+        "population": "16758448"
+    },
+    {
+        "country": "Chad",
+        "population": "16502877"
+    },
+    {
+        "country": "Somalia",
+        "population": "15965848"
+    },
+    {
+        "country": "Zimbabwe",
+        "population": "14899771"
+    },
+    {
+        "country": "Guinea",
+        "population": "13191279"
+    },
+    {
+        "country": "Rwanda",
+        "population": "13005303"
+    },
+    {
+        "country": "Benin",
+        "population": "12175480"
+    },
+    {
+        "country": "Burundi",
+        "population": "11948454"
+    },
+    {
+        "country": "Tunisia",
+        "population": "11839918"
+    },
+    {
+        "country": "Bolivia",
+        "population": "11700207"
+    },
+    {
+        "country": "Belgium",
+        "population": "11598451"
+    },
+    {
+        "country": "Haiti",
+        "population": "11426356"
+    },
+    {
+        "country": "Cuba",
+        "population": "11325391"
+    },
+    {
+        "country": "South Sudan",
+        "population": "11216250"
+    },
+    {
+        "country": "Dominican Republic",
+        "population": "10866667"
+    },
+    {
+        "country": "Czechia",
+        "population": "10712481"
+    },
+    {
+        "country": "Greece",
+        "population": "10413936"
+    },
+    {
+        "country": "Jordan",
+        "population": "10220604"
+    },
+    {
+        "country": "Portugal",
+        "population": "10191409"
+    },
+    {
+        "country": "Azerbaijan",
+        "population": "10154978"
+    },
+    {
+        "country": "Sweden",
+        "population": "10110233"
+    },
+    {
+        "country": "Honduras",
+        "population": "9931333"
+    },
+    {
+        "country": "United Arab Emirates",
+        "population": "9910892"
+    },
+    {
+        "country": "Hungary",
+        "population": "9655983"
+    },
+    {
+        "country": "Tajikistan",
+        "population": "9573310"
+    },
+    {
+        "country": "Belarus",
+        "population": "9448772"
+    },
+    {
+        "country": "Austria",
+        "population": "9015361"
+    },
+    {
+        "country": "Papua New Guinea",
+        "population": "8975531"
+    },
+    {
+        "country": "Serbia",
+        "population": "8731081"
+    },
+    {
+        "country": "Israel",
+        "population": "8678517"
+    },
+    {
+        "country": "Switzerland",
+        "population": "8665615"
+    },
+    {
+        "country": "Togo",
+        "population": "8310934"
+    },
+    {
+        "country": "Sierra Leone",
+        "population": "8004158"
+    },
+    {
+        "country": "Hong Kong",
+        "population": "7507523"
+    },
+    {
+        "country": "Laos",
+        "population": "7293542"
+    },
+    {
+        "country": "Paraguay",
+        "population": "7147553"
+    },
+    {
+        "country": "Bulgaria",
+        "population": "6939018"
+    },
+    {
+        "country": "Libya",
+        "population": "6887247"
+    },
+    {
+        "country": "Lebanon",
+        "population": "6819976"
+    },
+    {
+        "country": "Nicaragua",
+        "population": "6638075"
+    },
+    {
+        "country": "Kyrgyzstan",
+        "population": "6542426"
+    },
+    {
+        "country": "El Salvador",
+        "population": "6491923"
+    },
+    {
+        "country": "Turkmenistan",
+        "population": "6046292"
+    },
+    {
+        "country": "Singapore",
+        "population": "5858322"
+    },
+    {
+        "country": "Denmark",
+        "population": "5795780"
+    },
+    {
+        "country": "Finland",
+        "population": "5542237"
+    },
+    {
+        "country": "Congo (Brazzaville)",
+        "population": "5540555"
+    },
+    {
+        "country": "Slovakia",
+        "population": "5460109"
+    },
+    {
+        "country": "Norway",
+        "population": "5428594"
+    },
+    {
+        "country": "Oman",
+        "population": "5128058"
+    },
+    {
+        "country": "State of Palestine",
+        "population": "5121112"
+    },
+    {
+        "country": "Costa Rica",
+        "population": "5102158"
+    },
+    {
+        "country": "Liberia",
+        "population": "5077411"
+    },
+    {
+        "country": "Ireland",
+        "population": "4947267"
+    },
+    {
+        "country": "Central African Republic",
+        "population": "4843954"
+    },
+    {
+        "country": "New Zealand",
+        "population": "4829021"
+    },
+    {
+        "country": "Mauritania",
+        "population": "4669775"
+    },
+    {
+        "country": "Panama",
+        "population": "4326296"
+    },
+    {
+        "country": "Kuwait",
+        "population": "4281320"
+    },
+    {
+        "country": "Croatia",
+        "population": "4100719"
+    },
+    {
+        "country": "Moldova",
+        "population": "4032294"
+    },
+    {
+        "country": "Georgia",
+        "population": "3987805"
+    },
+    {
+        "country": "Eritrea",
+        "population": "3554797"
+    },
+    {
+        "country": "Uruguay",
+        "population": "3475842"
+    },
+    {
+        "country": "Bosnia and Herzegovina",
+        "population": "3277152"
+    },
+    {
+        "country": "Mongolia",
+        "population": "3287242"
+    },
+    {
+        "country": "Armenia",
+        "population": "2964219"
+    },
+    {
+        "country": "Jamaica",
+        "population": "2963429"
+    },
+    {
+        "country": "Qatar",
+        "population": "2889284"
+    },
+    {
+        "country": "Albania",
+        "population": "2877239"
+    },
+    {
+        "country": "Puerto Rico",
+        "population": "2846860"
+    },
+    {
+        "country": "Lithuania",
+        "population": "2715340"
+    },
+    {
+        "country": "Namibia",
+        "population": "2548663"
+    },
+    {
+        "country": "Gambia",
+        "population": "2427782"
+    },
+    {
+        "country": "Botswana",
+        "population": "2359585"
+    },
+    {
+        "country": "Gabon",
+        "population": "2234448"
+    },
+    {
+        "country": "Lesotho",
+        "population": "2145194"
+    },
+    {
+        "country": "North Macedonia",
+        "population": "2083359"
+    },
+    {
+        "country": "Slovenia",
+        "population": "2078989"
+    },
+    {
+        "country": "Guinea-Bissau",
+        "population": "1975718"
+    },
+    {
+        "country": "Latvia",
+        "population": "1882408"
+    },
+    {
+        "country": "Bahrain",
+        "population": "1711057"
+    },
+    {
+        "country": "Equatorial Guinea",
+        "population": "1410419"
+    },
+    {
+        "country": "Trinidad and Tobago",
+        "population": "1400283"
+    },
+    {
+        "country": "Estonia",
+        "population": "1326693"
+    },
+    {
+        "country": "Timor-Leste",
+        "population": "1322667"
+    },
+    {
+        "country": "Mauritius",
+        "population": "1272140"
+    },
+    {
+        "country": "Cyprus",
+        "population": "1208886"
+    },
+    {
+        "country": "Eswatini",
+        "population": "1162233"
+    },
+    {
+        "country": "Djibouti",
+        "population": "990447"
+    },
+    {
+        "country": "Fiji",
+        "population": "897573"
+    },
+    {
+        "country": "R\u00e9union",
+        "population": "896422"
+    },
+    {
+        "country": "Comoros",
+        "population": "872695"
+    },
+    {
+        "country": "Guyana",
+        "population": "787215"
+    },
+    {
+        "country": "Bhutan",
+        "population": "773069"
+    },
+    {
+        "country": "Solomon Islands",
+        "population": "689671"
+    },
+    {
+        "country": "Macao",
+        "population": "650846"
+    },
+    {
+        "country": "Montenegro",
+        "population": "628080"
+    },
+    {
+        "country": "Luxembourg",
+        "population": "627704"
+    },
+    {
+        "country": "Western Sahara",
+        "population": "599769"
+    },
+    {
+        "country": "Suriname",
+        "population": "587541"
+    },
+    {
+        "country": "Cabo Verde",
+        "population": "557026"
+    },
+    {
+        "country": "Maldives",
+        "population": "542151"
+    },
+    {
+        "country": "Malta",
+        "population": "441750"
+    },
+    {
+        "country": "Brunei",
+        "population": "438202"
+    },
+    {
+        "country": "Guadeloupe",
+        "population": "400136"
+    },
+    {
+        "country": "Belize",
+        "population": "398845"
+    },
+    {
+        "country": "Bahamas",
+        "population": "393893"
+    },
+    {
+        "country": "Martinique",
+        "population": "375213"
+    },
+    {
+        "country": "Iceland",
+        "population": "341628"
+    },
+    {
+        "country": "Vanuatu",
+        "population": "308337"
+    },
+    {
+        "country": "French Guiana",
+        "population": "299958"
+    },
+    {
+        "country": "Barbados",
+        "population": "287437"
+    },
+    {
+        "country": "New Caledonia",
+        "population": "285972"
+    },
+    {
+        "country": "French Polynesia",
+        "population": "281191"
+    },
+    {
+        "country": "Mayotte",
+        "population": "273905"
+    },
+    {
+        "country": "Sao Tome & Principe",
+        "population": "219844"
+    },
+    {
+        "country": "Samoa",
+        "population": "198643"
+    },
+    {
+        "country": "Saint Lucia",
+        "population": "183774"
+    },
+    {
+        "country": "Channel Islands",
+        "population": "174140"
+    },
+    {
+        "country": "Guam",
+        "population": "169031"
+    },
+    {
+        "country": "Cura\u00e7ao",
+        "population": "164211"
+    },
+    {
+        "country": "Kiribati",
+        "population": "119760"
+    },
+    {
+        "country": "Micronesia",
+        "population": "115231"
+    },
+    {
+        "country": "Grenada",
+        "population": "112614"
+    },
+    {
+        "country": "St. Vincent & Grenadines",
+        "population": "111002"
+    },
+    {
+        "country": "Aruba",
+        "population": "106845"
+    },
+    {
+        "country": "Tonga",
+        "population": "105901"
+    },
+    {
+        "country": "U.S. Virgin Islands",
+        "population": "104398"
+    },
+    {
+        "country": "Seychelles",
+        "population": "98453"
+    },
+    {
+        "country": "Antigua and Barbuda",
+        "population": "98069"
+    },
+    {
+        "country": "Isle of Man",
+        "population": "85112"
+    },
+    {
+        "country": "Andorra",
+        "population": "77287"
+    },
+    {
+        "country": "Dominica",
+        "population": "72017"
+    },
+    {
+        "country": "Cayman Islands",
+        "population": "65854"
+    },
+    {
+        "country": "Bermuda",
+        "population": "62237"
+    },
+    {
+        "country": "Marshall Islands",
+        "population": "59259"
+    },
+    {
+        "country": "Northern Mariana Islands",
+        "population": "57619"
+    },
+    {
+        "country": "Greenland",
+        "population": "56787"
+    },
+    {
+        "country": "American Samoa",
+        "population": "55169"
+    },
+    {
+        "country": "Saint Kitts & Nevis",
+        "population": "53264"
+    },
+    {
+        "country": "Faeroe Islands",
+        "population": "48896"
+    },
+    {
+        "country": "Sint Maarten",
+        "population": "42960"
+    },
+    {
+        "country": "Monaco",
+        "population": "39290"
+    },
+    {
+        "country": "Turks and Caicos",
+        "population": "38806"
+    },
+    {
+        "country": "Saint Martin",
+        "population": "38778"
+    },
+    {
+        "country": "Liechtenstein",
+        "population": "38147"
+    },
+    {
+        "country": "San Marino",
+        "population": "33944"
+    },
+    {
+        "country": "Gibraltar",
+        "population": "33689"
+    },
+    {
+        "country": "British Virgin Islands",
+        "population": "30266"
+    },
+    {
+        "country": "Caribbean Netherlands",
+        "population": "26265"
+    },
+    {
+        "country": "Palau",
+        "population": "18109"
+    },
+    {
+        "country": "Cook Islands",
+        "population": "17567"
+    },
+    {
+        "country": "Anguilla",
+        "population": "15026"
+    },
+    {
+        "country": "Tuvalu",
+        "population": "11817"
+    },
+    {
+        "country": "Wallis & Futuna",
+        "population": "11203"
+    },
+    {
+        "country": "Nauru",
+        "population": "10836"
+    },
+    {
+        "country": "Saint Barthelemy",
+        "population": "9882"
+    },
+    {
+        "country": "Saint Helena",
+        "population": "6080"
+    },
+    {
+        "country": "Saint Pierre & Miquelon",
+        "population": "5789"
+    },
+    {
+        "country": "Montserrat",
+        "population": "4993"
+    },
+    {
+        "country": "Falkland Islands",
+        "population": "3497"
+    },
+    {
+        "country": "Niue",
+        "population": "1628"
+    },
+    {
+        "country": "Tokelau",
+        "population": "1360"
+    },
+    {
+        "country": "Holy See",
+        "population": "801"
+    }
+]

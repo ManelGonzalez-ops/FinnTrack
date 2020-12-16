@@ -24,12 +24,14 @@ code {
   padding: 1.5rem;
   padding-top: 0;
   grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: auto 120px;
+  grid-template-rows: 400px 120px;
   grid-template-areas:
     "chart chart chart chart general general"
     "detaila detaila detailb detailb detailc detailc";
 }
-
+.general{
+  overflow-y: scroll;
+}
 .grida-p {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

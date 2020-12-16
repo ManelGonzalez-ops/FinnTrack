@@ -1,0 +1,4 @@
+covid section: {
+    summary
+    mapbycountry
+}

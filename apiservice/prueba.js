@@ -1,59 +1,26 @@
 const fetch = require("node-fetch")
 
+const {Dataset} = require('data.js')
 
-const fetcharS = async(search)=>{
-    
-    const rawData = await fetch(`https://api.tiingo.com/tiingo/utilities/search/${search}?token=7ca717775ec5e7e407b361a789d639ce27dc8224`, {
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    })
-    return await rawData.json()
-  } 
+const path = 'https://datahub.io/core/population/datapackage.json'
 
-const fetcharP = async(search)=>{
-    
-  const rawData = await fetch(`https://api.tiingo.com/tiingo/daily/${search}/prices?token=7ca717775ec5e7e407b361a789d639ce27dc8224`, {
-    headers: {
-      'Content-Type': 'application/json',
-    }
-  })
-  return await rawData.json()
-} 
-
-const fetcharM = async(search)=>{
-
-    const rawData = await fetch(`https://api.tiingo.com/tiingo/daily/${search}?token=7ca717775ec5e7e407b361a789d639ce27dc8224`)
-    return await rawData.json()
-  
- 
-}
-
-const fetcharN = async(search = null)=>{
-  let url = "https://api.tiingo.com/tiingo/news"
-  let token = "&token=7ca717775ec5e7e407b361a789d639ce27dc8224"
-  if (search){
-    url = url + "?tickers=" + search + token
+// We're using self-invoking function here as we want to use async-await syntax:
+;(async () => {
+  const dataset = await Dataset.load(path)
+  // get list of all resources:
+  for (const id in dataset.resources) {
+    console.log(dataset.resources[id]._descriptor.name)
   }
-  else{
-    url = url + "?" + token
+  // get all tabular data(if exists any)
+  for (const id in dataset.resources) {
+    if (dataset.resources[id]._descriptor.format === "csv") {
+      const file = dataset.resources[id]
+      // Get a raw stream
+      const stream = await file.stream()
+      // entire file as a buffer (be careful with large files!)
+      const buffer = await file.buffer
+      // print data
+      stream.pipe(process.stdout)
+    }
   }
-  const rawData = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json',
-    }
-  })
-  return await rawData.json()
-} 
-const fetcharH = async(search, startDate, endDate)=>{
-    
-  const rawData = await fetch(`https://api.tiingo.com/tiingo/daily/${search}/prices?startDate=${startDate}&endDate=${endDate}&token=7ca717775ec5e7e407b361a789d639ce27dc8224`, {
-    headers: {
-      'Content-Type': 'application/json',
-    }
-  })
-  return await rawData.json()
-} 
-
-
-module.exports = {fetcharS, fetcharP, fetcharN, fetcharH, fetcharM}
+})()
