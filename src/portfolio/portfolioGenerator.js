@@ -1,23 +1,90 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDataLayer } from '../Context'
 
 export const usePortfolioGenerator = () => {
 
     const { state, dispatch } = useDataLayer()
-
+    const userRefreshed = useRef(true)
     const [rendi, setRendi] = useState()
+    const validDates = useRef([])
     //option 1 : save masterSerie as a object
     //option 2 : save masterSerie as a array
 
     //generated series has dates that portfolioHistory dont have (weekends stock market is close)
-    const generateSerie = () => {
+
+    //we need to update today's income, so we could remove last value and added it again with the correct info
+    //this is step2z
+    const updateSerie = (cb) => {
+        var lastDaySerieStep2;
+        let change, incomeDiff, liquidativeValue, dayBefore;
+        let lastIncome = 0
+
+        const seriesStep2 = state.portfolioSeries
+        // const today = Object.keys(seriesStep2)[Object.keys(seriesStep2).length - 1]
+        const today = validDates.current[validDates.current.length - 1]
+
+        const currentSerieStep1 = state.generatedSeries.dates[today]
+        //const generatedSerieOfToday = state.generatedSeries
+        console.log(today, "todaaaay")
+        let portfolioCost = 0;
+        let portfolioValue = 0;
+        console.log(state.portfolioHistory)
+        console.log(state.portfolioSeries, "wuta")
+        currentSerieStep1.positions.forEach(asset => {
+            portfolioCost += asset.amount * asset.unitaryCost
+            console.log(asset.ticker, "ticko")
+            const stockClosePrice = state.portfolioHistory[today][asset.ticker.toUpperCase()].close
+            const positionVal = stockClosePrice * asset.amount
+            portfolioValue += positionVal
+        })
+        if(validDates.current.length > 1){
+            dayBefore = validDates.current[validDates.current.length - 2]
+            lastDaySerieStep2 = state.portfolioSeries[dayBefore]
+            console.log(lastDaySerieStep2, dayBefore, "tuntu")
+            lastIncome = lastDaySerieStep2.accruedYield
+            incomeDiff = state.generatedSeries.dates[today].income - state.generatedSeries.dates[dayBefore].income
+        }else{
+            incomeDiff = state.generatedSeries.dates[today].income
+        }
+        console.log(lastDaySerieStep2, "lolu")
+        const accruedIncome = validDates.length <= 1 ?
+         incomeDiff : incomeDiff + lastDaySerieStep2["accruedIncome"] 
+        const accruedYield = (portfolioValue + accruedIncome) / portfolioCost
+        if (validDates.length <= 1) { //handle first day
+            liquidativeValue = 0
+            change = 0
+        }
+        else {
+            // no podemos hacer esto ya uqe estamos repercutiendo el coste a la rentsabilidad real.
+            //deberiamos calcular la rentabilidad a partir del change diario de las acciones del portfolioHistory, y multiplicar ese porcentaje por su peso relativo en cartera
+            change = (accruedYield - lastIncome) / lastIncome
+            liquidativeValue = lastDaySerieStep2.liquidativeValue * (1 + change)
+        }
+        // state.generatedSeries.dates[validDates[validDates.length - 1]].income
+
+
+        const seriesStep2Copy = { ...seriesStep2 }
+        seriesStep2Copy[today] = {
+            portfolioCost,
+            portfolioValue,
+            change,
+            accruedYield,
+            liquidativeValue,
+            accruedIncome,
+            incomeDiff
+        }
+        console.log("execuuuted")
+        cb(seriesStep2Copy)
+    }
+
+
+    const generateSerie = (cb) => {
         let masterSerie = {}
         let liquidativeInitial = 1000
         let accruedIncome = 0
         let change, lastDate, lastIncome;
         let wtf = []
         const dateKeys = Object.keys(state.generatedSeries.dates)
-        let validDates = []
         dateKeys.forEach((date, index) => {
             if (state.portfolioHistory[date] !== undefined) {
                 let portfolioCost = 0
@@ -28,26 +95,26 @@ export const usePortfolioGenerator = () => {
                 let portfolioValue = 0
                 state.generatedSeries.dates[date].positions.forEach(asset => {
                     //console.log(asset.ticker, "tika")
-                    console.log(date, asset.ticker, "akuuu")
+                    // console.log(date, asset.ticker, "akuuu")
                     const stockClosePrice = state.portfolioHistory[date][asset.ticker.toUpperCase()].close
                     const positionVal = stockClosePrice * asset.amount
                     portfolioValue += positionVal
                 })                                            //poner lastPorfolioVal  
                 let incomeDiff
-                
+
                 if (index === 0) {
-                    incomeDiff = state.generatedSeries.dates[date].income 
-                }else{
-                    incomeDiff = state.generatedSeries.dates[date].income - 
-                    state.generatedSeries.dates[validDates[validDates.length - 1]].income 
+                    incomeDiff = state.generatedSeries.dates[date].income
+                } else {
+                    incomeDiff = state.generatedSeries.dates[date].income -
+                        state.generatedSeries.dates[validDates.current[validDates.current.length - 1]].income
                 }
-                    accruedIncome += incomeDiff
-                
+                accruedIncome += incomeDiff
+
                 const accruedYield = (portfolioValue + accruedIncome) / portfolioCost
                 if (index === 0) {
                     change = 0
                 } else {
-                    lastDate = validDates[validDates.length - 1]
+                    lastDate = validDates.current[validDates.current.length - 1]
                     lastIncome = masterSerie[lastDate].accruedYield
                     change = (accruedYield - lastIncome) / lastIncome
                     wtf = [...wtf, change]
@@ -67,21 +134,34 @@ export const usePortfolioGenerator = () => {
                         accruedIncome
                     }
                 }
-                validDates = [...validDates, date]
+                //we should store this array in the context to acces easily in the updateSeries
+                validDates.current = [...validDates.current, date]
             }
         })
         console.log(wtf)
         setRendi(masterSerie)
-        dispatch({type: "STORE_GENERATED_READY_SERIES", payload: masterSerie})
+
+        cb(masterSerie)
     }
 
     console.log(rendi, "rendiiiiii")
     console.log(state.generatedSeries, "muuu")
 
     useEffect(() => {
-        if (Object.keys(state.generatedSeries).length > 0) {
-            generateSerie()
+        console.log(state.areHistoricPricesReady, state.areGeneratedSeriesReady, "que cohone")
+        if (userRefreshed.current && state.areHistoricPricesReady && state.areGeneratedSeriesReady) {
+            generateSerie((result) => {
+                dispatch({ type: "STORE_GENERATED_READY_SERIES", payload: result })
+                userRefreshed.current = false
+            })
+        } else if (!userRefreshed.current && state.areHistoricPricesReady && state.areGeneratedSeriesReady) {
+            updateSerie((result) => {
+                dispatch({ type: "STORE_GENERATED_READY_SERIES", payload: result })
+            })
         }
-    }, [state.generatedSeries])
-    
+        // if (state.areHistoricPricesReady && Object.keys(state.generatedSeries).length > 0) {
+        //     generateSerie()
+        // }
+    }, [state.generatedSeries, state.areHistoricPricesReady, state.areGeneratedSeriesReady])
+
 }

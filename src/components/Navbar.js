@@ -87,9 +87,9 @@ export const Navbar = ({ handleDrawerOpen }) => {
     
   }, [location])
 
-  console.log(location, "location")
+  // console.log(location, "location")
   const { height } = useMesure(topNavigation)
-  console.log(height, "xuuuu")
+
   const classes = useStyles({ height });
   function a11yProps(index) {
     return {

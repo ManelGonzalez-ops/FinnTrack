@@ -218,7 +218,9 @@ export const useLogicPruebas = () => {
         return { income }
     }
 
-    const makeIt = (userActivity, cb) => {
+  
+
+    const generateSerieFromBegining = (userActivity, cb) => {
         const initialTime = findFirstDate(userActivity)
         console.log(initialTime, findFirstDate(userActivity), "inicial")
         const timelapse = createTimelaspse(initialTime)
@@ -492,7 +494,7 @@ export const useLogicPruebas = () => {
     usePortfolioGenerator()
     useEffect(() => {
         if (state.userActivity.length > 0 && Object.keys(state.portfolioHistory).length > 0) {
-            makeIt(state.userActivity, (generatedSerie) => { dispatch({ type: "STORE_GENERATED_SERIES", payload: generatedSerie }) })
+            generateSerieFromBegining(state.userActivity, (generatedSerie) => { dispatch({ type: "STORE_GENERATED_SERIES", payload: generatedSerie }) })
         }
     }, [state.userActivity, state.portfolioHistory])
 

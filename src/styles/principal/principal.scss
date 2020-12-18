@@ -1,16 +1,4 @@
 .p-grid {
-    display: grid;
-    width: 100%;
-    height: 100vh;
-    grid-template-columns: repeat(6, 1fr);
-    grid-template-rows: repeat(4, 1fr);
-    row-gap: 2rem;
-    column-gap: 2rem;
-    grid-template-areas:
-        "news news news resu resu resu"
-        "news news news resu resu resu"
-        "news news news resu resu resu"
-        "news news news resu resu resu";
 }
 
 .header {
@@ -20,17 +8,22 @@
 .p-left {
     grid-area: news;
     background-color: lightblue;
-    overflow: scroll;
+    height: 500px;
+    //overflow: scroll;
+    padding: 1rem;
 }
 .p-right-top {
     grid-area: resu;
     background-color: lightblue;
-    overflow: scroll;
+    height: 500px;
+    padding: 1rem;
+    //overflow: scroll;
 }
 .p-right-bottom {
     grid-area: chart;
     background-color: lightblue;
     overflow: scroll;
+   
 }
 
 .gainers {
@@ -39,12 +32,33 @@
     }
 }
 
-.search-section{
+.search-section {
     background-color: yellow;
     border-radius: 60px;
     display: flex;
     //width: fit-content;
     padding: 2rem;
     margin-bottom: 3rem;
-   
+}
+
+@media (min-width: 1000px) {
+    .p-grid {
+        display: grid;
+        width: 100%;
+        height: 100vh;
+        grid-template-columns: repeat(6, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+        row-gap: 2rem;
+        column-gap: 2rem;
+        grid-template-areas:
+            "news news news resu resu resu"
+            "news news news resu resu resu"
+            "news news news resu resu resu"
+            "news news news resu resu resu";
+    }
+}
+
+.principal-section {
+    height: 430px;
+    overflow: auto;
 }

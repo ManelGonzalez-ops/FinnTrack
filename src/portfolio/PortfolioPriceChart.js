@@ -3,17 +3,19 @@ import Highcharts, { chart } from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
 import { useChartReflow } from '../utils/useChartReflow';
 
-export const PortfolioPriceChart = ({ datos }) => {
+export const PortfolioPriceChart = ({ datos, title }) => {
 
     const chart = useRef(null)
     useChartReflow(chart.current)
 
     const [dataset, setDataset] = useState("")
     
+    //la fecha de la grafica siempre es un dia menos respecto a las generatedseries
 
     const prepareData = () => {
         let cleanData = []
         Object.keys(datos).forEach(date => {
+            console.log(date,"duuta")
             const actualDate = date.split("-").map((val) => parseInt(val));
             const formatedDate = new Date(
                 actualDate[0],
@@ -61,7 +63,7 @@ export const PortfolioPriceChart = ({ datos }) => {
         },
 
         title: {
-            text: "My chart",
+            text: {title},
             zoomType: "x",
         },
         rangeSelector: {

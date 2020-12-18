@@ -9,13 +9,12 @@ export const UserMain = () => {
     //const [metadata, setMetadata] = useState("")
     //tenemos que comprobar que cuando entramos al dashboard (por segunda vez), si hay algun stock nuevo que antes no tuviesemos
     useEffect(() => {
-        if(state.portfolioHistoryByCompany)
-        if (state.currentPossesions.stocks.length > 0) {
+        if (state.areHistoricPricesReady > 0) {
             console.log(state.currentPossesions, "los tenemos")
             setStocks(state.currentPossesions.stocks)
             //getHistoricals(state.currentPossesions.stocks)
         }
-    }, [state.currentPossesions.stocks])
+    }, [state.areHistoricPricesReady])
 
     
 

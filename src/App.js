@@ -23,6 +23,7 @@ import { userActivity } from "./portfolio/logicPruebas";
 import { UserMain } from "./dashboard/UserMain";
 import { Middleware } from "./dashboard/Middleware";
 import { useOktaAuth } from '@okta/okta-react';
+import { useTemporaryPossesions } from "./useTemporaryPossesions";
 
 
 
@@ -74,6 +75,7 @@ const App = () => {
   const inicializadorStadoPrueba = () => {
     dispatch({ type: "ADD_DIRECT_HISTORY", payload: userActivity })
   }
+  useTemporaryPossesions()
   useEffect(() => {
     inicializadorStadoPrueba()
   }, [])
@@ -97,6 +99,7 @@ const App = () => {
     initial.current = false
   }, [open, history])
 
+  console.log(state.areHistoricPricesReady, "ostiau")
 
   useEffect(() => {
     if (selection) {
@@ -164,7 +167,9 @@ const App = () => {
           <Route path="/companies/keymetrics/:company" exact>
             <KeymetricsChart />
           </Route>
-          <Route path="/news/:category" exact component={News} />
+          <Route path="/news/:category" exact>
+            <News principal={true}/>
+            </Route>
           <Route path="/covid19" exact>
             <CovidSection2 />
           </Route>

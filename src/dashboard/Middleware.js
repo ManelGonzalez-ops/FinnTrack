@@ -11,10 +11,10 @@ export const Middleware = (props) => {
     //we need to check that potfolio history is not empty before render userMain
     //and we need to check we have all posesion's historical prices
     useEffect(() => {
-        if (Object.keys(state.generatedSeries).length > 0) {
+        if (state.areHistoricPricesReady) {
             setPossesionsReady(true)
         }
-    }, [state.generatedSeries])
+    }, [state.areHistoricPricesReady])
     useEffect(() => {
         if (state.portfolioSeries && Object.keys(state.portfolioSeries).length > 0) {
             setPortfolioChartReady(true)
@@ -28,7 +28,7 @@ export const Middleware = (props) => {
                     <Component /> : <div>loading...</div>}
             </div>
             <div>
-           {portfolioChartReady && <PortfolioPriceChart datos={state.portfolioSeries} />}
+           {portfolioChartReady && <PortfolioPriceChart datos={state.portfolioSeries} title="profitability over investment" />}
             </div>
         </>
     )

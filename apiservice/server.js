@@ -477,3 +477,5 @@ app.post("/api/addoperation", (req, res)=>{
 app.listen(8001, () => {
     console.log("essto funca")
 })
+
+//we have to save state.currentPossesions in the database too

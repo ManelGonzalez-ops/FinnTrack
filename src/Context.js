@@ -40,24 +40,28 @@ const initialState = {
     currentPossesions: {
         userCash: checkLocalStorage("userCash") || 200000,
         stocks: [
-            {
-                ticker: "amzn",
-                amount: 20
-            },
-            {
-                ticker: "aapl",
-                amount: 50
-            },
-            {
-                ticker: "tef",
-                amount: 80
-            },
+            // {
+            //     ticker: "amzn",
+            //     amount: 20
+            // },
+            // {
+            //     ticker: "aapl",
+            //     amount: 50
+            // },
+            // {
+            //     ticker: "tef",
+            //     amount: 80
+            // },
         ]
     },
     // currentPossesions: checkLocalStorage("stockCurrentPossesions") || { tef: "", aapl: "", amzn: "" },
     generatedSeries: {}
-    //acumulatedRendiments : 
-
+    //acumulatedRendiments : ,
+    ,
+    areHistoricPricesReady: false,
+    areGeneratedSeriesReady: false,
+    setPruebaReady: false,
+    stockLibrary: new Set()
 }
 
 const companyReducer = (state, action) => {
@@ -125,7 +129,7 @@ const companyReducer = (state, action) => {
                 ...state,
                 portfolioHistory: action.payload
             }
-        case "STORE_PORTFOLIO_HISTORY_BY_COMPANY_READY":
+        case "STORE_PORTFOLIO_HISTORY_BY_COMPANY_CHART_READY":
             //by ready we mean this the data format array accepted by Highcharts
             return {
                 ...state,
@@ -176,6 +180,8 @@ const companyReducer = (state, action) => {
             }
 
         case "ADD_PORTFOLIO_CURRENT_POSSESIONS":
+            //OJO ESTE LO TENEMOS QUE QITAR
+            //action.payload.cashNetOperation = 0
             const { ticker } = action.payload
             let newAmount;
             let updatedPosesions;
@@ -229,6 +235,37 @@ const companyReducer = (state, action) => {
                 ...state,
                 portfolioSeries: action.payload
             }
+        case "SET_ARE_HISTORIC_PRICES_READY":
+            return {
+                ...state,
+                areHistoricPricesReady: action.payload
+            }
+        case "SET_ARE_GENERATED_SERIES_READY":
+            return {
+                ...state,
+                areGeneratedSeriesReady: action.payload
+            }
+        case "ENABLE":
+            console.log("eeenaaaabled")
+            return { ...state, setPruebaReady: true }
+        case "ADD_UNIQUE_STOCKS":
+            const stateCopy = { ...state }
+            stateCopy.stockLibrary.add(action.payload.ticker)
+            return {
+                ...state,
+                stockLibrary: stateCopy.stockLibrary
+            }
+        case "SET_MISSING_TICKER":
+            return {
+                ...state,
+                missingTicker: [action.payload]
+            }
+        case "RESET_MISSING_TICKER":
+            return {
+                ...state,
+                missingTicker: []
+            }
+
         default:
             return state
     }

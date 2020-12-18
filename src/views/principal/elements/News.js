@@ -6,7 +6,9 @@ import { GridComposition, NewsItem, NewsItemOver } from '../../../components/New
 import { useViewport } from '../../../utils/useViewport'
 import { CompassCalibrationOutlined } from '@material-ui/icons'
 
-export const News = ({ principal = false }) => {
+
+
+export const News = ({ principal = false, title, classnames }) => {
     // const {data, loading, error} = useFetchWithCors("http://localhost:8001/news", "news", true)
     const { category } = useParams()
     const options = { explicitUrl: true }
@@ -50,7 +52,7 @@ export const News = ({ principal = false }) => {
 
     console.log(datos.length, "ojones")
     return (
-        <>
+        <div className={classnames}>
             {   datos.length > 0 && principal ?
                 <>
                     {loading && <p>loading...</p>}
@@ -74,7 +76,10 @@ export const News = ({ principal = false }) => {
                     {datos.length > 0 && datos.map(item => <NewsItem item={item} />)}
                 </>
             }
-        </>
+        </div>
     )
 }
 
+News.defaultProps = {
+    title: ()=>null
+}

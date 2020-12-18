@@ -69,6 +69,12 @@ export const StockShop = ({ ticker }) => {
                 .then(success => {
                     //means we have stored it in database
                     dispatch({
+                        type: "ADD_UNIQUE_STOCKS",
+                        payload: {
+                            ticker,
+                        }
+                    })
+                    dispatch({
                         type: "STOCK_OPERATION",
                         payload: {
                             date: convertUnixToHuman(Date.now()),
@@ -97,9 +103,10 @@ export const StockShop = ({ ticker }) => {
     }
     useEffect(() => {
         //when users buys and its balance change we close firstModal
+        console.log("moneychange")
         modalOpen && setModalOpen(false)
         //after that we could add a success modal or animation
-    }, [state.userCash])
+    }, [state.currentPossesions.userCash])
     return (
         <div>
             {loading && <CustomCircularProgress />}
