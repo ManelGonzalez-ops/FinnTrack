@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 //import {HashRouter, Route, Switch} from "react-dom"
 
-import { Route, Switch, useHistory } from "react-router-dom";
+import { Route, Switch, useHistory, useLocation } from "react-router-dom";
 
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -21,9 +21,15 @@ import { useDataLayer } from "./Context";
 import { useEngine } from "./portfolio/Engine";
 import { userActivity } from "./portfolio/logicPruebas";
 import { UserMain } from "./dashboard/UserMain";
-import { Middleware } from "./dashboard/Middleware";
+import { Middleware } from "./dashboard/Middleware2";
 import { useOktaAuth } from '@okta/okta-react';
 import { useTemporaryPossesions } from "./useTemporaryPossesions";
+import useAuth from "./useAuth";
+import { useUserLayer } from "./UserContext";
+import { StackedColumn } from "./charts/StackedColumn";
+import { ControllerCompany } from "./views/company/ControllerCompany";
+import { Overlay } from "./components/Overlay";
+import Formm from "./SignIn2";
 
 
 
@@ -36,7 +42,9 @@ const useStyles = makeStyles((theme) => ({
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3),
+    padding: "24px 60px",
+    overflow: "hidden",
+    position: "relative",
   },
   toolbar: {
     //display: "flex",
@@ -45,8 +53,15 @@ const useStyles = makeStyles((theme) => ({
     //padding: theme.spacing(0, 1),
     // necessary for content to be below app bar
     width: "100%",
-    height: "112px",
+    height: (props) => props.location.pathname.split("/")[1] === "companies" ? "112px" : "40px"
   },
+  overlay: {
+    position: "absolute",
+    height: "100%",
+    width: "100%",
+    transition: "background 0.4s ease",
+    backgroundColor: (props) => props.showOverlay ? "black" : "transparent"
+  }
 }));
 
 
@@ -55,49 +70,59 @@ const useStyles = makeStyles((theme) => ({
 const App = () => {
 
   useEngine()
+  useAuth()
   const { authState, authService } = useOktaAuth();
-
+  const { userState } = useUserLayer()
+  useEffect(() => {
+    if (userState.info) {
+      const { email } = userState.info
+      if (email) {
+        fetch("http://localhost:8001/api/operations", {
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email }),
+          method: "POST"
+        })
+          .then(res => res.json())
+          .then(res => {
+            dispatch({ type: "ADD_DIRECT_HISTORY", payload: res.readyOperations })
+            dispatch({
+              type: "SET_INITIAL_POSSESIONS", payload: {
+                stocks: res.currentStocks,
+                cash: res.userCash
+              }
+            })
+            dispatch({ type: "SET_INITIAL_UNIQUE_STOCKS", payload: res.uniqueStocks })
+            dispatch({ type: "ENABLE" })
+          })
+          .catch(err => { console.log(err) })
+      }
+    }
+  }, [userState])
 
   const history = useHistory()
+  const location = useLocation()
+  console.log(history, location, "a ver diferencias")
   const [open, setOpen] = React.useState(false);
   const [selection, setSelection] = useState("");
-  const classes = useStyles();
-  const chart = useRef(null);
+  const { setSidebarOpen, showOverlay } = useUILayer()
+  const classes = useStyles({ location, showOverlay });
+
   const [expanded, setExpanded] = React.useState([]);
-  const { setSidebarOpen } = useUILayer()
 
   const [width, setWidth] = useState(0);
 
   const { state, dispatch } = useDataLayer()
 
-  const initial = useRef(true)
+  // const inicializadorStadoPrueba = () => {
+  //   dispatch({ type: "ADD_DIRECT_HISTORY", payload: userActivity })
+  // }
+  // useTemporaryPossesions()
+  // useEffect(() => {
+  //   inicializadorStadoPrueba()
+  // }, [])
 
-  const inicializadorStadoPrueba = () => {
-    dispatch({ type: "ADD_DIRECT_HISTORY", payload: userActivity })
-  }
-  useTemporaryPossesions()
-  useEffect(() => {
-    inicializadorStadoPrueba()
-  }, [])
-  useEffect(() => {
-    console.log(chart, "puta")
-    console.log(chart.current, "puta2")
-    if (chart.current && Object.keys(chart.current).length > 0 && !initial.current) {
-      setTimeout(() => {
-        chart.current.reflow()
-      }, 200)
-
-      // if(open && contentCont.current){
-      //   console.log("come")
-      //   console.log(contentCont.current.offsetWidth)
-      //   setWidth(contentCont.current.offsetWidth - (240 + 73)/2);
-      // }
-      // else {
-      //   setWidth(contentCont.current.offsetWidth + (240 - 73)/2)
-      // }
-    }
-    initial.current = false
-  }, [open, history])
 
   console.log(state.areHistoricPricesReady, "ostiau")
 
@@ -139,17 +164,16 @@ const App = () => {
     return <div>puto maricon ...</div>
   }
 
-  const button = authState.isAuthenticated ?
-    <button onClick={() => { authService.logout() }}>Logout</button> :
-    <button onClick={() => { history.push('/login') }}>Login</button>;
+console.log(selection, "seleeeection")
 
   return (
 
 
     <div className={classes.root}>
+        <Overlay />
       <CssBaseline />
-      <Navbar open={open} handleDrawerOpen={handleDrawerOpen} />
-      <Sidebar {...{ handleDrawerClose, handleDrawerOpen, open, handleSidebarToggle, expanded }} />
+      <Navbar handleDrawerOpen={handleDrawerOpen} auhtState={authState} />
+      <Sidebar {...{ handleDrawerClose, handleDrawerOpen, handleSidebarToggle, expanded }} />
       <main className={classes.content}>
         <div className={classes.toolbar} />
         <Button onClick={() => { history.push("/pruebaPorfolio") }}></Button>
@@ -158,24 +182,23 @@ const App = () => {
             <Principal setSelection={setSelection} />
           </Route>
           <Route path="/" exact >
-              <Searcher setSelection={setSelection} selection={selection}/>
-                </Route>
+            <Searcher setSelection={setSelection} selection={selection} />
+          </Route>
                 all company routes will have to be nested
-              <Route path="/companies/overview/:company" exact>
-            <CompanySection width={width} ref={chart} />
+              {/* <Route path="/companies/overview/:company" exact>
+            <CompanySection ref={chart} />
+          </Route> */}
+          <Route path="/companies">
+            <ControllerCompany />
           </Route>
-          <Route path="/companies/keymetrics/:company" exact>
-            <KeymetricsChart />
-          </Route>
+
           <Route path="/news/:category" exact>
-            <News principal={true}/>
-            </Route>
+            <News principal={true} />
+          </Route>
           <Route path="/covid19" exact>
             <CovidSection2 />
           </Route>
-          <Route path="/companies/financials/:company" exact>
-            <Financials />
-          </Route>
+
           <Route path="/indexes/:field" exact>
             <IndexesController />
           </Route>
@@ -188,11 +211,17 @@ const App = () => {
           <Route path="/portfoliof" exact>
             <Middleware component={UserMain} />
           </Route>
+          <Route path="/proba" exact>
+            <StackedColumn ticker="nflx" />
+          </Route>
+          <Route
+            path="/lugin"
+            exact
+          >
+            <Formm />
+          </Route>
         </Switch>
-          {button}
-          <Button variant="contained" color="primary"
-          onClick={()=>{history.push("/register")}}
-          >register</Button>
+
       </main>
     </div>
   );

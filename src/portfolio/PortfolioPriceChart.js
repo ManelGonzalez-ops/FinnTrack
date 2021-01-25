@@ -2,6 +2,13 @@ import React, { useState, useEffect, useRef } from 'react'
 import Highcharts, { chart } from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
 import { useChartReflow } from '../utils/useChartReflow';
+import { Paper } from '@material-ui/core';
+
+Highcharts.setOptions({
+    global : {
+        useUTC : false
+    }
+});
 
 export const PortfolioPriceChart = ({ datos, title }) => {
 
@@ -11,7 +18,7 @@ export const PortfolioPriceChart = ({ datos, title }) => {
     const [dataset, setDataset] = useState("")
     
     //la fecha de la grafica siempre es un dia menos respecto a las generatedseries
-
+    
     const prepareData = () => {
         let cleanData = []
         Object.keys(datos).forEach(date => {
@@ -19,10 +26,12 @@ export const PortfolioPriceChart = ({ datos, title }) => {
             const actualDate = date.split("-").map((val) => parseInt(val));
             const formatedDate = new Date(
                 actualDate[0],
-                actualDate[1],
+                actualDate[1]-1,
                 actualDate[2]
             );
+            console.log(formatedDate, "ttiiimo")
             const unixTime = formatedDate.getTime();
+            console.log(new Date(unixTime), "huuuuuuuuuue")
             cleanData.push({ ...datos[date], date: unixTime })
         })
         const readyData = cleanData.map(item => ([item.date, item.liquidativeValue]))
@@ -37,6 +46,7 @@ export const PortfolioPriceChart = ({ datos, title }) => {
 
     const options = {
         chart: {
+            type: "spline",
             zoomType: "x",
             events: {
                 selection: function (e) {
@@ -87,7 +97,9 @@ export const PortfolioPriceChart = ({ datos, title }) => {
     };
 
     return (
-        <div>
+        <Paper
+        className="portfolio-chart"
+        >
             {
                 dataset &&
                 <HighchartsReact
@@ -96,6 +108,6 @@ export const PortfolioPriceChart = ({ datos, title }) => {
                     constructorType={"stockChart"}
 
                 />}
-        </div>
+        </Paper>
     )
 }

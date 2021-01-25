@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useDataLayer } from "../Context";
-import { convertHumanToUnix, convertUnixToHuman } from "../utils/datesUtils";
-import { usePortfolioGenerator } from "./portfolioGenerator";
+import { convertHumanToUnixInit, convertHumanToUnixInitial, convertUnixToHuman, milisencondsInADay } from "../utils/datesUtils";
+import { usePortfolioGenerator } from "./portfolioGenerator2";
 //we lost lot of time by not realising .map() mutate object, so each time we were changing th eamount of one date we were change all the amount of the past dates as well kind of magically. That is because each date is an array of objects, and this objects are references from the previous object as we generate the the series from the objects of the date before. So everytime we were fining the updatedInfo, we were using the same object (as they werre pointing to he same memory dir), instead of a copy..
 
 
@@ -174,23 +174,28 @@ const findFirstDate = (userActivity) => {
     userActivity.forEach(operation => {
         if (operation.isFirstOperation) {
             console.log(operation.date)
-            valu = convertHumanToUnix(operation.date)
+            valu = convertHumanToUnixInit(operation.date)
         }
     })
     return valu
 }
 
 
-const milisencondsInADay = 24 * 60 * 60 * 1000
-
-
 
 const getTotalDaysElapsed = (initialTime) => {
     //const initialTime = findFirstDate()
     const date = convertUnixToHuman(Date.now())
-    const todayUnix00 = convertHumanToUnix(date)
+    console.log(date, "duuuu")
+    const todayUnix00 = convertHumanToUnixInit(date)
+
+    console.log(todayUnix00,"duuu2", initialTime)
     const totalMilisecons = todayUnix00 - initialTime
-    return totalMilisecons / milisencondsInADay
+    if (totalMilisecons > 0) {
+        return totalMilisecons / milisencondsInADay
+    } else {
+        //this will only run in the day 0 
+        return 1
+    }
 }
 
 
@@ -201,15 +206,17 @@ export const useLogicPruebas = () => {
     const userRefreshed = useRef(true)
 
     const createTimelaspse = (initialTime) => {
-        let timelapse = []
+        const firstDate = convertUnixToHuman(initialTime)
+        let timelapse = [firstDate]
+        let lastDate= initialTime
         //let initialTime = findFirstDate(state.userActivity)
         const range = getTotalDaysElapsed(initialTime)
         //let unixDate = initialTimeUnix.current
-        //console.log(range)
+        console.log(range, "raaango")
+        console.log(initialTime, "ostiatime")
         Array.from(Array(range).keys()).forEach(_ => {
-            const humanDate = convertUnixToHuman(initialTime)
-            timelapse = [...timelapse, humanDate]
-            initialTime += milisencondsInADay
+            lastDate += milisencondsInADay
+            timelapse = [...timelapse, convertUnixToHuman(lastDate)]
         })
         return timelapse
     }
@@ -221,14 +228,38 @@ export const useLogicPruebas = () => {
 
     const addToGeneratedSeries = (newOperation, cb) => {
         //we could save the first date in database intead of calculating everytime
+        console.log("queee hostiaaaaaaa")
+        let today;
         const { unitaryCost, ticker, amount } = newOperation.details
         const currentGeneratedSerie = state.generatedSeries
         //we need to get today's serie last key
         console.log(JSON.parse(JSON.stringify(currentGeneratedSerie)), "quepaso1")
-        const today = Object.keys(currentGeneratedSerie.dates)[Object.keys(currentGeneratedSerie.dates).length - 1]
+        if (newOperation.isFirstOperation) {
+            //the generated serie won't have any date
+            today = convertUnixToHuman(Date.now())
+            const updatedSeries = {
+                ...state.generatedSeries,
+                dates: {
+                    [today]: {
+                        income: 0,
+                        positions: [
+                            {ticker, amount, unitaryCost}
+                        ]
+                    }
+                }
+            }
+            cb(updatedSeries)
+            return
+            //we leave the function here
+        }
+        //realmente ya tenemos la date de hoy en newOperation
+        today = Object.keys(currentGeneratedSerie.dates)[Object.keys(currentGeneratedSerie.dates).length - 1]
+
+        console.log(state.generatedSeries, "repuuuuta")
         console.log(JSON.parse(JSON.stringify(today)), "quepaso2")
         let todayRegister = currentGeneratedSerie.dates[today]
         console.log(todayRegister, "registro de hoy")
+
         let alreadyInPortfolio = todayRegister.positions.find(asset => asset.ticker === ticker)
         if (alreadyInPortfolio) {
             if (newOperation.operationType === "buy") {
@@ -295,7 +326,7 @@ export const useLogicPruebas = () => {
                     { ticker, amount, unitaryCost }]
                 }
             } else {
-                throw new Error("can't sell stock that don't have")
+                throw new Error(ticker, amount, "can't sell stock that don't have")
             }
         }
         const updatedSeries = {
@@ -305,18 +336,29 @@ export const useLogicPruebas = () => {
                 [today]: todayRegister
             }
         }
-
+        console.log(updatedSeries, "repuuuuta2")
         cb(updatedSeries)
     }
 
     const generateSerieFromBegining = (userActivity, cb) => {
         console.log(userActivity, "actividad usuario")
         const initialTime = findFirstDate(userActivity)
+        console.log(initialTime, "tiempooo")
+        console.log(convertUnixToHuman(initialTime), "crazyy")
         const timelapse = createTimelaspse(initialTime)
+       
         let masterHistory;
         let koko = 0
         masterHistory = {
             income: 0
+        }
+        console.log(timelapse, "timelapse")
+        if (!timelapse.length) {
+            masterHistory = {
+                ...masterHistory,
+                dates: {
+                }
+            }
         }
         timelapse.forEach(date => {
             masterHistory = {
@@ -329,10 +371,13 @@ export const useLogicPruebas = () => {
         })
 
         //here we initialize an empty array for each date
-
+        console.log(masterHistory, "maastar")
+        console.log(timelapse, "timelapse")
         timelapse.forEach((date, index) => {
             let hasMadeOperationThatDate = false
             userActivity.forEach(operation => {
+                console.log(typeof operation.date,typeof date,date, "kostia")
+                console.log(operation.date, date, "kostia")
                 if (date === operation.date) {
                     console.log(index, "iiii")
                     console.log("hola")
@@ -559,6 +604,8 @@ export const useLogicPruebas = () => {
                             }
                         }
                     }
+                }else{
+                    console.log("noooooooooo")
                 }
             })
             if (!hasMadeOperationThatDate) {
@@ -583,14 +630,14 @@ export const useLogicPruebas = () => {
     //solo se recalcularan las series cuando el ususario haya echo una nueva operacion y o cuando haya entrado en portolio dashboard
     usePortfolioGenerator()
     useEffect(() => {
-        if (state.userActivity.length > 0) {
 
+        console.log(state.userActivity, "actu")
+        if (state.userActivity.length > 0) {
 
             if (userRefreshed.current) {
                 generateSerieFromBegining(state.userActivity, (generatedSerie) => {
                     dispatch({ type: "STORE_GENERATED_SERIES", payload: generatedSerie })
                     dispatch({ type: "SET_ARE_GENERATED_SERIES_READY", payload: true })
-                    userRefreshed.current = false
                 })
             } else {
                 const newOperation = state.userActivity[state.userActivity.length - 1]
@@ -601,7 +648,12 @@ export const useLogicPruebas = () => {
                     //userRefreshed.current will be alredy false
                 })
             }
+            if(userRefreshed.current){
+                userRefreshed.current = false
+            }
         }
+        
+       
         // if (state.userActivity.length > 0 && Object.keys(state.portfolioHistory).length > 0) {
         //     generateSerieFromBegining(state.userActivity, (generatedSerie) => { dispatch({ type: "STORE_GENERATED_SERIES", payload: generatedSerie }) })
         // }

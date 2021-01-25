@@ -5,6 +5,8 @@
 @import "./indexes/indexes.scss";
 @import "./news/news.scss";
 @import "./dashboard/usermain.scss";
+@import "./Company/company.scss";
+@import "./form/form.scss";
 
 .wrapper-reference {
     position: relative;
@@ -13,10 +15,24 @@
         position: absolute;
         top: 50%;
         left: 50%;
-        transform: translate(-50%,50%)
-    }    
+        transform: translate(-50%, 50%);
+    }
+}
+.wrapper-referencef {
+    height: 100%;
+    width: 100%;
+    .loader-wrapper {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, 50%);
+
+        *{
+            color: #FF0080;
+        }
+    }
 }
 
-.radius{
+.radius {
     border-radius: 1rem;
 }

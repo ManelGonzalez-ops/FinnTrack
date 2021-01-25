@@ -1,9 +1,7 @@
 import React, { useEffect, useRef, useState } from "react"
 import { useDataLayer } from "../Context"
-import { convertHumanToUnix } from "../utils/datesUtils"
+import { convertHumanToUnixInit } from "../utils/datesUtils"
 import { useLogicPruebas } from "./logicPruebasConAdd"
-import { PortfolioGenerator } from "./portfolioGenerator"
-import { PortfolioPriceChart } from "./PortfolioPriceChart"
 
 
 //1. Deducimos del historial de operaciones los Tickers que necesitamos
@@ -16,58 +14,46 @@ export const useEngine = () => {
 
     useLogicPruebas()
 
-    const [tickers, setTickers] = useState([])
-    const [allData, setAllData] = useState([])
-    const [missingTicker, setMissingTicker] = useState([])
     const { state, dispatch } = useDataLayer()
-    const userRefreshed = useRef(true)
-    const getAllTickers = () => {
-        console.log(state.currentPossesions.stocks, "que mirda")
-        console.log(state.stockLibrary, "aver3")
-        let tickars = []
-        state.stockLibrary.forEach(item => {
-            tickars = [...tickars, item.toUpperCase()]
-        })
-        // const tickars = state.currentPossesions.stocks.map((item) => item.ticker.toUpperCase())
-        // let tickars = []
-        // state.userActivity.forEach(operation => {
-        //     const { ticker } = operation.details;
-        //     if (!tickars.includes(ticker.toUpperCase())) tickars = [...tickars, ticker.toUpperCase()]
-        // })
-        return tickars
-    }
-    //WHAT if we don't have any ticker yet??
-    const getMissingTicker = () => {
-        let _missingTickers = []
-        // console.log(JSON.parse(JSON.stringify(state.portfolioHistoryByCompany)), "que wubu")
-        console.log(JSON.parse(JSON.stringify(state.stockLibrary)), "que wubu")
-        console.log(state.stockLibrary, "que wubu2")
-        console.log(JSON.parse(JSON.stringify(tickers)), "que wubu1")
-        // Object.keys(state.portfolioHistoryByCompany).forEach(ticker => {
-        //     if (!tickers.includes(ticker)) {
-        //         _missingTickers = [...missingTicker, ticker]
-        //     }
-        // })
-        state.stockLibrary.forEach(ticker => {
-            if (!tickers.includes(ticker.toUpperCase())) {
-                _missingTickers = [...missingTicker, ticker]
-            }
-        })
-        console.log(_missingTickers, "jodaaaaaaaaaar")
-        return _missingTickers
-    }
-    const getNewCompanyPrices = () => {
+    const {missingTicker} = state
+    const { stocks } = state.currentPossesions
 
-    }
-    const getPricesHistory = async (tickers) => {
-        console.log(tickers, "tiiiiiiiiiiii")
+    //WHAT if we don't have any ticker yet?
+
+    const getPricesHistory = async () => {
         try {
-            const request = await fetch("http://localhost:8001/portfolio", {
+            const request = await fetch("http://localhost:8001/portfolio2", {
                 headers: {
                     "Content-Type": "application/json"
                 },
                 method: "POST",
-                body: JSON.stringify(tickers)
+                body: JSON.stringify(stocks)
+            })
+            const data = await request.json()
+            return data
+        }
+        catch (err) {
+            throw new Error(err, " aquiii puta")
+        }
+    }
+    //missing ticker is a tuple for now
+    //deberiamos retornar una promesa aquí
+    const getPricesHistoryMissingTicker = async (missingTicker) => {
+        // console.log(missingTicker, "totsstocks missing tikcer")
+        // console.log(stocks, "totsstocks")
+        // console.log(JSON.stringify(stocks, "totsstocks"))
+        //we need arry format in the server so we use filter intead of find
+        const misingTickerOperationInfo =
+            stocks.
+                filter(asset => asset.ticker.toUpperCase() === missingTicker.toUpperCase())
+        console.log(misingTickerOperationInfo, "woot")
+        try {
+            const request = await fetch("http://localhost:8001/portfolio2?missingTicker=true", {
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                method: "POST",
+                body: JSON.stringify(misingTickerOperationInfo)
             })
             const data = await request.json()
             return data
@@ -77,8 +63,12 @@ export const useEngine = () => {
         }
     }
 
+
     //only one at a time right now
+    //this is pointless because we won't know the close proce untill tomorrow
+    //that may be only be usefull when dealing when with real time data
     const updateData = (data, cb) => {
+        console.log(data, "la jodida data")
         const newCompanyData = data[0][missingTicker]
         let portfolioHistoryCopy = { ...state.portfolioHistory }
         let portfolioHistoryByCompanyCopy = { ...state.portfolioHistoryByCompany }
@@ -101,7 +91,7 @@ export const useEngine = () => {
         let newCompanyChartData = newCompanyData.map(register => {
             const date = register.date.split("T")[0]
             return [
-                convertHumanToUnix(date),
+                convertHumanToUnixInit(date),
                 register["adjClose"],
                 register["adjHigh"],
                 register["adjLow"],
@@ -152,7 +142,7 @@ export const useEngine = () => {
             const companyHistory = company[ticker].map(register => {
                 const date = register.date.split("T")[0]
                 return (
-                    [convertHumanToUnix(date),
+                    [convertHumanToUnixInit(date),
                     register["adjClose"],
                     register["adjHigh"],
                     register["adjLow"],
@@ -170,79 +160,42 @@ export const useEngine = () => {
         cb()
     }
 
+    const __init = async () => {
+        //get price data of the user possesions
+        const initialData = await getPricesHistory()
+        prepareData(initialData, () => {
+            dispatch({ type: "SET_ARE_HISTORIC_PRICES_READY", payload: true })
+        })
+    }
 
-    //this component only rerenders on state update, you only can dismount it by refrshing the page
-    // useEffect(() => {
-    //     console.log("no mola", state.currentPossesions.stocks)
-    //     if (state.currentPossesions.stocks.length > 0) {
-    //         if (userRefreshed.current) {
-    //             const initialTickers = getAllTickers()
-    //             setTickers(initialTickers)
-    //         } else {
-    //             const result = getMissingTicker()
-    //             setMissingTicker(result)
-    //         }
-    //     }
-    // }, [state.currentPossesions.stocks])
+    //initialize the app
     useEffect(() => {
-        console.log("no mola", state.currentPossesions.stocks)
-        if (state.userActivity.length > 0 && state.setPruebaReady && state.stockLibrary.size > 0) {
 
-            if (userRefreshed.current) {
-                const initialTickers = getAllTickers()
-                setTickers(initialTickers)
-            } else {
-                // const result = getMissingTicker()
-                // setMissingTicker(result)
-            }
+        if (state.setPruebaReady) {
+            __init()
         }
-    }, [state.userActivity, state.setPruebaReady, state.stockLibrary])
+    }, [state.setPruebaReady])
+
 
     useEffect(() => {
-        console.log("muulda", userRefreshed.current, state.stockLibrary.size)
-        if (!userRefreshed.current && state.stockLibrary.size > 0) {
-            const result = getMissingTicker()
-            setMissingTicker(result)
-        }
-    }, [state.stockLibrary.size, state.setPruebaReady])
-
-    console.log(tickers, "tickarss")
-
-    useEffect(() => {
-        if (tickers.length > 0 && userRefreshed.current) {
-
-            const asyncWrapper = async () => {
-                const initialData = await getPricesHistory(tickers)
-                console.log(initialData, "datatota")
-                prepareData(initialData, () => {
-                    //ojo que no teganmos que declarar esto al principio
-                    userRefreshed.current = false
-                    // historicprices always starts as false
-                    dispatch({ type: "SET_ARE_HISTORIC_PRICES_READY", payload: true })
+        if(state.setPruebaReady){
+            console.log(missingTicker, "missingTicker otstia")
+            dispatch({
+                    type: "SET_ARE_HISTORIC_PRICES_READY",
+                    payload: false
                 })
-            }
-            asyncWrapper()
-        }
-    }, [tickers])
-
-    useEffect(() => {
-        console.log(missingTicker, "missing")
-        if (missingTicker.length > 0) {
-            dispatch({ type: "SET_ARE_HISTORIC_PRICES_READY", payload: false })
             const asyncWrapper = async () => {
-                const missingData = await getPricesHistory(missingTicker)
+                const missingData = await getPricesHistoryMissingTicker(missingTicker)
                 updateData(missingData, () => {
-                    setMissingTicker([])
+                    dispatch({dispatch: "RESTART_MISSING_TICKER"})
                     dispatch({ type: "SET_ARE_HISTORIC_PRICES_READY", payload: true })
                 })
             }
             asyncWrapper()
         }
+   
     }, [missingTicker])
 
-
-
-    console.log(allData, "aquidata")
 
 }
 

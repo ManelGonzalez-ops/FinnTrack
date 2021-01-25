@@ -6,11 +6,34 @@
 .navigation-right {
     ul {
         display: flex;
-        justify-content: flex-end;
 
-        li{
+        li {
             list-style: none;
             margin: 0 0.5rem;
         }
+    }
+}
+
+.table-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-columns: "icon title title spacing year year year year year";
+
+}
+
+.MuiTableCell-root{
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+}
+.nested-cell {
+    &.MuiTableCell-root{
+        padding: 0px !important;
+    }
+}
+
+.statement-table{
+    *{
+
+        font-size: 12px !important;
     }
 }

@@ -55,13 +55,18 @@ const initialState = {
         ]
     },
     // currentPossesions: checkLocalStorage("stockCurrentPossesions") || { tef: "", aapl: "", amzn: "" },
-    generatedSeries: {}
+    generatedSeries: {
+        dates: {
+
+        }
+    }
     //acumulatedRendiments : ,
     ,
     areHistoricPricesReady: false,
     areGeneratedSeriesReady: false,
     setPruebaReady: false,
-    stockLibrary: new Set()
+    stockLibrary: [],
+    missingTicker: ""
 }
 
 const companyReducer = (state, action) => {
@@ -170,7 +175,8 @@ const companyReducer = (state, action) => {
         case "ADD_DIRECT_HISTORY":
             return {
                 ...state,
-                userActivity: [...state.userActivity, ...action.payload]
+                userActivity: [...state.userActivity, ...action.payload],
+                isUserActivityReady: true
             }
         case "SELL_STOCK":
             let balance1 = state.userCash + action.payload
@@ -182,9 +188,14 @@ const companyReducer = (state, action) => {
         case "ADD_PORTFOLIO_CURRENT_POSSESIONS":
             //OJO ESTE LO TENEMOS QUE QITAR
             //action.payload.cashNetOperation = 0
-            const { ticker } = action.payload
+            const { ticker, date } = action.payload
             let newAmount;
             let updatedPosesions;
+            const newCash = action.payload.operationType === "buy" ?
+                state.currentPossesions.userCash - action.payload.cashNetOperation
+                :
+                state.currentPossesions.userCash + action.payload.cashNetOperation
+
             const alreadyOwned = state.currentPossesions.stocks.find(item => item.ticker === ticker)
             //ojo aqui que no nos de un empty object y sea evaluado como true
             if (alreadyOwned) {
@@ -202,8 +213,25 @@ const companyReducer = (state, action) => {
                 }
             }
             else {
-                updatedPosesions = [...state.currentPossesions.stocks,
-                { ticker, amount: action.payload.amount }]
+                updatedPosesions = [
+                    ...state.currentPossesions.stocks,
+                    {
+                        ticker,
+                        amount: action.payload.amount,
+                        date
+                    }
+                ]
+
+                return {
+                    ...state,
+                    currentPossesions: {
+                        ...state.stockCurrentPossesions,
+                        userCash: newCash,
+                        stocks: updatedPosesions
+                    },
+                    missingTicker: ticker
+                }
+
             }
             // const posesionToAdd = newAmount === 0 ?
             //     [...state.currentPossesions.stocks] :
@@ -211,10 +239,7 @@ const companyReducer = (state, action) => {
             //         ...state.currentPossesions.stocks,
             //         { ticker, amount: newAmount }
             //     ]
-            const newCash = action.payload.operationType === "buy" ?
-                state.currentPossesions.userCash - action.payload.cashNetOperation
-                :
-                state.currentPossesions.userCash + action.payload.cashNetOperation
+            
             //tenemos que eliminarlo si hemos vendido todas las acciones de un ticker
             return {
                 ...state,
@@ -225,6 +250,28 @@ const companyReducer = (state, action) => {
                 }
             }
         // this one could be just temporal as is needed for creating chart (is the trans)
+        case "SET_INITIAL_POSSESIONS":
+            return {
+                ...state,
+                currentPossesions: {
+                    stocks: action.payload.stocks,
+                    userCash: action.payload.cash
+                }
+            }
+        case "ADD_UNIQUE_STOCKS":
+            let stateCopy = state.stockLibrary
+            if (!stateCopy.includes(action.payload.ticker)) {
+                stateCopy = [...stateCopy, action.payload.ticker]
+            }
+            return {
+                ...state,
+                stockLibrary: stateCopy,
+            }
+        case "SET_INITIAL_UNIQUE_STOCKS":
+            return {
+                ...state,
+                stockLibrary: action.payload
+            }
         case "STORE_GENERATED_SERIES":
             return {
                 ...state,
@@ -248,24 +295,27 @@ const companyReducer = (state, action) => {
         case "ENABLE":
             console.log("eeenaaaabled")
             return { ...state, setPruebaReady: true }
-        case "ADD_UNIQUE_STOCKS":
-            const stateCopy = { ...state }
-            stateCopy.stockLibrary.add(action.payload.ticker)
-            return {
-                ...state,
-                stockLibrary: stateCopy.stockLibrary
-            }
         case "SET_MISSING_TICKER":
             return {
                 ...state,
                 missingTicker: [action.payload]
             }
-        case "RESET_MISSING_TICKER":
+        case "RESTART_MISSING_TICKER":
             return {
                 ...state,
-                missingTicker: []
+                missingTicker: ""
             }
-
+        case "STORE_IMPACT_BY_COMPANY":
+            return {
+                ...state,
+                companiesImpact: action.payload
+            }
+            //ojo esto es formato gráfica
+        case "STORE_COMPANIES_CHANGE": 
+            return {
+                ...state,
+                companiesChange: action.payload
+            }
         default:
             return state
     }

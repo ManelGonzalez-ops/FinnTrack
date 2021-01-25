@@ -1,0 +1,43 @@
+.positions {
+  min-height: 32%;
+  margin-bottom: 1rem;
+}
+
+.positions > header {
+  display: flex;
+  padding: 0.5rem;
+}
+
+.positions > header h3 {
+  flex: 1;
+}
+
+.positions .positions-body ul {
+  list-style: none;
+}
+
+.positions .positions-body ul li {
+  display: flex;
+  padding: 0.5rem;
+}
+
+.positions .positions-body ul li img {
+  flex-basis: 50px;
+  margin-right: 30px;
+  height: 50px;
+  border-radius: 15px;
+}
+
+.positions .positions-body ul li .additional-wrap {
+  flex: 1;
+  display: flex;
+  justify-content: space-around;
+}
+
+.positions .positions-body ul li .additional-wrap .field-2 {
+  flex: 1;
+}
+
+.positions .positions-body ul li .additional-wrap .field-3 {
+  flex: 1;
+}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDataLayer } from '../Context'
+import { Marcador } from './Marcador'
 import { StockDispatcher } from './StockDispatcher'
 
 export const UserMain = () => {

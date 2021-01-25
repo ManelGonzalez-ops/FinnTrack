@@ -21,6 +21,7 @@ export const MiniatureChart = ({ datos }) => {
             type: "spline",
             margin: 0,
             height: (9 / 16 * 100) + '%',
+            animation: false //to disable initial animation we need to disable animation in plotOptions.series 
             //width: 50 
         },
         title: {
@@ -76,6 +77,7 @@ export const MiniatureChart = ({ datos }) => {
                 borderWidth: 0
             },
             series: {
+                animation: false,
                 marker: {
                     states: {
                         hover: {

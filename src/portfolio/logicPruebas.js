@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDataLayer } from "../Context";
-import { convertHumanToUnix, convertUnixToHuman } from "../utils/datesUtils";
+import { convertHumanToUnixInit, convertUnixToHuman } from "../utils/datesUtils";
 import { usePortfolioGenerator } from "./portfolioGenerator";
 //we lost lot of time by not realising .map() mutate object, so each time we were changing th eamount of one date we were change all the amount of the past dates as well kind of magically. That is because each date is an array of objects, and this objects are references from the previous object as we generate the the series from the objects of the date before. So everytime we were fining the updatedInfo, we were using the same object (as they werre pointing to he same memory dir), instead of a copy..
 
@@ -174,7 +174,7 @@ const findFirstDate = (userActivity) => {
     userActivity.forEach(operation => {
         if (operation.isFirstOperation) {
             console.log(operation.date)
-            valu = convertHumanToUnix(operation.date)
+            valu = convertHumanToUnixInit(operation.date)
         }
     })
     return valu
@@ -188,7 +188,7 @@ const milisencondsInADay = 24 * 60 * 60 * 1000
 const getTotalDaysElapsed = (initialTime) => {
     //const initialTime = findFirstDate()
     const date = convertUnixToHuman(Date.now())
-    const todayUnix00 = convertHumanToUnix(date)
+    const todayUnix00 = convertHumanToUnixInit(date)
     const totalMilisecons = todayUnix00 - initialTime
     return totalMilisecons / milisencondsInADay
 }

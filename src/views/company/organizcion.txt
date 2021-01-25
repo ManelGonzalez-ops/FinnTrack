@@ -1,0 +1,10 @@
+Symbol
+T
+
+Asset Type
+Common Stock
+
+Name
+AT&T Inc
+
+Description

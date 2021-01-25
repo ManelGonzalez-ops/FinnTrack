@@ -39,7 +39,7 @@
   .p-grid {
     display: grid;
     width: 100%;
-    height: 100vh;
+    margin-bottom: 5rem;
     grid-template-columns: repeat(6, 1fr);
     grid-template-rows: repeat(4, 1fr);
     row-gap: 2rem;
@@ -51,4 +51,233 @@
 .principal-section {
   height: 430px;
   overflow: auto;
+}
+
+.gl-wrapper {
+  display: grid;
+  grid-template-columns: [info] 1.5fr [chart] 1fr;
+  grid-template-rows: auto;
+  background: white;
+  height: 100%;
+  overflow: hidden;
+  padding: 14.7px 11.7px !important;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.05);
+}
+
+.gl-wrapper .info {
+  grid-column: info;
+  overflow: hidden;
+}
+
+.gl-wrapper .info p:first-of-type {
+  color: blue;
+}
+
+.gl-wrapper .chart {
+  grid-column: chart;
+  overflow: hidden;
+}
+
+.item {
+  background: lightgreen;
+  height: 100px;
+}
+
+.spacer {
+  width: 202px !important;
+  height: 100px !important;
+  padding: 0 10px !important;
+}
+
+.alice-carousel__prev-btn,
+.alice-carousel__next-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0 !important;
+}
+
+.alice-carousel__prev-btn *,
+.alice-carousel__next-btn * {
+  padding: 0 !important;
+}
+
+.alice-carousel__prev-btn {
+  left: -15px;
+  text-align: left !important;
+}
+
+.alice-carousel__next-btn {
+  right: -15px;
+  text-align: right !important;
+}
+
+.alice-carousel__wrapper {
+  z-index: -1;
+}
+
+.searcher2 {
+  position: relative;
+  height: 100px;
+  /* input:nth-child(2) {
+        z-index: 1;
+      } */
+}
+
+.searcher2 p,
+.searcher2 #transparent {
+  height: 100%;
+  position: absolute;
+  width: 100%;
+}
+
+.searcher2 #transparent {
+  color: transparent;
+  outline: none;
+  border: 1px solid black;
+  top: 0;
+  left: 0;
+  background: transparent;
+}
+
+.searcher2 p {
+  background: lightblue;
+  /* overflow-x: scroll; */
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.searcher2 .caret {
+  display: inline-block;
+  width: 5px;
+  height: 70%;
+  background: black;
+  position: absolute;
+  animation: blink 1.2s ease infinite;
+  text-align: left;
+  opacity: 0;
+  transform: translateX(2px);
+}
+
+@keyframes blink {
+  1% {
+    opacity: 1;
+  }
+  49% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.searcher3 {
+  position: absolute;
+  width: 90vw;
+  top: 100px;
+  z-index: 5;
+}
+
+.searcher3 .wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+.searcher3 .expandable {
+  background: lightblue;
+  transition: transform 0.3s ease;
+  /* margin-top: 3rem; */
+  /* transform-origin: top; */
+  height: 50px;
+  position: absolute;
+  width: 100%;
+}
+
+.searcher3 input {
+  position: absolute;
+  width: 90%;
+  z-index: 1;
+  transition: transform 0.3s ease;
+  padding: 1rem;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.searcher3 .lista-search {
+  opacity: 0;
+  transition: opacity 0.2s ease 0.4s;
+  background: red;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
+.searcher4 {
+  position: absolute;
+  background: #3f51b5;
+  width: 80%;
+  top: 260px;
+  z-index: 5;
+  transition: height 0.2s ease, transform 0.4s ease;
+  transform: translateY(0px);
+  border: 16px solid #3f51b5;
+  border-top: 35px solid #3f51b5;
+  border-radius: 10px;
+  box-sizing: content-box;
+  right: 0;
+  left: 0;
+  margin: 0 auto;
+}
+
+.searcher4:before {
+  content: "stock searcher";
+  position: absolute;
+  top: -30px;
+  color: white;
+  font-size: 20px;
+}
+
+.searcher4.open {
+  transform: translateY(-50px);
+  z-index: 2001;
+}
+
+.searcher4 input {
+  width: calc(100% - 16px - 1rem - 4px);
+  z-index: 1;
+  transition: transform 0.3s ease;
+  padding: 1rem;
+  outline: 0;
+  border-radius: 5px;
+  border-color: white;
+  box-shadow: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.searcher4 .lista-search {
+  opacity: 0;
+  transition: opacity 0.2s ease 0.4s;
+  width: 100%;
+  color: white;
+  transform: translateY(0%);
 }

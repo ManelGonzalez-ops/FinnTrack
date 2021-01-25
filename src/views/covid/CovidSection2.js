@@ -1,5 +1,6 @@
 import { makeStyles, Slider, Typography } from '@material-ui/core'
 import React, { useEffect, useRef, useState } from 'react'
+import { Transition } from 'react-transition-group'
 import { CovidMap } from '../../charts/CovidMap'
 import { CustomCircularProgress } from '../../components/components/CustomCircularProgress'
 import countryCode from "../../utils/countryCodes.json"
@@ -11,7 +12,6 @@ import { Sliders } from './Sliders'
 export const CovidSection2 = () => {
     const [{ datosHuge, loadingHuge, errorHuge }, setRequest] = useState({ datosHuge: [], loadingHuge: false, errorHuge: "" })
     const blackList = ["Burma", "Diamond Princess", "Eswatini", "MS Zaandam", "East Timor", "West Bank and Gaza", "Kosovo", "Jersey"]
-    const [populations, setPopulations] = useState([])
 
     const [date, setDate] = useState("2020-10-15")
     const [mode, setMode] = useState("relative")
@@ -42,7 +42,7 @@ export const CovidSection2 = () => {
         const fetcher = async () => {
             try {
 
-                setRequest(prev => ({ ...prev, loadingHuge: true }))
+                setRequest(prev => ({ ...prev, loadingHuge: true, errorHuge: "" }))
                 controller.current = new AbortController()
                 const rawData = await fetch(`https://api.covid19tracking.narrativa.com/api/${date}`, {
                     "signal": controller.current.signal
@@ -57,7 +57,11 @@ export const CovidSection2 = () => {
                     if (!blackList.includes(nombre)) {
                         const pais = data.dates[date].countries
                         const population = findPopulation(nombre)
-                        countryArr = [...countryArr, [countryCode[nombre].code.toLowerCase(), pais[nombre].today_confirmed, findPopulation(nombre), nombre]]
+                        //avoid error cause by covid api unmatched countries
+                        if (countryCode[nombre] !== undefined) {
+                            console.log(countryCode[nombre], nombre, "que cujuno")
+                            countryArr = [...countryArr, [countryCode[nombre].code.toLowerCase(), pais[nombre].today_confirmed, findPopulation(nombre), nombre]]
+                        }
                     }
 
                 })
@@ -72,15 +76,17 @@ export const CovidSection2 = () => {
                         } else {
                             return null
                         }
-                    }).filter(item=>item!==null).map(item => item.slice(0, 2))
-                    
+                    }).filter(item => item !== null).map(item => item.slice(0, 2))
+
                 console.log(JSON.parse(JSON.stringify(result)), "joderrrr")
                 console.log(populationNF, "no encontrado")
                 if (!controller.current.signal.aborted) {
                     setRequest(prev => ({ ...prev, loadingHuge: false, datosHuge: result }))
                 }
             } catch (err) {
-                setRequest(prev => ({ ...prev, loadingHuge: false, errorHuge: err.message }))
+                if (err.message !== "The user aborted a request.") {
+                    setRequest(prev => ({ ...prev, loadingHuge: false, errorHuge: `${date} not available` }))
+                }
             }
             //console.log(data.Countries)
 
@@ -100,14 +106,17 @@ export const CovidSection2 = () => {
     console.log(population, "population")
 
     return (
-        <>
+        <div
+            style={{ position: "relative" }}
+        >
 
             {/* {loadingHuge && <CustomCircularProgress />} */}
-            {errorHuge && <p>{errorHuge}</p>}
-
+            {/* {errorHuge && <p>{errorHuge}</p>} */}
+            <ErrorOverlay error={errorHuge} />
             <CovidMap
                 data={datosHuge}
-            />
+                {...{mode}}
+                />
 
             <div className="sliders-container">
                 <Sliders
@@ -116,11 +125,50 @@ export const CovidSection2 = () => {
                 />
             </div>
 
-        </>
+        </div>
     )
 }
+const defaultStyles = {
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    zIndex: 1,
+    transition: "all 0.5s ease",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
+}
+const transitionStyles = {
 
+    entering: { opacity: 1 },
+    entered: { opacity: 1 },
+    exiting: { opacity: 0 },
+    exited: { opacity: 0 },
 
+}
+const ErrorOverlay = ({ error }) => {
+
+    return (
+
+        <Transition
+            in={error}
+            timeout={500}
+            appear={true}
+            mountOnEnter
+            unmountOnExit
+        >
+            {state => (
+                <div
+                    style={{ ...defaultStyles, ...transitionStyles[state] }}
+                >
+                    <div style={{ opacity: 0.6, width: "100%", height: "100%", background: "grey" }}></div>
+                     <div style={{position: "absolute"}}>{error}</div>
+                </div>
+            )}
+
+        </Transition>
+    )
+}
 
 
 

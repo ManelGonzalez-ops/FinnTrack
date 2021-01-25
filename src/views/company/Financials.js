@@ -1,47 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from "react-router-dom"
+import { CustomCircularProgress } from '../../components/components/CustomCircularProgress'
 import { useDataLayer } from '../../Context'
 import { FinancialOptions } from './FinancialOptions'
-import { TableUI } from './TableUI'
+import { CashFlow } from './FinancialStatements/CashFlow'
+import { IncomeStatement } from './FinancialStatements/IncomeStatement'
+import { TableUI2 } from './FinancialStatements/TableUI2'
 
 
 export const Financials = () => {
-    const { company } = useParams()
-    const { state, dispatch } = useDataLayer()
-    const campo = useRef("")
+
+
+    const [field, setField] = useState("BALANCE_SHEET")
     const [{ data, loading, error }, setRequest] = useState({ data: "", loading: false, error: "" })
-
-    const assignStatement = (field) => {
-        switch (field) {
-            case "BALANCE_SHEET":
-                return "balance"
-            case "INCOME_STATEMENT":
-                return "income"
-            case "CASH_FLOW":
-                return "cashflow"
-            default:
-                return ""
-        }
-    }
-
-    const handleGetIncome = (statement) => {
-        const field = assignStatement(statement)
-        campo.current = field
-        if (state.financials[field][company]) {
-            setRequest(prev => ({ ...prev, data: state.financials[field][company] }))
-        } else {
-            setRequest(prev => ({ ...prev, loading: true }))
-            fetch(`https://www.alphavantage.co/query?function=${statement}&symbol=${company}&apikey=btm6dp748v6ud360stcg`)
-                .then(res => res.json())
-                .then(res => {
-                    if (Object.keys(res).length > 0) {
-                        return setRequest(prev => ({ ...prev, loading: false, data: res }))
-                    }
-                    throw new Error("no data")
-                })
-                .catch(err => { setRequest(prev => ({ ...prev, loading: false, error: err.message })) })
-        }
-    }
+    const { company } = useParams()
+    const campo = useRef("")
+    const { state, dispatch } = useDataLayer()
 
     useEffect(() => {
         console.log(campo.current, company, "elements")
@@ -50,19 +24,86 @@ export const Financials = () => {
         }
     }, [data])
 
+    console.log(data, field, "putaadata")
+
     return (
         <div>
-            {/* {error && <p>{error}</p>}
-            <button onClick={() => { handleGetIncome("BALANCE_SHEET") }}>balance</button>
-            <button onClick={() => { handleGetIncome("INCOME_STATEMENT") }}>income</button>
-            <button onClick={() => { handleGetIncome("CASH_FLOW") }}>cash flow</button>
-             */}
-             {error && <p>{error}</p>}
-              <FinancialOptions {...{ handleGetIncome }} />
-             {data && <TableUI
-                income={data}
-            />}
-           
+            {error && <p>{error}</p>}
+            <FinancialOptions {...{ field, setField, setRequest, campo, company }} />
+
+            {
+                loading ? <CustomCircularProgress /> :
+                    error ? <p>{error}</p> :
+                        data && <TableDataPrep
+                            data={data}
+                            field={field}
+                        />}
+
         </div>
     )
 }
+
+const TableDataPrep = ({ data, field }) => {
+
+    const [readyData, setReadyData] = useState("");
+    let anualdata = useRef({});
+
+    useEffect(() => {
+        if (data) {
+            console.log(data, "error tabla")
+            data.annualReports.forEach((item) => {
+                anualdata.current = {
+                    ...anualdata.current,
+                    [item.fiscalDateEnding]: item,
+                };
+            });
+
+            console.log(anualdata.current, "first step");
+            let structuredData = {};
+            //every year has the same fields, so we take first index as a template
+            Object.keys(data.annualReports[0]).forEach((field) => {
+                console.log(field, "campo");
+                structuredData[field] = {};
+                Object.keys(anualdata.current).forEach((year) => {
+                    structuredData[field][year] = anualdata.current[year][field];
+                    console.log(anualdata.current[year]);
+                });
+            });
+            setReadyData(structuredData);
+        }
+    }, [data]);
+
+    useEffect(() => {
+        console.log(readyData, "ready");
+    }, [readyData]);
+
+    return (
+        data &&
+            field === "BALANCE_SHEET" ?
+            <TableUI2
+                {...{
+                    anualdata,
+                    readyData
+                }}
+            />
+            :
+            field === "INCOME_STATEMENT" ?
+                <IncomeStatement
+                    {...{
+                        anualdata,
+                        readyData
+                    }}
+                />
+                :
+                field === "CASH_FLOW" ?
+                    <CashFlow
+                        {...{
+                            anualdata,
+                            readyData
+                        }}
+                    />
+                    :
+                    <p>Somethign went wrong</p>
+    )
+}
+

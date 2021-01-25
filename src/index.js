@@ -8,17 +8,20 @@ import { BrowserRouter, Route } from "react-router-dom";
 import { ContextProvider } from './Context';
 import { UIProvider } from './ContextUI';
 import { AppWithRouterAccess } from './AppWithRouterAccess';
+import { UserContext } from './UserContext';
 
- //hasrouter won't work with okta
+//hasrouter won't work with okta
 ReactDOM.render(
   <React.StrictMode>
-    <ContextProvider>
-      <UIProvider>
-        <BrowserRouter>
+    <UserContext>
+      <ContextProvider>
+        <UIProvider>
+          <BrowserRouter>
             <AppWithRouterAccess />
-        </BrowserRouter>
-      </UIProvider>
-    </ContextProvider>
+          </BrowserRouter>
+        </UIProvider>
+      </ContextProvider>
+    </UserContext>
   </React.StrictMode>,
   document.getElementById('root')
 );

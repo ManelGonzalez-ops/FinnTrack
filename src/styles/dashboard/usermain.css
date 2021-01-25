@@ -1,3 +1,47 @@
+.positions {
+  min-height: 32%;
+  margin-bottom: 1rem;
+}
+
+.positions > header {
+  display: flex;
+  padding: 0.5rem;
+}
+
+.positions > header h3 {
+  flex: 1;
+}
+
+.positions .positions-body ul {
+  list-style: none;
+}
+
+.positions .positions-body ul li {
+  display: flex;
+  padding: 0.5rem;
+}
+
+.positions .positions-body ul li img {
+  flex-basis: 50px;
+  margin-right: 30px;
+  height: 50px;
+  border-radius: 15px;
+}
+
+.positions .positions-body ul li .additional-wrap {
+  flex: 1;
+  display: flex;
+  justify-content: space-around;
+}
+
+.positions .positions-body ul li .additional-wrap .field-2 {
+  flex: 1;
+}
+
+.positions .positions-body ul li .additional-wrap .field-3 {
+  flex: 1;
+}
+
 .user-dashboard {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -6,4 +50,129 @@
 .user-dashboard .user-dashboard--item {
   background-color: yellow;
   border: 1px solid black;
+}
+
+.marcador1-wrap {
+  width: 70%;
+  display: flex;
+  min-height: 250px;
+  position: relative;
+  justify-content: space-between;
+}
+
+.marcador1-wrap div:first-child {
+  margin-right: 10px;
+}
+
+.marcador1-wrap .marcador {
+  background: #e8edf6;
+  border-radius: 10px;
+  flex: 0.95;
+  display: flex;
+  flex-direction: column;
+}
+
+.marcador1-wrap .marcador > header {
+  padding-left: 30px;
+  display: flex;
+  padding: 1rem;
+  border-bottom: 1px solid lightgray;
+}
+
+.marcador1-wrap .marcador .marcador-item--body {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  flex: 1;
+}
+
+.marcador2-wrap {
+  width: 70%;
+  display: flex;
+  min-height: 250px;
+  position: relative;
+  justify-content: space-between;
+}
+
+.marcador2-wrap div:first-child {
+  margin-right: 10px;
+}
+
+.marcador2-wrap .marcador {
+  background: #e8edf6;
+  border-radius: 20px;
+  flex: 0.95;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.marcador2-wrap .marcador .absolute {
+  position: absolute;
+  border-radius: 15px;
+  width: 70px;
+  height: 70px;
+  background: gray;
+  top: 10px;
+  left: 10px;
+}
+
+.marcador2-wrap .marcador > header {
+  padding: 1rem;
+  padding-right: 30px;
+  border-bottom: 1px solid lightgray;
+  text-align: right;
+}
+
+.marcador2-wrap .marcador .marcador-item--body {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  flex: 1;
+}
+
+.dasboard-grid--desktop {
+  display: grid;
+  grid-template-columns: [principal] 1.5fr [secondary] 1fr;
+  gap: 1rem;
+}
+
+.principal {
+  grid-area: principal;
+}
+
+.principal > header {
+  text-align: center;
+}
+
+.secondary {
+  grid-area: secondary;
+}
+
+.lateral-section > header {
+  text-align: center;
+}
+
+.lateral-section .avatar-section {
+  text-align: center;
+}
+
+.lateral-section .avatar-section .placeholder {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: gray;
+}
+
+.performance-chart1, .portfolio-chart {
+  margin-bottom: 1rem;
+}
+
+.menu-item--selected {
+  background: #3f51b5 !important;
+  color: white !important;
 }

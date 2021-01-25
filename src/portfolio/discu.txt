@@ -1,2 +1,3 @@
-1. At the begining we have to calculate if the user has some generated serie.
-2. if 
+userCash
+portfolioValue,
+userTotalAssets = userCash + portfolioValue

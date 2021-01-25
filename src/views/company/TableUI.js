@@ -1,4 +1,5 @@
 import {
+  makeStyles,
   Table,
   TableBody,
   TableCell,
@@ -8,13 +9,24 @@ import {
 } from "@material-ui/core";
 import React, { useEffect, useRef, useState } from "react";
 import { Cell } from "../../components/Cell";
-import {useParams} from "react-router-dom"
+import { useParams } from "react-router-dom"
+import { camelCasePipe } from "../../utils/Pipes";
 
-export const TableUI = ({income}) => {
+const useStyles = makeStyles({
+
+  root: {
+    background: "white",
+    borderRadius: "10px",
+    width: "90%",
+    margin: "0 auto"
+  }
+})
+
+export const TableUI = ({ income }) => {
   const [readyData, setReadyData] = useState("");
-  let anualdata= useRef({});
-  
- 
+  let anualdata = useRef({});
+
+
 
   useEffect(() => {
     if (income) {
@@ -45,9 +57,13 @@ export const TableUI = ({income}) => {
     console.log(readyData, "ready");
   }, [readyData]);
   //we need to loop each field, which is an object with the  values of 5 different years
-
+  const classes = useStyles()
   return (
-    <TableContainer>
+    <TableContainer
+      classes={{
+        root: classes.root
+      }}
+    >
       <Table>
         <TableHead>
           <TableRow>
@@ -60,15 +76,17 @@ export const TableUI = ({income}) => {
         </TableHead>
         <TableBody>
           {readyData &&
-            Object.keys(readyData).map((field, index) => {
+            Object.keys(readyData).slice(1, -1).map((field, index) => {
               let data = Object.keys(readyData[field]);
               return (
                 <TableRow key={index}>
-                  <TableCell colSpan={3}>{field}</TableCell>
+                  <TableCell
+                    style={{ fontWeight: "bold" }}
+                    colSpan={2}>{camelCasePipe(field)}</TableCell>
                   {Array(data.length)
                     .fill(0)
                     .map((_, index) => (
-                      <Cell data={readyData[field][data[index]]} align="right" key={index}/>
+                      <Cell data={readyData[field][data[index]]} align="right" key={index} />
                     ))}
                 </TableRow>
               );

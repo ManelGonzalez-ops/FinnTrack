@@ -1,5 +1,6 @@
 import { Divider } from '@material-ui/core'
-import React, { Fragment } from 'react'
+import React from 'react'
+
 
 export const NewsItem = ({ item }) => {
     return (
@@ -30,12 +31,12 @@ export const NewsItem = ({ item }) => {
 
 
 export const NewsItemOver = ({ item }) => {
-    console.log(item, "xooo")
+
     return (
         <>
             <Divider />
             <div
-                className="news-item-over"
+                className="news-item-over fade-img-wrapper"
             >
                 <div className="image-container">
                     <img
@@ -57,14 +58,14 @@ export const NewsItemOver = ({ item }) => {
 }
 
 export const GridComposition = ({ chunk }) => {
-    //console.log(bigItem, "tiiiiii", smallItems)
     return (
 
         <div
             className="news-grid-parent"
         >
-            <NewsItemOver item={chunk[0]} />
-            <NewsItemSmall items={chunk.slice(1, 3)} />
+           
+                        <NewsItemOver item={chunk[0]} />
+                        <NewsItemSmall items={chunk.slice(1, 3)} />
         </div>
     )
 }
@@ -73,7 +74,7 @@ export const NewsItemSmall = ({ items }) => {
 
     return (
         <div
-            className="news-layout-small"
+            className="news-layout-small fade-img-wrapper"
         >
             {items.length > 0 && items.map(itam => <NewsItemNoStyled item={itam} />)}
         </div>

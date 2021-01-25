@@ -86,3 +86,5 @@ searcher {
 }
 
 sentiment => gauge charts
+
+finnhub token = btm6dp748v6ud360stcg

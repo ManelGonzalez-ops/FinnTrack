@@ -67,7 +67,7 @@ export const Searcher = ({ setSelection }) => {
         <Autocomplete
           id="asynchronous-demo"
           style={{ width: 300 }}
-          open={true}
+          open={open}
           onOpen={() => {
             setOpen(true);
           }}
@@ -89,7 +89,7 @@ export const Searcher = ({ setSelection }) => {
           renderInput={(params) => (
             <TextField
               {...params}
-              label="Asynchronous"
+              label="by ticker, by name.."
               variant="outlined"
               onKeyUp={handleAutocomplete}
               onChange={(e) => {

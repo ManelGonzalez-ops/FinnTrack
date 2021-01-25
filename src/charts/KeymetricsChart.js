@@ -19,6 +19,12 @@ export const KeymetricsChart = () => {
         ["tangibleBookValuePerShare", "shareholdersEquityPerShare", "interestDebtPerShare"])
 
     const { datos, loading, error } = useFetch(url, company, "metricsHistorical", hookOptions)
+    useEffect(()=>{
+        fetch("https://financialmodelingprep.com/api/v3/key-metrics/AMZN?apikey=651d720ba0c42b094186aa9906e307b4")
+        .then(res=>res.json())
+        .then(resa=>{console.log(resa, "resa")})
+        .catch(err=>{console.log(err, "puto error")})
+    },[])
 
     const datasetBuilder = (data) => {
         let masterObject = {}
@@ -43,7 +49,7 @@ export const KeymetricsChart = () => {
     }, [datos])
 
 
-    console.log("mama")
+    console.log(datos, "mammmmma")
 
     const options = {
         chart: {

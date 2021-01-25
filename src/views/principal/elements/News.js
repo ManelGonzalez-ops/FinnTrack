@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useFetch } from '../../../utils/useFetch'
 import { useFetchWithCors } from '../../../utils/useFetchWithCors'
 import { useParams } from "react-router-dom"
 import { GridComposition, NewsItem, NewsItemOver } from '../../../components/NewsItem'
 import { useViewport } from '../../../utils/useViewport'
 import { CompassCalibrationOutlined } from '@material-ui/icons'
-
+import { useIntersection } from 'react-use';
 
 
 export const News = ({ principal = false, title, classnames }) => {
@@ -13,9 +13,20 @@ export const News = ({ principal = false, title, classnames }) => {
     const { category } = useParams()
     const options = { explicitUrl: true }
     const { datos, loading, error } = useFetch(`https://finnhub.io/api/v1/news?category=${category}&token=btm6dp748v6ud360stcg`, category, "news", options)
+
     const [datosGrid, setDatosGrid] = useState("")
     const [newsPerPage, setNewsPerPage] = useState(4)
+    const debounce = useRef(false)
     const { viewport } = useViewport()
+
+    const intersectionRef = React.useRef(null);
+    const intersection = useIntersection(intersectionRef, {
+        root: null,
+        rootMargin: '0px',
+        threshold: 1
+    });
+
+    const isLoadingImgs = useRef()
     const arrangeDatos = (data) => {
         let gridArr = []
         let initialNum = 0
@@ -36,19 +47,20 @@ export const News = ({ principal = false, title, classnames }) => {
         }
     }, [datos])
 
-
-
+    const [showingSkeletong, setShowingSkeleton] = useState(false)
+console.log(intersection, "intersec")
+let debounceTimer
     useEffect(() => {
-        const handleScrollBottom = () => {
-            if ((window.innerHeight + window.pageYOffset) >= document.body.offsetHeight) {
-                setNewsPerPage(prev => prev + 4)
-            }
+        if (intersection && intersection.intersectionRatio < 1.5 && !debounce.current) {
+            setNewsPerPage(prev => prev + 1)
+            debounce.current = true
+            debounceTimer = setTimeout(()=>{
+                debounce.current = false
+                clearTimeout(debounceTimer)
+            }, 500)
         }
-        document.addEventListener("scroll", handleScrollBottom)
-        return () => {
-            document.removeEventListener("scroll", handleScrollBottom)
-        }
-    }, [])
+
+    }, [intersection])
 
     console.log(datos.length, "ojones")
     return (
@@ -64,7 +76,12 @@ export const News = ({ principal = false, title, classnames }) => {
                         :
                         (<>
 
-                            { datosGrid && datosGrid.slice(1, newsPerPage).map(item => <GridComposition chunk={item} />)}
+                            { datosGrid && datosGrid.slice(1, newsPerPage).map((item, index) =>
+                                <GridComposition
+                                    key={index}
+                                    chunk={item}
+                                    index={index}
+                                />)}
                             {/* { datos && datos.slice(3, datos.length).map(item => <NewsItemOver item={item} />)} */}
                         </>)
                     }
@@ -76,10 +93,14 @@ export const News = ({ principal = false, title, classnames }) => {
                     {datos.length > 0 && datos.map(item => <NewsItem item={item} />)}
                 </>
             }
+            {datos.length && <div
+                ref={intersectionRef}
+                style={{ height: "20px" }}
+            ></div>}
         </div>
     )
 }
 
 News.defaultProps = {
-    title: ()=>null
+    title: () => null
 }

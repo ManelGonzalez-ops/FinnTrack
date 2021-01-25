@@ -1,9 +1,135 @@
-.user-dashboard{
+@import "./positions.scss";
+
+.user-dashboard {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 
-    .user-dashboard--item{
+    .user-dashboard--item {
         background-color: yellow;
         border: 1px solid black;
     }
+}
+
+//shot1 https://dribbble.com/shots/5923205-Currency-exchange-platform
+//shopt2 https://dribbble.com/shots/14715367-Wallet-Dashboard-Design
+.marcador1-wrap {
+    width: 70%;
+    display: flex;
+    min-height: 250px;
+    position: relative;
+    justify-content: space-between;
+
+    & div:first-child {
+        margin-right: 10px;
+    }
+    .marcador {
+        background: #e8edf6;
+        border-radius: 10px;
+        flex: 0.95;
+        display: flex;
+        flex-direction: column;
+        & > header {
+            padding-left: 30px;
+            display: flex;
+            padding: 1rem;
+            border-bottom: 1px solid lightgray;
+        }
+        .marcador-item--body {
+            display: flex;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            flex: 1;
+        }
+    }
+}
+
+.marcador2-wrap {
+    width: 70%;
+    display: flex;
+    min-height: 250px;
+    position: relative;
+    justify-content: space-between;
+
+    & div:first-child {
+        margin-right: 10px;
+    }
+
+    .marcador {
+        background: #e8edf6;
+        border-radius: 20px;
+        flex: 0.95;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        .absolute {
+            position: absolute;
+            border-radius: 15px;
+            width: 70px;
+            height: 70px;
+            background: gray;
+            top: 10px;
+            left: 10px;
+        }
+        & > header {
+            padding: 1rem;
+            padding-right: 30px;
+            border-bottom: 1px solid lightgray;
+            text-align: right;
+        }
+        .marcador-item--body {
+            display: flex;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            flex: 1;
+        }
+    }
+}
+
+@mixin header{
+    text-align: center;
+}
+.dasboard-grid--desktop {
+    display: grid;
+    grid-template-columns: [principal] 1.5fr [secondary] 1fr;
+    gap: 1rem;
+    
+}
+
+.principal {
+    grid-area: principal;
+   & > header {
+        @include header;
+    }
+}
+.secondary {
+    grid-area: secondary;
+}
+.lateral-section {
+    & > header {
+        @include header;
+    }
+    .avatar-section {
+        text-align: center;
+        .placeholder{
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: gray;
+        }
+    }
+}
+
+
+
+.performance-chart1, .portfolio-chart{
+    margin-bottom: 1rem;
+}
+
+.menu-item--selected{
+    background: #3f51b5 !important;
+    color: white !important
 }

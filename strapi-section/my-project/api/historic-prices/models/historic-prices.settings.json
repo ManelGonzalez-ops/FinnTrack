@@ -1,0 +1,20 @@
+{
+  "kind": "collectionType",
+  "collectionName": "historic_prices",
+  "info": {
+    "name": "historic-prices"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "ticker": {
+      "type": "string"
+    },
+    "prices": {
+      "type": "json"
+    }
+  }
+}

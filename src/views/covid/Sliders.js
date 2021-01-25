@@ -7,7 +7,7 @@ const useStyles = makeStyles({
         height: "100%"
     },
     slider: {
-        margin: "0 1.5rem"
+        margin: "0 1.5rem",
     },
     valueLabel: {
         transform: "scale(1)",
@@ -20,15 +20,20 @@ export const Sliders = ({ setDate, setMode }) => {
 
     const [day, setDays] = useState(25)
     const [month, setMonth] = useState(2)
+    const [year, setYear] = useState(2020)
+    const lastChosenYear = useRef(2020)
     const sliderDay = useRef(null)
     const [value, setValue] = useState("relative")
     // const monthName = useRef("Jan")
-    
+
     const handleDaySlider = (e, newVal) => {
         setDays(newVal)
     }
     const handleMonthSlider = (e, newVal) => {
         setMonth(newVal)
+    }
+    const handleYearSlider = (e, newVal) => {
+        setYear(newVal)
     }
     const childnum = useRef(0)
     const recursivadorStyle = (item) => {
@@ -64,26 +69,34 @@ export const Sliders = ({ setDate, setMode }) => {
         }
     }, [sliderDay])
 
-    useEffect(()=>{
-        if(value){
+    useEffect(() => {
+        if (value) {
             setMode(value)
         }
     }, [value])
 
-    const dateBuider = (month, day, year = "2020") => {
+    const dateBuider = (month, day, year) => {
         let dayc = day.toString().length < 2 ? `0${day.toString()}` : day.toString()
         let monthc = month.toString().length < 2 ? `0${month.toString()}` : month.toString()
 
         return `${year}-${monthc}-${dayc}`
     }
 
+  
     useEffect(() => {
-        setDate(dateBuider(month, day))
-    }, [month, day])
+        if(year === lastChosenYear.current){
+            setDate(dateBuider(month, day, year))
+        }else{
+            setDays(1)
+            setMonth(1)
+        }
+        lastChosenYear.current = year
+    }, [month, day, year])
     const classes = useStyles()
 
     return (
         <>
+        <div className="dates">
             <Slider
                 ref={sliderDay}
                 orientation="vertical"
@@ -112,15 +125,20 @@ export const Sliders = ({ setDate, setMode }) => {
                 classes={{ root: classes.slider }}
             />
             <Slider
-
+            style={{height: "50%"}}
                 orientation="vertical"
-                //getAriaValueText={valuetext}
-                valueLabelDisplay="auto"
+                min={2020}
+                max={2021}
+                value={year}
+                marks={marksYear}
+                onChange={handleYearSlider}
+                valueLabelDisplay="off"
                 defaultValue={30}
                 aria-labelledby="vertical-slider"
                 classes={{ root: classes.slider }}
             />
-            <RadioGroup aria-label="gender" name="gender1" value={value} onChange={(e)=>{setValue(e.target.value)}}>
+            </div>
+            <RadioGroup aria-label="gender" name="gender1" value={value} onChange={(e) => { setValue(e.target.value) }} style={{flexDirection: "row"}}>
                 <FormControlLabel value="absolute" control={<Radio />} label="absolute" />
                 <FormControlLabel value="relative" control={<Radio />} label="relative" />
             </RadioGroup>
@@ -128,7 +146,16 @@ export const Sliders = ({ setDate, setMode }) => {
     )
 }
 
-
+const marksYear = [
+    {
+        label: 2020,
+        value: 2020
+    },
+    {
+        label: 2021,
+        value: 2021
+    }
+]
 const marks = [
     {
         name: "January",

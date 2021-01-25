@@ -9,20 +9,27 @@
     grid-template-columns: repeat(6, 1fr);
 }
 
-.covid-map{
+.covid-map {
     grid-area: map;
 }
 
 .sliders-container {
     //grid-area: slider;
     //margin-left: 5rem;
-    padding: 2rem;
+
     border-radius: 20px;
     background: coral;
     height: 300px;
     width: fit-content;
     position: absolute;
-    top: 70%;
+    top: 50%;
+    z-index: 5;
+    padding: 1.5rem;
+    padding-left:1rem;
+    padding-bottom: 0.7rem;
 }
 
-
+.dates {
+    height: 80%;
+    transform: translateX(-10px);
+}

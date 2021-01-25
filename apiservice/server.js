@@ -3,10 +3,12 @@ const app = express()
 const cors = require("cors")
 const fs = require("fs")
 const path = require("path")
-const { fetcharS, fetcharP, fetcharN, fetcharH, fetcharM, fetchQuoteConstituents, fetchprueba, fetchAllIndexesPrices, fetchAvailableIndexes } = require("./controller")
+const { fetcharS, fetcharP, fetcharN, fetcharH, fetcharM, fetchQuoteConstituents, fetchprueba, fetchAllIndexesPrices, fetchAvailableIndexes, fetchCompanyAdditional, fetchAllQuotes, fetchEmptyLogo, fetchMostActives, fetchDispatcher } = require("./controller")
 const oktaClient = require('./lib/oktaClient');
 const cookieParser = require("cookie-parser")
-const { createUserTable, addNewUser, findUser, addOperation, createOperationTable } = require("../db/services")
+const { createUserTable, addNewUser, findUser, addOperation, createOperationTable, getOperations, addCompanyInfo, getCompanyInfo, createCompanyInfo, createCompaniesJsonTable, getMostActives, storeMostActives, deletePreviousDateRecord } = require("../db/services")
+const { prepareStoredOperations, setInitialPossesions } = require("./dataPreparation")
+const { convertUnixToHuman } = require("./dateUtils")
 
 
 createUserTable((err) => {
@@ -16,6 +18,18 @@ createUserTable((err) => {
     }
 })
 createOperationTable((err) => {
+    console.log("que conchu")
+    if (err) {
+        console.log(err, "error al crear usuarios")
+    }
+})
+createCompanyInfo((err) => {
+    console.log("que conchu")
+    if (err) {
+        console.log(err, "error al crear usuarios")
+    }
+})
+createCompaniesJsonTable((err) => {
     console.log("que conchu")
     if (err) {
         console.log(err, "error al crear usuarios")
@@ -145,6 +159,61 @@ app.post("/portfolio", async (req, res) => {
     }
 })
 
+app.post("/portfolio2", async (req, res) => {
+    const possesions = req.body
+    console.log(possesions, "posesionses ostia")
+    console.log(req.body, "body")
+    const { dates, missingTicker } = req.query
+    let metadataArrPromise
+
+    metadataArrPromise = possesions.map(item => fetcharM(item.ticker))
+
+    //ojo esto puede haber error
+    let metadataArr;
+    try {
+        metadataArr = await Promise.all(metadataArrPromise)
+        //console.log(metadataArr, "metadata")
+        console.log(metadataArr, "laametaaaadata")
+        if (!metadataArr.length) {
+            return res.status(400).send("no metadata found")
+        }
+    }
+    catch (err) {
+        return res.status(404).send({ err })
+    }
+
+    if (dates) {
+        return res.status(200).send(metadataArr)
+    } else {
+        try {
+            console.log(possesions, "poooossesion")
+            const pricesArrPromise = metadataArr.map((item) => {
+                console.log(item.ticker, "tickuu")
+                const startDate = possesions.find(asset =>
+                    asset.ticker.toUpperCase() === item.ticker.toUpperCase()
+                ).date
+
+
+                console.log(startDate, "la puta startdate")
+                console.log(startDate, item.endDate, "startandenddddd")
+                return fetcharH(item.ticker, startDate, item.endDate, true)
+            }
+            )
+
+            const pricesArrs = await Promise.all(pricesArrPromise)
+            if (pricesArrs.length >= 0) {
+                return res.status(200).send(pricesArrs)
+            } else {
+                console.log(pricesArrs, "error no result prices")
+                return res.status(400).send("no prices found")
+            }
+        }
+        catch (err) {
+            console.log(err, "fallo1")
+            return res.status(400).send(err.message, "fallo2")
+        }
+    }
+})
 
 app.get("/news/:ticker?", async (req, res) => {
     try {
@@ -463,16 +532,177 @@ app.post('/api/users', (req, res, next) => {
         });
 });
 
-app.post("/api/addoperation", (req, res)=>{
+app.post("/api/addoperation", (req, res) => {
     const email = req.body.user
+    console.log(req.body.order, "la faking order")
     //const {operationType, ticker, amount, price} = req.body.order
     findUser(email)
-    .then(userId=>{
-        return addOperation(req.body.order, userId)})
-    //if this sends success, will update context api state
-    .then(()=>res.status(200).send("success"))
-    .catch(err=>res.status(400).send(err))
+        .then(userId => {
+            console.log(userId, "el poto id")
+            return addOperation(req.body.order, userId)
+        })
+        //if this sends success, will update context api state
+        .then(() => res.status(200).send("success"))
+        .catch(err => res.status(400).send(err))
 })
+
+app.post("/api/operations", async (req, res) => {
+    const { email } = req.body
+    console.log(email, "emaillll")
+    try {
+        const operations = await getOperations(email)
+        if (operations) {
+            console.log(operations, "operatiuns")
+            const readyOperations = prepareStoredOperations(operations)
+            const { uniqueStocks, currentStocks, userCash } = setInitialPossesions(operations)
+            res.status(200).send({ readyOperations, uniqueStocks, currentStocks, userCash })
+        } else {
+            res.status(400).send("error esto viene vacio", operations)
+        }
+    } catch (err) {
+        res.status(400).send(err, "errur")
+    }
+})
+
+app.post("/api/companies_url", async (req, res) => {
+    const { positions } = req.body
+    console.log(req.body, "putapasa")
+    console.log(positions, "posicionees")
+    if (positions.length > 0) {
+        const promiseArrAll = positions.map(position => getCompanyInfo(position.ticker)
+        )
+        let alreadyStored = await Promise.all(promiseArrAll)
+
+        let missingStocks = [];
+        //alreadyStored.forEach(item=>{console.log(item.status)}, "statuuuuuus")
+        alreadyStored = alreadyStored.filter(item => item.length > 0).map(item => item[0])
+        const alreadyStoredTickers = alreadyStored.map(item => item.ticker)
+        console.log(alreadyStoredTickers, "despres")
+        //we compare against existing companies in the db to find missing one
+        positions.forEach(item => {
+            if (!alreadyStoredTickers.includes(item.ticker)) {
+                missingStocks.push(item.ticker)
+            }
+        })
+        if (missingStocks.length === 0) {
+            return res.status(200).send(alreadyStored)
+        }
+        else {
+            const missingCompaniesDataArr = await fetchTillAllSucceed(missingStocks)
+            addCompanyInfo(missingCompaniesDataArr)
+                .then((response) => {
+                    console.log(response, "reeeeepi")
+                    const readyResponse = response.map(stock => ({
+                        ticker: stock[0],
+                        logourl: stock[1],
+                        weburl: stock[2],
+                        name: stock[3]
+                    }))
+                    const allData = [...alreadyStored, ...readyResponse]
+                    return res.status(200).send(allData)
+                })
+                .catch(err => { console.log(err, "fataaaal errorrrr") })
+        }
+
+    }
+})
+
+const fetchTillAllSucceed = async (missingStocks) => {
+    //console.log(missingStocks,"execuuuuted")
+    let currentMissings = missingStocks
+    console.log(currentMissings, "currmisings")
+    let successArr = []
+    while (currentMissings.length > 0) {
+        // eslint-disable-next-line no-loop-func
+        await new Promise(resolve => {
+            setTimeout(async () => {
+                const promiseArrMissing = currentMissings.map(position => fetchCompanyAdditional(position))
+                const missingData = await Promise.all(promiseArrMissing)
+                console.log(missingData, "missing data")
+                for (let promise of missingData) {
+                    console.log(promise, promise.status, "resuueelta")
+                    // // if (!promise.logo) {
+                    // //     const logourl = await fetchEmptyLogo(promise)
+                    // //     promise.logourl = logourl
+                    // // }
+
+                    successArr = [...successArr, promise]
+
+                }
+                console.log(missingStocks, "que conxaa1")
+                console.log(successArr, "que conxaa2")
+                for (let poss of missingStocks) {
+                    //console.log(poss, successArr[0].ticker)
+                    const stockSuccesfullyFetched = successArr.find(item => item.ticker === poss)
+                    if (stockSuccesfullyFetched) {
+                        console.log("encontradoo")
+                        currentMissings = currentMissings.filter(ticker => ticker !== poss)
+                    }
+                }
+                resolve()
+            }, 5000)
+        })
+    }
+
+    return successArr
+
+}
+
+app.post("/api/portfolio/quotes", async (req, res) => {
+    const { tickers } = req.body
+    console.log(tickers, "aquii tickerrs")
+    if (tickers && tickers.length > 0) {
+        try {
+            const dataArr = await fetchAllQuotes(tickers)
+            if (dataArr.length > 0) {
+                return res.status(200).send(dataArr)
+            } else {
+                return res.status(400).send(dataArr, "la funcion no ha dao empty arr")
+            }
+        }
+        catch (err) {
+            return res.status(400).send(err.message, "errruuur")
+        }
+    }
+    else {
+        console.log("client sent empty body")
+    }
+})
+
+app.get("/api/direct_json", async (req, res) => {
+    const { field } = req.query
+    const validDbDate = convertUnixToHuman(Date.now())
+    try {
+        const mostActiveCompanies = await getMostActives(field, validDbDate)
+        console.log(mostActiveCompanies, "awiii1")
+        if (mostActiveCompanies.length > 0) {
+            //we need to parse db's json field we'll do it in the client
+
+            res.status(200).send(mostActiveCompanies[0])
+        }
+        else {
+            console.log("jodeeer")
+            try {
+                const data = await fetchDispatcher(field)
+                console.log(data, "thee datau")
+                if (data.length > 0) {
+                    await deletePreviousDateRecord(field)
+                    const sameDataButFromDb = await storeMostActives(field, validDbDate, data)
+                    res.status(200).send(sameDataButFromDb)
+                } else {
+                    res.status(400).send("error, the message was empty")
+                }
+            } catch (err) {
+                res.status(400).send(err, "error when fetching most actives")
+            }
+        }
+    }
+    catch (err) {
+        res.status(400).send(err, "databse error")
+    }
+
+})
+
 
 app.listen(8001, () => {
     console.log("essto funca")

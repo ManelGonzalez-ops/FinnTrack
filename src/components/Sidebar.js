@@ -142,7 +142,7 @@ export const Sidebar = ({ handleDrawerClose, handleDrawerOpen, expanded, handleS
       >
         <StyledTreeItem nodeId="13" labelText="Search" labelIcon={SearchIcon} isTitle
           ariaLabel="search"
-          onLabelClick={() => { history.push("/search") }}
+          onLabelClick={() => { history.push("/") }}
         />
         <StyledTreeItem nodeId="1" labelText="Indexes" labelIcon={MailIcon} isTitle
 

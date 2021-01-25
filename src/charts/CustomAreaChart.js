@@ -33,20 +33,30 @@ export const CustomAreaChart = ({ datos, ticker }) => {
     const chartOptions = {
         chart: {
             margin: [0, 0, 0, 0],
-            height: '80%',
+            height: '100%',
             spacing: [0, 0, 0, 0],
             borderWidth: 0,
-            crisp: false
+            crisp: false,
+            type: "areaspline",
+            animation: false
             //width: 50 
         },
         title: {
-            text: ""
+            //enabled: false,
+            text: ticker
         },
         series: [{
             name: ticker,
             //we display just the last year
             data: data,
-            color: '#3f51b5',
+            //color: 'linear-gradient(to top, #c6ffdd, #fbd786, #f7797d);',
+            color: {
+                linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
+                stops: [
+                    [0, '#FF0080'],
+                    [1, '#FFFFFF']
+                ]
+            }
             
         }],
         xAxis: {
@@ -57,9 +67,7 @@ export const CustomAreaChart = ({ datos, ticker }) => {
             lineColor: 'transparent',
             minorTickLength: 0, //removes minor axis ticks 
             tickLength: 0, //removes  axis ticks 
-            title: {
-                enabled: false
-            },
+            
             labels: {
                 enabled: false
             },
@@ -102,7 +110,9 @@ export const CustomAreaChart = ({ datos, ticker }) => {
                 borderWidth: 0
             },
             series: {
+                animation: false,
                 marker: {
+                    enabled: false,
                     states: {
                         hover: {
                             enabled: false
@@ -121,6 +131,7 @@ export const CustomAreaChart = ({ datos, ticker }) => {
                     highcharts={Highcharts}
                     constructorType="chart"
                     options={chartOptions}
+                    containerProps={{style:{overflow: "hidden"}}}
                 />
             }
         </>)

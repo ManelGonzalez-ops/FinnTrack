@@ -7,7 +7,7 @@ import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import clsx from "clsx";
-import { Tab, Tabs } from "@material-ui/core";
+import { Chip, Tab, Tabs, useTheme } from "@material-ui/core";
 import { useHistory, useLocation } from "react-router-dom"
 import { useDataLayer } from "../Context";
 import { useUILayer } from "../ContextUI";
@@ -15,6 +15,7 @@ import { useParams } from "react-router-dom";
 import { useMesure } from "../utils/useMesure";
 import { Transition } from "react-transition-group";
 import { formatter } from "../utils/numFormatter";
+import { useOktaAuth } from '@okta/okta-react';
 
 const drawerWidth = 240;
 
@@ -47,11 +48,13 @@ const useStyles = makeStyles((theme) => ({
     display: 'none',
   },
   appBarCompany: {
+    flexDirection: "row",
+    alignItems: "center",
     transition: theme.transitions.create(["top", "transform"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
-    transform: "translateX(0px)"
+    transform: "translateX(0px)",
   },
   appBarCompanyShift: {
     transform: `translateX(${drawerWidth}px)`
@@ -59,35 +62,37 @@ const useStyles = makeStyles((theme) => ({
   tab: {
     marginLeft: "60px",
 
+  },
+  white: {
+    borderColor: "white"
   }
 
 }));
 
 export const Navbar = ({ handleDrawerOpen }) => {
-
+  const { authState, authService } = useOktaAuth();
   const [tabValue, setTabValue] = React.useState(0);
   const topNavigation = useRef(null)
   const history = useHistory()
   const { state } = useDataLayer()
-  const { sidebarOpen } = useUILayer()
+  const { sidebarOpen, setMountApproval } = useUILayer()
   const location = useLocation()
   const [menuCompaniesOpen, setMenuCompaniesOpen] = useState(false)
-
+  const theme = useTheme()
   useEffect(() => {
-    if (location.pathname !== "/") {
-      const masterRoute = location.pathname.split("/").filter(item => item !== "")
-      console.log(masterRoute[0], "first pathname query")
-      if (masterRoute[0] === "companies") {
-        setMenuCompaniesOpen(true)
-      }
-      else {
-        setMenuCompaniesOpen(false)
-      }
+    const masterRoute = location.pathname.split("/").filter(item => item !== "")
+    console.log(masterRoute[0], "first pathname query")
+    if (masterRoute[0] === "companies") {
+      setMenuCompaniesOpen(true)
     }
-    
+    else {
+      console.log("ahora es falso")
+      setMenuCompaniesOpen(false)
+    }
+
   }, [location])
 
-  // console.log(location, "location")
+  console.log(location, "locationnnnnn")
   const { height } = useMesure(topNavigation)
 
   const classes = useStyles({ height });
@@ -117,6 +122,10 @@ export const Navbar = ({ handleDrawerOpen }) => {
     }
   }
 
+  const button = authState.isAuthenticated ?
+  <button onClick={() => { authService.logout() }}>Logout</button> :
+  <button onClick={() => { history.push('/login') }}>Login</button>;
+
   return (
     <div>
       <AppBar
@@ -140,31 +149,31 @@ export const Navbar = ({ handleDrawerOpen }) => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-            {state.currentCompany.name}
+            {menuCompaniesOpen ? state.currentCompany.name : "FinnTrack"}
           </Typography>
-          <Button
-          onClick={()=>{history.push("/portfolio")}}
-          variant="contained"
-          >
-            request ticker history
-          </Button>
           <div
-          style={{marginLeft: "auto"}}
+            style={{ marginLeft: "auto", display: "flex", alignItems: "centeryyy" }}
           >
+            <Button variant="contained" color="primary"
+              onClick={() => { history.push("/login") }}
+            >login</Button>
             <Button
-            onClick={()=>{history.push("/portfoliof")}}
-            variant="contained"
+              onClick={() => { history.push("/portfoliof") }}
+              variant="contained"
             >
               Investment Dashboard
             </Button>
             <Typography>
-            {formatter.format(state.currentPossesions.userCash)} $
+              {formatter.format(state.currentPossesions.userCash)} $
             </Typography>
           </div>
         </Toolbar>
       </AppBar>
       <Transition
         in={menuCompaniesOpen}
+        // mountOnEnter
+        // unmountOnExit
+        onExited={() => { setMountApproval(true) }}
       >
         {animationState => (
           <AppBar
@@ -181,6 +190,11 @@ export const Navbar = ({ handleDrawerOpen }) => {
               <Tab label="Key metrics" {...a11yProps(2)} onClick={() => { history.push(`/companies/keymetrics/${state.currentCompany.ticker}`) }} />
               <Tab label="News" {...a11yProps(2)} onClick={() => { history.push(`/news/${state.currentCompany.ticker}`) }} />
             </Tabs>
+            <Chip label="not owned" size="small" variant="outlined" style={{ color: "white" }}
+              classes={{
+                outlined: classes.white
+              }}
+            />
           </AppBar>
         )}
       </Transition>

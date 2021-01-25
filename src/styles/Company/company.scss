@@ -1,0 +1,69 @@
+.grida {
+    display: grid;
+    gap: 2.5rem;
+    row-gap: 2rem;
+    padding: 1.5rem;
+    padding-top: 0;
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: 175px 225px 200px 100px;
+    grid-template-areas:
+        "chart chart chart chart chart shop shop shop shop"
+        "chart chart chart chart chart general general general general"
+        "detaila detaila detaila detaila detaila general general general general"
+        "detaila detaila detaila detaila detaila general general general general";
+
+    .grida-p {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+    .stock-shop{
+        grid-area: shop;
+    }
+
+    .chart { 
+        grid-area: chart;
+        align-self: flex-start;
+    }
+    .general {
+        grid-area: general;
+        overflow: scroll;
+        height: auto;
+        transition: all 1s linear !important;
+        &.overflown {
+            overflow: auto;
+        }
+        ul {
+            padding: 0.5rem;
+            list-style: none;
+        }
+    }
+    .detail1 {
+        grid-area: detaila;
+        align-self: flex-start;
+    }
+
+    
+}
+
+//cambio grid dinamico
+
+.list-modelo {
+    li {
+        padding: 0px 5px;
+        display: flex;
+        margin: 10px 0px;
+
+        .list-field {
+            position: relative;
+            &:before {
+                content: "";
+                position: absolute;
+                height: 2px;
+                width: 150%;
+                background-color: #3f51b5;
+                bottom: 0;
+            }
+        }
+    }
+}

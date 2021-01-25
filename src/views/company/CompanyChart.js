@@ -10,7 +10,7 @@ import { useDataLayer } from "../../Context";
 import { CustomCircularProgress } from "../../components/components/CustomCircularProgress";
 
 
-export const CompanyChart = React.forwardRef(({ width, ticker }, ref) => {
+export const CompanyChart = React.forwardRef(({ ticker }, ref) => {
     const url = "http://localhost:8001/prices";
 
     const AdjustedPrices = useRef(null);
@@ -91,8 +91,6 @@ export const CompanyChart = React.forwardRef(({ width, ticker }, ref) => {
         //need to add them into localStorage
         notAdjustedPrices.current = ohlNA;
     };
-
-    console.log(width, "wiiidth")
     console.log(ref.current, "chaaart")
 
     const options = {

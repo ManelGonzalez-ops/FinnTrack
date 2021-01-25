@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { OktaAuth } from '@okta/okta-auth-js';
 import { useOktaAuth } from '@okta/okta-react';
-
+import FacebookLogin from 'react-facebook-login';
+import {useHistory} from "react-router-dom"
 const RegisterForm = () => {
     const { authService } = useOktaAuth();
     const [sessionToken, setSessionToken] = useState();
@@ -9,7 +10,7 @@ const RegisterForm = () => {
     const [lastName, setLastName] = useState();
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
-
+const history = useHistory()
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -41,7 +42,7 @@ const RegisterForm = () => {
                     authService.redirect({ sessionToken });
                 })
                 .catch(err => console.log('Found an error', err));
-        }).catch(err=>{console.log(err, "kuuu")})
+        }).catch(err => { console.log(err, "kuuu") })
 
 
     };
@@ -53,37 +54,46 @@ const RegisterForm = () => {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <label>
-                FirstName:
+        <>
+            <FacebookLogin
+                appId="121304306392446"
+                autoLoad={true}
+                fields="name,email,picture"
+                onClick={()=>{history.push(	"https://dev-5378874.okta.com/oauth2/v1/authorize/callback")}}
+                //callback={responseFacebook} 
+                />
+            <form onSubmit={handleSubmit}>
+                <label>
+                    FirstName:
         <input
-                    id="firstName" type="text"
-                    value={firstName}
-                    onChange={(e) => { setFirstName(e.target.value) }} />
-            </label>
-            <label>
-                LastName:
+                        id="firstName" type="text"
+                        value={firstName}
+                        onChange={(e) => { setFirstName(e.target.value) }} />
+                </label>
+                <label>
+                    LastName:
         <input
-                    id="LastName" type="text"
-                    value={lastName}
-                    onChange={(e) => { setLastName(e.target.value) }} />
-            </label>
-            <label>
-                email:
+                        id="LastName" type="text"
+                        value={lastName}
+                        onChange={(e) => { setLastName(e.target.value) }} />
+                </label>
+                <label>
+                    email:
         <input
-                    id="email" type="text"
-                    value={email}
-                    onChange={(e) => { setEmail(e.target.value) }} />
-            </label>
-            <label>
-                Password:
+                        id="email" type="text"
+                        value={email}
+                        onChange={(e) => { setEmail(e.target.value) }} />
+                </label>
+                <label>
+                    Password:
         <input
-                    id="password" type="password"
-                    value={password}
-                    onChange={(e) => { setPassword(e.target.value) }} />
-            </label>
-            <input id="submit" type="submit" value="Submit" />
-        </form>
+                        id="password" type="password"
+                        value={password}
+                        onChange={(e) => { setPassword(e.target.value) }} />
+                </label>
+                <input id="submit" type="submit" value="Submit" />
+            </form>
+        </>
     );
 };
 export default RegisterForm;

@@ -3,20 +3,25 @@ import React, { useEffect, useState } from 'react'
 import { CustomCircularProgress } from '../components/components/CustomCircularProgress'
 import { useDataLayer } from '../Context'
 import useAuth from '../useAuth'
+import { useUserLayer } from '../UserContext'
 import { convertUnixToHuman } from '../utils/datesUtils'
 import { formatter } from '../utils/numFormatter'
 import { PurchaseDialog } from "./PurchaseDialog"
 
+
+const date = convertUnixToHuman(Date.now())
 export const StockShop = ({ ticker }) => {
 
     const { state, dispatch } = useDataLayer()
+    const {setPruebaReady} = state
     const [{ currentPrice, loading, error }, setCurrentPrice] = useState({
         currentPrice: "",
         loading: false,
         error: ""
     })
-    const userInfo = useAuth()
-    console.log(userInfo, "info usuario")
+    //const userInfo = useAuth()
+
+   const {userState} = useUserLayer()
     useEffect(() => {
 
         const getCurrentPrice = async (ticker) => {
@@ -41,6 +46,7 @@ export const StockShop = ({ ticker }) => {
     const [orderTotal, setOrderTotal] = useState("")
     const [modalOpen, setModalOpen] = React.useState(false);
     const [operationType, setOperationType] = React.useState("")
+    
     useEffect(() => {
         if (currentPrice) {
             setOrderTotal(currentPrice * qty)
@@ -48,8 +54,8 @@ export const StockShop = ({ ticker }) => {
     }, [qty, currentPrice])
 
     const submitOrder = () => {
-        if (userInfo.email) {
-
+        if (userState.info.email) {
+            let isFirstOperation = state.userActivity.length > 0 ? false: true
             fetch("http://localhost:8001/api/addoperation", {
                 headers: {
                     Accept: 'application/json',
@@ -57,17 +63,29 @@ export const StockShop = ({ ticker }) => {
                 },
                 method: "POST",
                 body: JSON.stringify({
-                    user: userInfo.email,
+                    user: userState.info.email,
                     order: {
                         operationType,
                         ticker,
                         amount: qty,
-                        price: currentPrice
+                        price: currentPrice,
+                        date,
+                        isFirstOperation
                     }
                 })
             })
                 .then(success => {
                     //means we have stored it in database
+                    dispatch({
+                        type: "ADD_PORTFOLIO_CURRENT_POSSESIONS",
+                        payload: {
+                            ticker,
+                            amount: qty,
+                            operationType,
+                            cashNetOperation: orderTotal,
+                            date
+                        }
+                    })
                     dispatch({
                         type: "ADD_UNIQUE_STOCKS",
                         payload: {
@@ -77,24 +95,18 @@ export const StockShop = ({ ticker }) => {
                     dispatch({
                         type: "STOCK_OPERATION",
                         payload: {
-                            date: convertUnixToHuman(Date.now()),
+                            date,
                             operationType,
                             amount: qty,
                             ticker,
                             unitPrice: currentPrice
                         }
                     })
-                    dispatch({
-                        type: "ADD_PORTFOLIO_CURRENT_POSSESIONS",
-                        payload: {
-                            ticker,
-                            amount: qty,
-                            operationType,
-                            cashNetOperation: orderTotal
-                        }
-                    })
+                    
                 })
                 .catch(err=>{console.log(err, "pputa falló")})
+        }else{
+            alert("please log in")
         }
     }
     const getHumanDate = () => {
@@ -108,11 +120,12 @@ export const StockShop = ({ ticker }) => {
         //after that we could add a success modal or animation
     }, [state.currentPossesions.userCash])
     return (
-        <div>
+        <div className="stock-shop">
             {loading && <CustomCircularProgress />}
             {error && <p>{error}</p>}
-            { currentPrice &&
-                <>
+            { !setPruebaReady ? <div>Loading initial data...</div>
+            : currentPrice &&
+                <div>
                     <p>{formatter.format((currentPrice))}</p>
                     <TextField
                         type="number"
@@ -140,7 +153,7 @@ export const StockShop = ({ ticker }) => {
                     <PurchaseDialog
                         {...{ modalOpen, setModalOpen, qty, orderTotal, ticker, submitOrder, operationType }}
                     />
-                </>
+                </div>
             }
         </div>
     )

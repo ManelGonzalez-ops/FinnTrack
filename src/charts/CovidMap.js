@@ -3,7 +3,7 @@ import Highcharts from "highcharts/highmaps";
 import HighchartsReact from "highcharts-react-official";
 import worldMap from "@highcharts/map-collection/custom/world.geo.json"
 import { useUILayer } from "../ContextUI"
-export const CovidMap = ({ data }) => {
+export const CovidMap = ({ data, mode }) => {
 
     console.log(worldMap, "puta higcharts")
     const { sidebarOpen } = useUILayer()
@@ -51,26 +51,27 @@ export const CovidMap = ({ data }) => {
             {
                 mapData: worldMap,
                 data: data,
+                name: mode === "absolute"? "Total cases": "Cases/100k habs",
                 dataLabels: {
                     enabled: true,
                     format: '{point.properties.postal-code}'
                 }
             },
         ],
-        drilldown: {
-            activeDataLabelStyle: {
-                color: '#FFFFFF',
-                textDecoration: 'none',
-                textOutline: '1px #000000'
-            },
-            drillUpButton: {
-                relativeTo: 'spacingBox',
-                position: {
-                    x: 0,
-                    y: 60
-                }
-            }
-        }
+        // drilldown: {
+        //     activeDataLabelStyle: {
+        //         color: '#FFFFFF',
+        //         textDecoration: 'none',
+        //         textOutline: '1px #000000'
+        //     },
+        //     drillUpButton: {
+        //         relativeTo: 'spacingBox',
+        //         position: {
+        //             x: 0,
+        //             y: 60
+        //         }
+        //     }
+        // }
     };
 
     return (

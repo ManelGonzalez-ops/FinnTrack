@@ -1,7 +1,10 @@
+import { Paper } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 import { useDataLayer } from '../Context'
 // import { useEngine } from '../portfolio/Engine'
 import { PortfolioPriceChart } from '../portfolio/PortfolioPriceChart'
+import { LateralSection } from './LateralSection'
+import { Marcador2 } from './Marcador2'
 
 export const Middleware = (props) => {
     const Component = props.component
@@ -22,14 +25,23 @@ export const Middleware = (props) => {
     }, [state.portfolioSeries])
     return (
         //tenemos que crear un useEngine para generar el portfolioHistory
-        <>
-            <div>
+        <Paper>
+            <div class="dasboard-grid--desktop">
+                <div className="principal">
+                    <header>History Tracking</header>
+                    <Marcador2 />
+                    {/* <div>
                 {posessionsReady ?
                     <Component /> : <div>loading...</div>}
+            </div> */}
+                    <div>
+                        {portfolioChartReady && <PortfolioPriceChart datos={state.portfolioSeries} title="profitability over investment" />}
+                    </div>
+                </div>
+                <Paper className="secondary">
+                    <LateralSection />
+                </Paper>
             </div>
-            <div>
-           {portfolioChartReady && <PortfolioPriceChart datos={state.portfolioSeries} title="profitability over investment" />}
-            </div>
-        </>
+        </Paper>
     )
 }
