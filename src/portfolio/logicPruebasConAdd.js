@@ -8,163 +8,7 @@ import { usePortfolioGenerator } from "./portfolioGenerator2";
 //we are injecting this from App.js
 
 
-export const userActivity = [
-    {
-        date: "2020-06-15",
-        operationType: "buy",
-        details: {
-            ticker: "amzn",
-            amount: 40,
-            unitaryCost: 300
 
-        },
-        isFirstOperation: true,
-
-    },
-    {
-        date: "2020-06-15",
-        operationType: "buy",
-        details: {
-            ticker: "aapl",
-            amount: 60,
-            unitaryCost: 300
-
-        },
-        isFirstOperation: false,
-
-    },
-    {
-        date: "2020-06-15",
-        operationType: "sell",
-        details: {
-            ticker: "aapl",
-            amount: 40,
-            priceSold: 300
-
-        },
-        isFirstOperation: false,
-    },
-    {
-        date: "2020-06-16",
-        operationType: "buy",
-        details: {
-            ticker: "aa",
-            amount: 40,
-            unitaryCost: 14
-
-        },
-        isFirstOperation: false,
-
-    },
-    {
-        date: "2020-06-22",
-        operationType: "buy",
-        details: {
-            ticker: "aa",
-            amount: 30,
-            unitaryCost: 14
-
-        },
-        isFirstOperation: false,
-    },
-    {
-        date: "2020-06-25",
-        operationType: "buy",
-        details: {
-            ticker: "aa",
-            amount: 30,
-            unitaryCost: 14
-
-        },
-        isFirstOperation: false,
-
-    },
-    {
-        date: "2020-07-18",
-        operationType: "sell",
-        details: {
-            ticker: "aapl",
-            amount: 10,
-            priceSold: 315
-
-        },
-        isFirstOperation: false,
-
-    },
-    {
-        date: "2020-08-21",
-        operationType: "buy",
-        details: {
-            ticker: "fb",
-            amount: 100,
-            unitaryCost: 10
-
-        },
-        isFirstOperation: false,
-
-    },
-    {
-        date: "2020-08-21",
-        operationType: "buy",
-        details: {
-            ticker: "fb",
-            amount: 20,
-            unitaryCost: 10
-
-        },
-        isFirstOperation: false,
-
-    },
-    {
-        date: "2020-08-21",
-        operationType: "buy",
-        details: {
-            ticker: "tef",
-            amount: 80,
-            unitaryCost: 7
-
-        },
-        isFirstOperation: false,
-
-    },
-    {
-        date: "2020-09-24",
-        operationType: "sell",
-        details: {
-            ticker: "fb",
-            amount: 120,
-            priceSold: 20
-
-        },
-        isFirstOperation: false,
-
-
-    },
-    {
-        date: "2020-09-21",
-        operationType: "sell",
-        details: {
-            ticker: "tef",
-            amount: 45,
-            priceSold: 3
-
-        },
-        isFirstOperation: false,
-
-    },
-    {
-        date: "2020-10-26",
-        operationType: "sell",
-        details: {
-            ticker: "amzn",
-            amount: 10,
-            priceSold: 3000
-
-        },
-        isFirstOperation: false,
-
-    }
-]
 //let initialTimeUnix = 0
 //gastamos 12.000 en acciones de amzn
 //vendemos 10 acciones a 3000, ingresando 30.000, ganamos 12.000
@@ -203,7 +47,6 @@ const getTotalDaysElapsed = (initialTime) => {
 export const useLogicPruebas = () => {
 
     const { state, dispatch } = useDataLayer()
-    const userRefreshed = useRef(true)
 
     const createTimelaspse = (initialTime) => {
         const firstDate = convertUnixToHuman(initialTime)
@@ -226,121 +69,122 @@ export const useLogicPruebas = () => {
         return { income }
     }
 
-    const addToGeneratedSeries = (newOperation, cb) => {
-        //we could save the first date in database intead of calculating everytime
-        console.log("queee hostiaaaaaaa")
-        let today;
-        const { unitaryCost, ticker, amount } = newOperation.details
-        const currentGeneratedSerie = state.generatedSeries
-        //we need to get today's serie last key
-        console.log(JSON.parse(JSON.stringify(currentGeneratedSerie)), "quepaso1")
-        if (newOperation.isFirstOperation) {
-            //the generated serie won't have any date
-            today = convertUnixToHuman(Date.now())
-            const updatedSeries = {
-                ...state.generatedSeries,
-                dates: {
-                    [today]: {
-                        income: 0,
-                        positions: [
-                            {ticker, amount, unitaryCost}
-                        ]
-                    }
-                }
-            }
-            cb(updatedSeries)
-            return
-            //we leave the function here
-        }
-        //realmente ya tenemos la date de hoy en newOperation
-        today = Object.keys(currentGeneratedSerie.dates)[Object.keys(currentGeneratedSerie.dates).length - 1]
+    // const addToGeneratedSeries = (newOperation, cb) => {
+    //     //we could save the first date in database intead of calculating everytime
+    //     console.log("queee hostiaaaaaaa")
+    //     let today;
+    //     const { unitaryCost, ticker, amount } = newOperation.details
+    //     const currentGeneratedSerie = state.generatedSeries
+    //     //we need to get today's serie last key
+    //     console.log(JSON.parse(JSON.stringify(currentGeneratedSerie)), "quepaso1")
+    //     if (newOperation.isFirstOperation) {
+    //         //the generated serie won't have any date
+    //         today = convertUnixToHuman(Date.now())
+    //         const updatedSeries = {
+    //             ...state.generatedSeries,
+    //             dates: {
+    //                 [today]: {
+    //                     income: 0,
+    //                     positions: [
+    //                         {ticker, amount, unitaryCost}
+    //                     ]
+    //                 }
+    //             }
+    //         }
+    //         cb(updatedSeries)
+    //         return
+    //         //we leave the function here
+    //     }
+    //     //realmente ya tenemos la date de hoy en newOperation
+    //     today = Object.keys(currentGeneratedSerie.dates)[Object.keys(currentGeneratedSerie.dates).length - 1]
 
-        console.log(state.generatedSeries, "repuuuuta")
-        console.log(JSON.parse(JSON.stringify(today)), "quepaso2")
-        let todayRegister = currentGeneratedSerie.dates[today]
-        console.log(todayRegister, "registro de hoy")
+    //     console.log(state.generatedSeries, "repuuuuta")
+    //     console.log(JSON.parse(JSON.stringify(today)), "quepaso2")
+    //     let todayRegister = currentGeneratedSerie.dates[today]
+    //     console.log(todayRegister, "registro de hoy")
 
-        let alreadyInPortfolio = todayRegister.positions.find(asset => asset.ticker === ticker)
-        if (alreadyInPortfolio) {
-            if (newOperation.operationType === "buy") {
-                const newAmount = alreadyInPortfolio.amount + amount
-                const unitaryCostMean =
-                    (alreadyInPortfolio.unitaryCost * alreadyInPortfolio.amount) /
-                    (alreadyInPortfolio.amount + amount)
-                    +
-                    (unitaryCost * amount) /
-                    (alreadyInPortfolio.amount + amount)
-                alreadyInPortfolio = {
-                    ...alreadyInPortfolio
-                }
-                const readyUnitaryCost = Math.round(unitaryCostMean * 100) / 100
-                const otherPositions = todayRegister.positions.filter(asset => asset.ticker !== ticker)
-                alreadyInPortfolio = {
-                    ...alreadyInPortfolio,
-                    amount: newAmount,
-                    unitaryCost: readyUnitaryCost
-                }
-                todayRegister = {
-                    ...todayRegister,
-                    positions: [
-                        ...otherPositions,
+    //     let alreadyInPortfolio = todayRegister.positions.find(asset => asset.ticker === ticker)
+    //     if (alreadyInPortfolio) {
+    //         if (newOperation.operationType === "buy") {
+    //             const newAmount = alreadyInPortfolio.amount + amount
+    //             const unitaryCostMean =
+    //                 (alreadyInPortfolio.unitaryCost * alreadyInPortfolio.amount) /
+    //                 (alreadyInPortfolio.amount + amount)
+    //                 +
+    //                 (unitaryCost * amount) /
+    //                 (alreadyInPortfolio.amount + amount)
+    //             alreadyInPortfolio = {
+    //                 ...alreadyInPortfolio
+    //             }
+    //             const readyUnitaryCost = Math.round(unitaryCostMean * 100) / 100
+    //             const otherPositions = todayRegister.positions.filter(asset => asset.ticker !== ticker)
+    //             alreadyInPortfolio = {
+    //                 ...alreadyInPortfolio,
+    //                 amount: newAmount,
+    //                 unitaryCost: readyUnitaryCost
+    //             }
+    //             todayRegister = {
+    //                 ...todayRegister,
+    //                 positions: [
+    //                     ...otherPositions,
 
-                    ]
-                }
-            } else {
-                //sell
-                const newAmount = alreadyInPortfolio.amount - amount
-                const { income } = handleSell(alreadyInPortfolio.unitaryCost, amount, newOperation.details.priceSold)
-                //we need to check if there was income for this ticker (if was sold anytime before)
-                const newIncome = alreadyInPortfolio.income ? alreadyInPortfolio.income + income : income
-                alreadyInPortfolio = {
-                    ...alreadyInPortfolio,
-                    income: newIncome,
-                    amount: newAmount
-                }
-                const otherPositions = todayRegister.positions.filter(asset => asset.ticker !== ticker)
-                if (newAmount > 0) {
-                    todayRegister = {
-                        ...todayRegister,
-                        positions: [
-                            ...otherPositions,
-                            alreadyInPortfolio
-                        ],
-                        income: todayRegister.income + income
-                    }
-                } else {
-                    const updatedPositions = todayRegister.positions.filter(asset => asset.ticker === ticker)
-                    todayRegister = {
-                        ...todayRegister,
-                        positions: updatedPositions,
-                        income: todayRegister.income + income
-                    }
-                }
-            }
+    //                 ]
+    //             }
+    //         } else {
+    //             //sell
+    //             const newAmount = alreadyInPortfolio.amount - amount
+    //             const { income } = handleSell(alreadyInPortfolio.unitaryCost, amount, newOperation.details.priceSold)
+    //             //we need to check if there was income for this ticker (if was sold anytime before)
+    //             const newIncome = alreadyInPortfolio.income ? alreadyInPortfolio.income + income : income
+    //             alreadyInPortfolio = {
+    //                 ...alreadyInPortfolio,
+    //                 income: newIncome,
+    //                 amount: newAmount
+    //             }
+    //             const otherPositions = todayRegister.positions.filter(asset => asset.ticker !== ticker)
+    //             if (newAmount > 0) {
+    //                 todayRegister = {
+    //                     ...todayRegister,
+    //                     positions: [
+    //                         ...otherPositions,
+    //                         alreadyInPortfolio
+    //                     ],
+    //                     income: todayRegister.income + income
+    //                 }
+    //             } else {
+    //                 const updatedPositions = todayRegister.positions.filter(asset => asset.ticker === ticker)
+    //                 todayRegister = {
+    //                     ...todayRegister,
+    //                     positions: updatedPositions,
+    //                     income: todayRegister.income + income
+    //                 }
+    //             }
+    //         }
 
-        } else {
-            if (newOperation.operationType === "buy") {
-                todayRegister = {
-                    ...todayRegister,
-                    positions: [...todayRegister.positions,
-                    { ticker, amount, unitaryCost }]
-                }
-            } else {
-                throw new Error(ticker, amount, "can't sell stock that don't have")
-            }
-        }
-        const updatedSeries = {
-            ...state.generatedSeries,
-            dates: {
-                ...state.generatedSeries.dates,
-                [today]: todayRegister
-            }
-        }
-        console.log(updatedSeries, "repuuuuta2")
-        cb(updatedSeries)
-    }
+    //     } else {
+    //         if (newOperation.operationType === "buy") {
+    //             todayRegister = {
+    //                 ...todayRegister,
+    //                 positions: [...todayRegister.positions,
+    //                 { ticker, amount, unitaryCost }]
+    //             }
+    //         } else {
+    //             throw new Error(ticker, amount, "can't sell stock that don't have")
+    //         }
+    //     }
+    //     const updatedSeries = {
+    //         ...state.generatedSeries,
+    //         dates: {
+    //             ...state.generatedSeries.dates,
+    //             [today]: todayRegister
+    //         }
+    //     }
+    //     console.log(updatedSeries, "repuuuuta2")
+    //     cb(updatedSeries)
+    // }
 
     const generateSerieFromBegining = (userActivity, cb) => {
+ 
         console.log(userActivity, "actividad usuario")
         const initialTime = findFirstDate(userActivity)
         console.log(initialTime, "tiempooo")
@@ -630,34 +474,31 @@ export const useLogicPruebas = () => {
     //solo se recalcularan las series cuando el ususario haya echo una nueva operacion y o cuando haya entrado en portolio dashboard
     usePortfolioGenerator()
     useEffect(() => {
-
+        //this needs to fire either when initialState is ready and everytime we add new operation (user activity changes), as we need this to calculate the changes in AssetStructure chart
         console.log(state.userActivity, "actu")
-        if (state.userActivity.length > 0) {
-
-            if (userRefreshed.current) {
+        //setPruebaReady creo que es redundante aqui ya que cuando generatedSeries.status es falso significa que hemos realizado una nueva operacion (deberiamos impedir realizar nueva operacion hasta que no generatedSeries.status sea true again)
+        if (state.userActivity.length > 0 && state.setPruebaReady && !state.generatedSeries.ready) {
+            //if no userActivity we wont run any code
                 generateSerieFromBegining(state.userActivity, (generatedSerie) => {
                     dispatch({ type: "STORE_GENERATED_SERIES", payload: generatedSerie })
-                    dispatch({ type: "SET_ARE_GENERATED_SERIES_READY", payload: true })
                 })
-            } else {
-                const newOperation = state.userActivity[state.userActivity.length - 1]
-                dispatch({ type: "SET_ARE_GENERATED_SERIES_READY", payload: false })
-                addToGeneratedSeries(newOperation, (generatedSerie) => {
-                    dispatch({ type: "STORE_GENERATED_SERIES", payload: generatedSerie })
-                    dispatch({ type: "SET_ARE_GENERATED_SERIES_READY", payload: true })
-                    //userRefreshed.current will be alredy false
-                })
-            }
-            if(userRefreshed.current){
-                userRefreshed.current = false
-            }
+            //  else {
+            //     const newOperation = state.userActivity[state.userActivity.length - 1]
+            //     dispatch({ type: "SET_ARE_GENERATED_SERIES_READY", payload: false })
+            //     addToGeneratedSeries(newOperation, (generatedSerie) => {
+            //         dispatch({ type: "STORE_GENERATED_SERIES", payload: generatedSerie })
+            //         dispatch({ type: "SET_ARE_GENERATED_SERIES_READY", payload: true })
+            //         //userRefreshed.current will be alredy false
+            //     })
+            // }
+            
         }
         
        
         // if (state.userActivity.length > 0 && Object.keys(state.portfolioHistory).length > 0) {
         //     generateSerieFromBegining(state.userActivity, (generatedSerie) => { dispatch({ type: "STORE_GENERATED_SERIES", payload: generatedSerie }) })
         // }
-    }, [state.userActivity])
+    }, [state.setPruebaReady, state.generatedSeries])
 
 
 }
@@ -671,3 +512,162 @@ export const useLogicPruebas = () => {
 
 //makeIt()
 //console.log(findFirstDate(), "aqui")
+
+
+export const userActivity = [
+    {
+        date: "2020-06-15",
+        operationType: "buy",
+        details: {
+            ticker: "amzn",
+            amount: 40,
+            unitaryCost: 300
+
+        },
+        isFirstOperation: true,
+
+    },
+    {
+        date: "2020-06-15",
+        operationType: "buy",
+        details: {
+            ticker: "aapl",
+            amount: 60,
+            unitaryCost: 300
+
+        },
+        isFirstOperation: false,
+
+    },
+    {
+        date: "2020-06-15",
+        operationType: "sell",
+        details: {
+            ticker: "aapl",
+            amount: 40,
+            priceSold: 300
+
+        },
+        isFirstOperation: false,
+    },
+    {
+        date: "2020-06-16",
+        operationType: "buy",
+        details: {
+            ticker: "aa",
+            amount: 40,
+            unitaryCost: 14
+
+        },
+        isFirstOperation: false,
+
+    },
+    {
+        date: "2020-06-22",
+        operationType: "buy",
+        details: {
+            ticker: "aa",
+            amount: 30,
+            unitaryCost: 14
+
+        },
+        isFirstOperation: false,
+    },
+    {
+        date: "2020-06-25",
+        operationType: "buy",
+        details: {
+            ticker: "aa",
+            amount: 30,
+            unitaryCost: 14
+
+        },
+        isFirstOperation: false,
+
+    },
+    {
+        date: "2020-07-18",
+        operationType: "sell",
+        details: {
+            ticker: "aapl",
+            amount: 10,
+            priceSold: 315
+
+        },
+        isFirstOperation: false,
+
+    },
+    {
+        date: "2020-08-21",
+        operationType: "buy",
+        details: {
+            ticker: "fb",
+            amount: 100,
+            unitaryCost: 10
+
+        },
+        isFirstOperation: false,
+
+    },
+    {
+        date: "2020-08-21",
+        operationType: "buy",
+        details: {
+            ticker: "fb",
+            amount: 20,
+            unitaryCost: 10
+
+        },
+        isFirstOperation: false,
+
+    },
+    {
+        date: "2020-08-21",
+        operationType: "buy",
+        details: {
+            ticker: "tef",
+            amount: 80,
+            unitaryCost: 7
+
+        },
+        isFirstOperation: false,
+
+    },
+    {
+        date: "2020-09-24",
+        operationType: "sell",
+        details: {
+            ticker: "fb",
+            amount: 120,
+            priceSold: 20
+
+        },
+        isFirstOperation: false,
+
+
+    },
+    {
+        date: "2020-09-21",
+        operationType: "sell",
+        details: {
+            ticker: "tef",
+            amount: 45,
+            priceSold: 3
+
+        },
+        isFirstOperation: false,
+
+    },
+    {
+        date: "2020-10-26",
+        operationType: "sell",
+        details: {
+            ticker: "amzn",
+            amount: 10,
+            priceSold: 3000
+
+        },
+        isFirstOperation: false,
+
+    }
+]

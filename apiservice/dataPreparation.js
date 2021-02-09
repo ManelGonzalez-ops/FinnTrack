@@ -1,3 +1,5 @@
+const { unitaryCostMean } = require("./dataUtils");
+
 module.exports = {
     prepareStoredOperations: (ops) => {
         return ops.map(op => {
@@ -38,6 +40,7 @@ module.exports = {
                     const updatedPosesions = currentStocks.map(item => {
                         if (item.ticker === op.ticker) {
                             item.amount = newAmount
+                            item.unitaryCost = unitaryCostMean(item, op.amount, op.price)
                         }
                         return item
                     })
@@ -63,7 +66,7 @@ module.exports = {
                     userCash -= op.price * op.amount
                     const readyDate = JSON.parse(JSON.stringify(op.opdate)).split("T")[0]
                     currentStocks = [...currentStocks,
-                    { ticker: op.ticker, amount: op.amount, date: readyDate }]
+                    { ticker: op.ticker, amount: op.amount, date: readyDate, unitaryCost: op.price, assetType: op.assetType }]
                 } else {
                     throw new Error("no puedes vender lo que no tienes")
                 }

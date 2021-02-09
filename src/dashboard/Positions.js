@@ -8,6 +8,7 @@ import SortByAlphaIcon from '@material-ui/icons/SortByAlpha';
 import { Sorter } from './Sorter'
 import { Searcher } from '../components/Searcher'
 import { SearcherPositions } from './SearcherPositions'
+import { CustomCircularProgress } from '../components/components/CustomCircularProgress'
 
 const logoReducer = (state, action) => {
     switch (action.type) {
@@ -27,7 +28,7 @@ const logoReducer = (state, action) => {
                 ...state,
                 loading: false,
                 logos: action.payload,
-                success: true
+                successLogo: true
             }
         default:
             return state
@@ -37,25 +38,15 @@ export const Positions = () => {
     const { state } = useDataLayer()
     const { companiesChange } = state
     const [readyState, setReadyState] = useState("")
-    const [{ quotes, loadingQuotes, errorQuotes }, setQuotes] = useState({ quotes: "" })
+    const [loading, setLoading] = useState(false)
+    const [{ quotes }, setQuotes] = useState({ quotes: "" })
     const defaultData = useRef(null)
-    const [{ logos, error, loading, success }, dispatch] = useReducer(logoReducer, { logos: [], loading: false, error: null, success: false })
+    const [{ logos, error, successLogo }, dispatch] = useReducer(logoReducer, { logos: [], loading: false, error: null, successLogo: false })
     const [openSearcher, setOpenSearcher] = useState(false)
     const [openSorter, setOpenSorter] = useState(null)
     useEffect(() => {
-        const requestAdditionalInfo = (stocks) => {
-            dispatch({ type: "SET_LOADING" })
-            fetch("http://localhost:8001/api/companies_url", {
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                method: "POST",
-                body: JSON.stringify({ positions: stocks })
-            })
-                .then(res => res.json())
-                .then(res => { dispatch({ type: "SET_SUCCESS", payload: res }) })
-                .catch(err => { dispatch({ type: "SET_ERROR", payload: err.message }) })
-        }
+        //init requests
+        
         if (state.currentPossesions.stocks.length > 0) {
             console.log("axactua")
             requestAdditionalInfo(state.currentPossesions.stocks)
@@ -65,13 +56,17 @@ export const Positions = () => {
     }, [state.currentPossesions])
 
     useEffect(() => {
-        console.log(success, quotes, "quee coja")
-        if (success && quotes && companiesChange) {
+        console.log(successLogo, quotes, "quee coja")
+        if (successLogo && quotes && companiesChange) {
             const stocks = [...state.currentPossesions.stocks]
-            console.log(stocks, "stokkkeee")
             const stocksWithLogos = stocks.map(asset => {
                 const compChangeArr = companiesChange[asset.ticker]
-                asset["change"] = compChangeArr[compChangeArr.length - 1][1]
+                if (compChangeArr.length) {
+                    asset["change"] = compChangeArr[compChangeArr.length - 1][1]
+                    console.log(asset.change, "kpchange")
+                } else {
+                    asset["change"] = 0
+                }
                 const theStockLogo = logos.find(stock => asset.ticker.toUpperCase() === stock.ticker.toUpperCase())
                 const { logourl, weburl } = theStockLogo
                 //if logo is missing will come as empty string
@@ -85,8 +80,9 @@ export const Positions = () => {
             })
             defaultData.current = stocksWithLogos
             setReadyState(stocksWithLogos)
+            setLoading(false)
         }
-    }, [logos, success, quotes, companiesChange])
+    }, [successLogo, quotes, companiesChange])
 
     const [selected, setSelected] = useState("")
 
@@ -122,6 +118,22 @@ export const Positions = () => {
         setReadyState(defaultData.current)
     }
 
+    const requestAdditionalInfo = (stocks) => {
+        setLoading(true)
+        dispatch({ type: "SET_LOADING" })
+        fetch("http://localhost:8001/api/companies_url", {
+            headers: {
+                "Content-Type": "application/json"
+            },
+            method: "POST",
+            body: JSON.stringify({ positions: stocks })
+        })
+            .then(res => res.json())
+            .then(res => { dispatch({ type: "SET_SUCCESS", payload: res }) })
+            .catch(err => { dispatch({ type: "SET_ERROR", payload: err.message }) })
+    }
+
+    
     const fetchQuotes = (tickers) => {
         fetch("http://localhost:8001/api/portfolio/quotes", {
             headers: {
@@ -143,37 +155,41 @@ export const Positions = () => {
             setReadyState(updatedList)
         }
     }, [query])
-    const handleOpenSearcher =()=>{
+    const handleOpenSearcher = () => {
         setOpenSorter(null)
         setOpenSearcher(true)
     }
-    const handleOpenSorter =(e)=>{
+    const handleOpenSorter = (e) => {
         setOpenSearcher(false)
         setOpenSorter(e.currentTarget)
     }
     return (
         <Paper className="positions">
-            <header>
-                <h3>My Assets</h3>
-                <div>
-                    {openSearcher &&
-                        <SearcherPositions {...{ query, setQuery }} />
-                    }
-                    {openSorter &&
-                        <Sorter {...{ openSorter, setOpenSorter, setReadyState, handleSorting, handleSelected, selected}} />
-                    }
-                    <IconButton
-                        onClick={handleOpenSearcher}
-                    >
-                        <SearchIcon />
-                    </IconButton>
-                    <IconButton
-                        onClick={handleOpenSorter}
-                    >
-                        <SortByAlphaIcon />
-                    </IconButton>
-                </div>
-            </header>
+            {loading ?
+                <CustomCircularProgress />
+                :
+                <>
+                <header>
+                    <h3>My Assets</h3>
+                    <div>
+                        {openSearcher &&
+                            <SearcherPositions {...{ query, setQuery }} />
+                        }
+                        {openSorter &&
+                            <Sorter {...{ openSorter, setOpenSorter, setReadyState, handleSorting, handleSelected, selected }} />
+                        }
+                        <IconButton
+                            onClick={handleOpenSearcher}
+                        >
+                            <SearchIcon />
+                        </IconButton>
+                        <IconButton
+                            onClick={handleOpenSorter}
+                        >
+                            <SortByAlphaIcon />
+                        </IconButton>
+                    </div>
+                </header>
             {/* <ul>
                 {logos.map(item => <li>
                     {item.logo}
@@ -201,6 +217,7 @@ export const Positions = () => {
                     )}
                 </ul>
             </div>
+            </>}
         </Paper>
     )
 }

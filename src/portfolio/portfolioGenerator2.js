@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useDataLayer } from '../Context'
+import { useUserLayer } from '../UserContext'
 import { convertUnixToHuman } from '../utils/datesUtils'
 
 export const usePortfolioGenerator = () => {
 
     const { state, dispatch } = useDataLayer()
+    const {portfolioHistory, generatedSeries, areHistoricPricesReady} = state
     const userRefreshed = useRef(true)
-    const [rendi, setRendi] = useState()
+    const {userState: {info}} = useUserLayer()
     const validDates = useRef([])
     //option 1 : save masterSerie as a object
     //option 2 : save masterSerie as a array
@@ -19,10 +21,10 @@ export const usePortfolioGenerator = () => {
     const getLastValidPrice = (ticker) => {
         let fecha
         let register
-        for (let date of Object.keys(state.portfolioHistory).reverse()) {
-            if (state.portfolioHistory[date][ticker]) {
+        for (let date of Object.keys(portfolioHistory).reverse()) {
+            if (portfolioHistory[date][ticker]) {
                 fecha = date
-                register = state.portfolioHistory[date][ticker]
+                register = portfolioHistory[date][ticker]
                 break
             }
         }
@@ -35,18 +37,18 @@ export const usePortfolioGenerator = () => {
     //     let change, incomeDiff, dayBefore;
     //     let lastIncome = 0
     //     let liquidativeValue = 1000
-    //     const seriesStep2 = state.portfolioSeries
+    //     const seriesStep2 = portfolioSeries
     //     const seriesStep2Copy = { ...seriesStep2 }
     //     // const today = Object.keys(seriesStep2)[Object.keys(seriesStep2).length - 1]
     //     const today = convertUnixToHuman(Date.now())
 
-    //     const currentSerieStep1 = state.generatedSeries.dates[today]
-    //     //const generatedSerieOfToday = state.generatedSeries
+    //     const currentSerieStep1 = generatedSeries.dates[today]
+    //     //const generatedSerieOfToday = generatedSeries
     //     console.log(today, "todaaaay")
     //     let portfolioCost = 0;
     //     let portfolioValue = 0;
-    //     console.log(state.portfolioHistory)
-    //     console.log(state.portfolioSeries, "wuta")
+    //     console.log(portfolioHistory)
+    //     console.log(portfolioSeries, "wuta")
     //     currentSerieStep1.positions.forEach(asset => {
     //         portfolioCost += asset.amount * asset.unitaryCost
     //         console.log(asset.ticker, "ticko")
@@ -61,7 +63,7 @@ export const usePortfolioGenerator = () => {
     //         //calculate portfolioValue and costs
 
     //         //calculate liquidative Value
-    //         const stockClosePrice = state.portfolioHistory[today][asset.ticker.toUpperCase()].close
+    //         const stockClosePrice = portfolioHistory[today][asset.ticker.toUpperCase()].close
     //         const aportacion = calculadorMedia(asset, register.close, today, lastDate, portfolioValue)
     //         console.log(aportacion, "jojo")
     //         valueIncrement += aportacion
@@ -83,10 +85,10 @@ export const usePortfolioGenerator = () => {
     const calculadorMedia = (asset, stockPrice, date, lastDate, portfolioValue) => {
 
         console.log(asset.amount, asset.price, portfolioValue, date, lastDate, asset.ticker, "rururu")
-        console.log(state.portfolioHistory, "historria")
+        console.log(portfolioHistory, "historria")
         const relativeSize = (asset.amount * stockPrice) / portfolioValue
-        const currentPrice = state.portfolioHistory[date][asset.ticker.toUpperCase()].close
-        const lastPrice = state.portfolioHistory[lastDate][asset.ticker.toUpperCase()].close
+        const currentPrice = portfolioHistory[date][asset.ticker.toUpperCase()].close
+        const lastPrice = portfolioHistory[lastDate][asset.ticker.toUpperCase()].close
         const change = (currentPrice - lastPrice) / lastPrice
         //console.log(relativeSize, "rururu")
         //console.log((currentPrice - lastPrice) / lastPrice, "rururu")
@@ -129,23 +131,23 @@ export const usePortfolioGenerator = () => {
         //polifill, if some price is unexpectly missing we will use the last valid price.
         let polyfillPrices = {}
         let stocksProcesed = []
-        const dateKeys = Object.keys(state.generatedSeries.dates)
+        const dateKeys = Object.keys(generatedSeries.data.dates)
         dateKeys.forEach((date, index) => {
-            if (state.portfolioHistory[date] !== undefined) {
+            if (portfolioHistory[date] !== undefined) {
                 let portfolioCost = 0
                 let portfolioValue = 0
-                state.generatedSeries.dates[date].positions.forEach(asset => {
+                generatedSeries.data.dates[date].positions.forEach(asset => {
                     portfolioCost += asset.amount * asset.unitaryCost
-                    console.log(date, state.portfolioHistory, state.generatedSeries, asset.ticker, "todddddo")
-                    const stockRegister = state.portfolioHistory[date][asset.ticker.toUpperCase()]
+                    const stockRegister = portfolioHistory[date][asset.ticker.toUpperCase()]
                     let stockClosePrice;
                     if (stockRegister === undefined) {
-                        stockClosePrice = polyfillPrices[asset.ticker]
+                        let lastValidPrice = polyfillPrices[asset.ticker]
+                        stockClosePrice = lastValidPrice ? lastValidPrice : asset.unitaryCost
                     } else {
                         stockClosePrice = stockRegister.close
                         polyfillPrices[asset.ticker] = stockClosePrice
                     }
-
+                    console.log(asset.ticker, stockClosePrice, "paro ka")
                     const positionVal = stockClosePrice * asset.amount
                     portfolioValue += positionVal
                 })
@@ -171,14 +173,14 @@ export const usePortfolioGenerator = () => {
                     //calculate portfolioValue and costs
                     //calculate liquidative Value
 
-                    state.generatedSeries.dates[date].positions.forEach(asset => {
+                    generatedSeries.data.dates[date].positions.forEach(asset => {
                         let isFirstRecord = false
                         if (!stocksProcesed.includes(asset.ticker.toUpperCase())) {
                             stocksProcesed = [...stocksProcesed, asset.ticker.toUpperCase()]
                             isFirstRecord = true
                         }
 
-                        const stockRegister = state.portfolioHistory[date][asset.ticker.toUpperCase()]
+                        const stockRegister = portfolioHistory[date][asset.ticker.toUpperCase()]
                         let stockClosePrice;
                         if (stockRegister === undefined) {
                             stockClosePrice = polyfillPrices[asset.ticker]
@@ -216,28 +218,33 @@ export const usePortfolioGenerator = () => {
         console.log(companiesPerformanceImpact, "perfi")
         console.log(wtf)
         dispatch({ type: "STORE_IMPACT_BY_COMPANY", payload: companiesPerformanceImpact })
-        setRendi(masterSerie)
         cb(masterSerie)
     }
 
-    console.log(rendi, "rendiiiiii")
-    console.log(state.generatedSeries, "muuu")
+    console.log(generatedSeries, "muuu")
+
+    const storePortfolioDB =(portfolio)=>{
+        fetch("http://localhost:8001/api/v1/operations/update", {
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({email: info.email, portfolio})
+            ,
+            method: "POST"
+        })
+        .then(res=>res.json())
+        .catch(err=>{throw err.message})
+    }
 
     useEffect(() => {
-        console.log(state.areHistoricPricesReady, state.areGeneratedSeriesReady, "que cohone")
-        if (userRefreshed.current && state.areHistoricPricesReady && state.areGeneratedSeriesReady) {
+        console.log(areHistoricPricesReady, "que cohone")
+        if (areHistoricPricesReady && generatedSeries.ready) {
             generateSerie((result) => {
-                dispatch({ type: "STORE_GENERATED_READY_SERIES", payload: result })
-                userRefreshed.current = false
+                dispatch({ type: "STORE_PORTFOLIO_SERIES", payload: result })
+                storePortfolioDB(result)
             })
         }
-        // al final no hace falta actualizar la serie al momento
-        // else if (!userRefreshed.current && state.areHistoricPricesReady && state.areGeneratedSeriesReady) {
-        //     updateSerie((result) => {
-        //         dispatch({ type: "STORE_GENERATED_READY_SERIES", payload: result })
-        //     })
-        // }
 
-    }, [state.generatedSeries, state.areHistoricPricesReady, state.areGeneratedSeriesReady])
+    }, [generatedSeries, areHistoricPricesReady])
 
 }

@@ -10,36 +10,15 @@ import { PurchaseDialog } from "./PurchaseDialog"
 
 
 const date = convertUnixToHuman(Date.now())
-export const StockShop = ({ ticker }) => {
+export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) => {
 
     const { state, dispatch } = useDataLayer()
     const {setPruebaReady} = state
-    const [{ currentPrice, loading, error }, setCurrentPrice] = useState({
-        currentPrice: "",
-        loading: false,
-        error: ""
-    })
+    
     //const userInfo = useAuth()
 
    const {userState} = useUserLayer()
-    useEffect(() => {
-
-        const getCurrentPrice = async (ticker) => {
-            setCurrentPrice(prev => ({ ...prev, loading: true }))
-            try {
-                const request = await fetch(`https://finnhub.io/api/v1/quote?symbol=${ticker}&token=btm6dp748v6ud360stcg`)
-                const data = await request.json()
-                setCurrentPrice(prev => ({ ...prev, loading: false, currentPrice: data.c }))
-            }
-            catch (err) {
-                setCurrentPrice(prev => ({ ...prev, loading: false, error: err.message }))
-            }
-        }
-        if (ticker) {
-
-            getCurrentPrice(ticker)
-        }
-    }, [ticker])
+   
 
     console.log(currentPrice, "preciooo")
     const [qty, setQty] = useState(1)
@@ -56,7 +35,7 @@ export const StockShop = ({ ticker }) => {
     const submitOrder = () => {
         if (userState.info.email) {
             let isFirstOperation = state.userActivity.length > 0 ? false: true
-            fetch("http://localhost:8001/api/addoperation", {
+            fetch("http://localhost:8001/api/v1/operations/addoperation", {
                 headers: {
                     Accept: 'application/json',
                     'Content-Type': 'application/json'
@@ -70,7 +49,8 @@ export const StockShop = ({ ticker }) => {
                         amount: qty,
                         price: currentPrice,
                         date,
-                        isFirstOperation
+                        isFirstOperation,
+                        assetType
                     }
                 })
             })
@@ -83,7 +63,8 @@ export const StockShop = ({ ticker }) => {
                             amount: qty,
                             operationType,
                             cashNetOperation: orderTotal,
-                            date
+                            date,
+                            unitaryPrice: currentPrice
                         }
                     })
                     dispatch({
@@ -102,6 +83,7 @@ export const StockShop = ({ ticker }) => {
                             unitPrice: currentPrice
                         }
                     })
+                    dispatch({type: "RESTART_GENERATED_SERIES"})
                     
                 })
                 .catch(err=>{console.log(err, "pputa falló")})
@@ -109,10 +91,7 @@ export const StockShop = ({ ticker }) => {
             alert("please log in")
         }
     }
-    const getHumanDate = () => {
-        const d = new Date(Date.now())
-        const date = d.getDate() + '-' + (d.getMonth() + 1) + '-' + d.getFullYear()
-    }
+  
     useEffect(() => {
         //when users buys and its balance change we close firstModal
         console.log("moneychange")
@@ -123,6 +102,7 @@ export const StockShop = ({ ticker }) => {
         <div className="stock-shop">
             {loading && <CustomCircularProgress />}
             {error && <p>{error}</p>}
+            {/* prueba momentanea */}
             { !setPruebaReady ? <div>Loading initial data...</div>
             : currentPrice &&
                 <div>

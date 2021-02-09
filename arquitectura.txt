@@ -1,0 +1,5 @@
+--People Section--
+
+Los portfolios de la otra genete pueden estar ya calculados o por calcular.
+A. Si ya están calculados, enviaremos la serie guardada en la base de datos.
+B. 

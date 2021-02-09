@@ -30,6 +30,8 @@ import { StackedColumn } from "./charts/StackedColumn";
 import { ControllerCompany } from "./views/company/ControllerCompany";
 import { Overlay } from "./components/Overlay";
 import Formm from "./SignIn2";
+import { PersonasList } from "./Personas/PersonasList";
+import { PeopleRouter } from "./Personas/PeopleRouter";
 
 
 
@@ -77,7 +79,7 @@ const App = () => {
     if (userState.info) {
       const { email } = userState.info
       if (email) {
-        fetch("http://localhost:8001/api/operations", {
+        fetch("http://localhost:8001/api/v1/operations", {
           headers: {
             "Content-Type": "application/json"
           },
@@ -210,6 +212,9 @@ console.log(selection, "seleeeection")
           </Route> */}
           <Route path="/portfoliof" exact>
             <Middleware component={UserMain} />
+          </Route>
+          <Route path="/people" >
+            <PeopleRouter/>
           </Route>
           <Route path="/proba" exact>
             <StackedColumn ticker="nflx" />

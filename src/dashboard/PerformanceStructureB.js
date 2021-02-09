@@ -8,13 +8,14 @@ import { Paper } from '@material-ui/core';
 
 export const PerformanceStructureB = () => {
     const { state } = useDataLayer()
-    const {areGeneratedSeriesReady} = state
+    const { generatedSeries } = state
     const [chartData, setChartData] = useState()
+    
     const prepareDataset = () => {
         let readyData = {}
         Object.keys(state.companiesImpact).forEach(date => {
             state.companiesImpact[date].forEach(asset => {
-                if(readyData[asset.ticker] === undefined){
+                if (readyData[asset.ticker] === undefined) {
                     readyData = {
                         ...readyData,
                         [asset.ticker]: []
@@ -33,12 +34,14 @@ export const PerformanceStructureB = () => {
             })
         })
         console.log(readyData, "ruuudi")
-        if(readyData.other.length > 0){
+        if (readyData.other.length > 0) {
             //if sum of all others is less than absolute 0.1 we won't show category other for that date neither
-            readyData.other = readyData.other.filter(item=>Math.abs(item[1]) > 0.1)
+            const relevantOthers = readyData.other.filter(item => Math.abs(item[1]) > 0.1)
+            readyData = { ...readyData, relevantOthers }
         }
         return readyData
     }
+
     const prepareForChart = (data, cb) => {
         let readySeries = []
         Object.entries(data).forEach(assetData => {
@@ -55,14 +58,15 @@ export const PerformanceStructureB = () => {
         cb(readySeries)
     }
     useEffect(() => {
-        if (state.companiesImpact && areGeneratedSeriesReady) {
+        console.log(state.companiesImpact, generatedSeries, "sorios")
+        if (state.companiesImpact && generatedSeries.ready) {
             const data = prepareDataset()
-            prepareForChart(data, (result)=>{
+            prepareForChart(data, (result) => {
                 setChartData(result)
             })
 
         }
-    }, [state.companiesImpact, areGeneratedSeriesReady])
+    }, [state.companiesImpact, generatedSeries])
 
     const chartOptions = {
         chart: {
@@ -100,11 +104,10 @@ export const PerformanceStructureB = () => {
         //     categories: dataReady && dataReady.map(item => item.name)
         // },
         series: chartData
-
     }
     return (
         <Paper>
-          { chartData &&  <HighchartsReact
+            { chartData && <HighchartsReact
                 highcharts={Highcharts}
                 options={chartOptions}
                 constructorType={"stockChart"}

@@ -31,5 +31,11 @@ module.exports = {
             actualDate[2]
         );
         return formatedDate.getTime();
-    }
+    },
+    unitaryCostMean: (posesions, amount, unitaryCost) =>
+        (posesions.unitaryCost * posesions.amount) /
+        (posesions.amount + amount)
+        +
+        (unitaryCost * amount) /
+        (posesions.amount + amount)
 }
