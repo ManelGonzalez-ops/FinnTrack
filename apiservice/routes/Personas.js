@@ -11,7 +11,7 @@ router.route("/porfolio")
 .get(makePortfolio)
 
 router.route("/main")
-.get(showUsers)
+.get(makePortfolio)
 
 router.route("/:id")
 .get(showUser)

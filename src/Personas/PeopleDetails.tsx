@@ -40,6 +40,7 @@ export const PeopleDetails = () => {
     }, [])
 
     useEffect(() => {
+        console.log(data, "la datana")
         getPortfolioPrice()
     }, [data])
 
@@ -49,6 +50,7 @@ export const PeopleDetails = () => {
         if (!data) {
             return
         }
+        console.log(data, "portfoliou")
         const portfolio = Object.keys(data.portfolio)
         const lastDate = portfolio[portfolio.length - 1]
         setCurrentPrice(data.portfolio[lastDate].liquidativeValue / 10)

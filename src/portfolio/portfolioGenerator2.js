@@ -10,6 +10,7 @@ export const usePortfolioGenerator = () => {
     const userRefreshed = useRef(true)
     const {userState: {info}} = useUserLayer()
     const validDates = useRef([])
+    const polyfillPrices = useRef({})
     //option 1 : save masterSerie as a object
     //option 2 : save masterSerie as a array
 
@@ -82,14 +83,21 @@ export const usePortfolioGenerator = () => {
     //     cb(seriesStep2Copy)
     // }
 
+    const getLastPrice =(lastDate, asset)=>{
+        const theresLastPrice = portfolioHistory[lastDate][asset.ticker.toUpperCase()]
+        if(theresLastPrice){
+            return portfolioHistory[lastDate][asset.ticker.toUpperCase()].close
+        }
+        return polyfillPrices.current[asset.ticker]
+    }
+
     const calculadorMedia = (asset, stockPrice, date, lastDate, portfolioValue) => {
 
         console.log(asset.amount, asset.price, portfolioValue, date, lastDate, asset.ticker, "rururu")
         console.log(portfolioHistory, "historria")
         const relativeSize = (asset.amount * stockPrice) / portfolioValue
-        const currentPrice = portfolioHistory[date][asset.ticker.toUpperCase()].close
-        const lastPrice = portfolioHistory[lastDate][asset.ticker.toUpperCase()].close
-        const change = (currentPrice - lastPrice) / lastPrice
+        const lastPrice = getLastPrice(lastDate, asset)
+        const change = (stockPrice - lastPrice) / lastPrice
         //console.log(relativeSize, "rururu")
         //console.log((currentPrice - lastPrice) / lastPrice, "rururu")
         //console.log(change, relativeSize, "rururu")
@@ -128,8 +136,8 @@ export const usePortfolioGenerator = () => {
         let companiesPerformanceImpact = {}
         let change, lastDate, lastIncome, liquidativeValue;
         let wtf = []
+        polyfillPrices.current = {}
         //polifill, if some price is unexpectly missing we will use the last valid price.
-        let polyfillPrices = {}
         let stocksProcesed = []
         const dateKeys = Object.keys(generatedSeries.data.dates)
         dateKeys.forEach((date, index) => {
@@ -141,11 +149,12 @@ export const usePortfolioGenerator = () => {
                     const stockRegister = portfolioHistory[date][asset.ticker.toUpperCase()]
                     let stockClosePrice;
                     if (stockRegister === undefined) {
-                        let lastValidPrice = polyfillPrices[asset.ticker]
+                        let lastValidPrice = polyfillPrices.current[asset.ticker]
                         stockClosePrice = lastValidPrice ? lastValidPrice : asset.unitaryCost
+                        polyfillPrices.current[asset.ticker] = stockClosePrice
                     } else {
                         stockClosePrice = stockRegister.close
-                        polyfillPrices[asset.ticker] = stockClosePrice
+                        polyfillPrices.current[asset.ticker] = stockClosePrice
                     }
                     console.log(asset.ticker, stockClosePrice, "paro ka")
                     const positionVal = stockClosePrice * asset.amount
@@ -183,7 +192,7 @@ export const usePortfolioGenerator = () => {
                         const stockRegister = portfolioHistory[date][asset.ticker.toUpperCase()]
                         let stockClosePrice;
                         if (stockRegister === undefined) {
-                            stockClosePrice = polyfillPrices[asset.ticker]
+                            stockClosePrice = polyfillPrices.current[asset.ticker]
                         } else {
                             stockClosePrice = stockRegister.close
                             //polyfillPrices[asset.ticker] = stockClosePrice

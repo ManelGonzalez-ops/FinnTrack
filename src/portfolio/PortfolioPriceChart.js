@@ -35,6 +35,7 @@ export const PortfolioPriceChart = ({ datos, title }) => {
             cleanData.push({ ...datos[date], date: unixTime })
         })
         const readyData = cleanData.map(item => ([item.date, item.liquidativeValue]))
+        console.log(readyData, "dataridi")
         setDataset(readyData)
     }
     useEffect(() => {

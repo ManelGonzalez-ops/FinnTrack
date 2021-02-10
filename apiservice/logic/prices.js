@@ -1,17 +1,17 @@
 const { PriceService } = require("../controllers/Prices");
 
-class PricesServer extends PriceService {
+class PricesServer {
 
     pricesDirty
-
+    possesions
     constructor(possesions) {
-        super(possesions)
+        this.possesions = possesions
     }
     async getPraices() {
 
         try {
-
-            this.pricesDirty = await super.init()
+            const priceService = new PriceService(this.possesions, "puta3")
+            this.pricesDirty = await priceService.init()
             return this.structurePrices()
         }
         catch (err) {
@@ -45,7 +45,7 @@ class PricesServer extends PriceService {
                 })
             }
         })
-        console.log(portfolioHistoryByDate, "pooorfiin funciona")
+        //console.log(portfolioHistoryByDate, "pooorfiin funciona")
         return portfolioHistoryByDate
     }
 }

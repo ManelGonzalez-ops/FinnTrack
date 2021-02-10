@@ -3,6 +3,7 @@ const Logic = require("../logic/state.js")
 const fs = require("fs")
 
 const listPeople = (req, res) => {
+    console.log("ejecutao 4")
     getAllOperations()
         .then(data => {
             console.log(data, "personas")
@@ -16,8 +17,9 @@ const listPeople = (req, res) => {
 }
 
 const makePortfolio = async (req, res) => {
-    const logicInstance = new Logic()
+    console.log("ejecutao 1")
     try {
+        const logicInstance = new Logic()
         const peopleCollection = await logicInstance.initAll()
         res.status(200).send(peopleCollection)
     }
@@ -27,11 +29,13 @@ const makePortfolio = async (req, res) => {
 }
 
 const showUsers = (req, res) => {
+    console.log("ejecutao 2")
     const rawData = fs.readFileSync("porfolios.json")
     const data = JSON.parse(rawData)
     return res.status(200).send(data)
 }
 const showUser = (req, res) => {
+    console.log("ejecutao 3")
     const { id } = req.params
     const logicInstance = new Logic()
     logicInstance.initOne(id)

@@ -1,6 +1,6 @@
 const { prepareStoredOperations, setInitialPossesions } = require("../dataPreparation")
 const fs = require("fs")
-const { getAllUsers, getAllOperations, getOperations, findUser, getOperationsByUserId, findUserById, getOutdatedPortfoliosDB, addPortfolio, portfolioExists, updatePortfolioDB } = require("../../db/services")
+const { getAllUsers, getAllOperations, getOperations, findUser, getOperationsByUserId, findUserById, getOutdatedPortfoliosDB, addPortfolio, portfolioExists, updatePortfolioDB, getAllPortfoliosDB } = require("../../db/services")
 const PricesServer = require("./prices")
 const PossesionsSeries = require("./posesionsSeries")
 const Portfolio = require("./portfolioPrices")
@@ -32,14 +32,14 @@ class Logic {
     async initAll() {
         this.people = await this.getUsers()
         this.operations = await this.getUsersOperations()
-        return this.dispatchUsers()
+        return await this.dispatchUsers()
     }
 
     async initOne(id) {
         this.user = await findUserById(id)
         this.operations = await getOperationsByUserId(id)
         await this.dispatchUsers(true)
-        return { prices: this.prices, possesionsSeries: this.posessionsSeries, portfolio: this.outdatedPortfolio, user: this.user }
+        return { prices: this.prices, possesionsSeries: this.posessionsSeries, portfolio: this.portfolio, user: this.user }
     }
 
     async getUsers() {
@@ -62,29 +62,32 @@ class Logic {
         }
     }
     async classifyPortfoliosByStats() {
-        const allPortfoliosReq = await getAllPortfolios()
-        const allPortfolios = allPortfoliosReq.map(item => item[0])
+        const allPortfolios = await getAllPortfoliosDB()
+        //console.log(allPortfolios, "allportf")
         allPortfolios.forEach(row => {
-            console.log(row["last_updated"], "fecha portfolio last updated")
-            if (row["last_updated"] === this.today) {
+           // console.log(row, "roooow")
+            //console.log(row["last_updated"], "fecha portfolio last updated")
+            if (JSON.parse(JSON.stringify(row["last_updated"])).split("T")[0] === this.today) {
                 this.upToDatePortfolios.push(row)
             } else {
                 this.outdatedPortfolios.push(row)
             }
         })
+        console.log(this.outdatedPortfolios, "outdated")
     }
 
     handleUpToDatePortfolios() {
-        upToDatePortfolios.forEach(row => {
+        this.upToDatePortfolios.forEach(row => {
             const userInfo = this.people.find(user => user.userId === row.userId)
-            this.masterObj.push({ user: userInfo, portfolio })
+            this.masterObj.push({ user: userInfo, portfolio: row.portfolio })
         })
     }
 
     async dispatchUsers(individual = false) {
 
         if (individual) {
-            await this.getUserData(this.operations)
+           const portfolio = await this.getUserData(this.operations)
+           this.portfolio = portfolio
             return
         }
         await this.classifyPortfoliosByStats()
@@ -97,15 +100,17 @@ class Logic {
     handleOutdatedPotfolios = async () => {
         for (let row of this.outdatedPortfolios) {
             const userOps = this.operations.filter(op => op.userId === row.userId)
-
-            //if user has operations we generate portfolio
-            console.log(row, "userrrnmae")
-            //si el usuario no ha realizado operaciones tampoco tendrñia portofolio por lo que la comprobavion userOps.length es redundante
-            const updatedPortfolio = await this.getUserData(userOps)
-            //en principio en caso de que el usuario haya operado, su portfolio ya existe, (a no ser que cuando realizara la operacion el cliente cerrara la app antes de que el nuevo portfolio fuera generado en el cliente o que la base de datos fallara en gurdarlo)
-            await updatePortfolioDB(user.userId, updatedPortfolio, this.today)
-            const user = this.people.find(user => user.userId === row.userId)
-            this.masterObj.push({ user: user, portfolio: updatedPortfolio })
+            if(userOps.length){
+                console.log(row.userId, "el puto user")
+                //if user has operations we generate portfolio
+                //console.log(row, "userrrnmae")
+                //si el usuario no ha realizado operaciones tampoco tendrñia portofolio por lo que la comprobavion userOps.length es redundante
+                const updatedPortfolio = await this.getUserData(userOps)
+                //en principio en caso de que el usuario haya operado, su portfolio ya existe, (a no ser que cuando realizara la operacion el cliente cerrara la app antes de que el nuevo portfolio fuera generado en el cliente o que la base de datos fallara en gurdarlo)
+                await updatePortfolioDB(row.userId, updatedPortfolio, this.today)
+                const user = this.people.find(user => user.userId === row.userId)
+                this.masterObj.push({ user: user, portfolio: updatedPortfolio })
+            }
         }
     }
 
@@ -129,6 +134,7 @@ class Logic {
     }
 
     async getPricesHistory(currentStocks) {
+        console.log(currentStocks, "current stoock")
         const priceInstance = new PricesServer(currentStocks)
         this.prices = await priceInstance.getPraices()
     }

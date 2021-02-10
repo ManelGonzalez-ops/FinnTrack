@@ -203,7 +203,7 @@ module.exports = {
     },
     //we have to update it everytime a user makes a new operation
     updatePortfolioDB: (userId, portfolio, today) => {
-        console.log(userId, portfolio, today, "que hostia")
+        //console.log(userId, portfolio, today, "que hostia")
         return new Promise((resolve, reject) => {
             db.query("update financeapp.portfolios set portfolio = ?, last_updated = ? where userId = ?", [JSON.stringify(portfolio), today, userId], (err) => {
                 if (err) {

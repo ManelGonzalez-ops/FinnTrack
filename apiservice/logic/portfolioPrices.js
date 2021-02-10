@@ -15,8 +15,7 @@ class Portfolio {
 
     calculadorMedia = (asset, stockPrice, date, lastDate, portfolioValue) => {
 
-        console.log(asset.amount, asset.price, portfolioValue, date, lastDate, asset.ticker, "rururu")
-        //console.log(portfolioHistory, "historria")
+        // console.log(asset.amount, asset.price, portfolioValue, date, lastDate, asset.ticker, "rururu")
         const relativeSize = (asset.amount * stockPrice) / portfolioValue
         const currentPrice = this.portfolioHistory[date][asset.ticker.toUpperCase()].close
         const lastPrice = this.portfolioHistory[lastDate][asset.ticker.toUpperCase()].close
@@ -65,7 +64,7 @@ class Portfolio {
         //polifill, if some price is unexpectly missing we will use the last valid price.
         let polyfillPrices = {}
         let stocksProcesed = []
-        console.log(this.generatedSeries, "WTFFF")
+        //console.log(this.generatedSeries, "WTFFF")
         const dateKeys = Object.keys(this.generatedSeries.dates)
         let isFirstDay = true
         dateKeys.forEach((date, index) => {
@@ -104,7 +103,7 @@ class Portfolio {
                     companiesPerformanceImpact[date] = []
                     let valueIncrement = 0
                     let lastDate = validDates[validDates.length - 1]
-                    console.log(lastDate, "luuust")
+                    //console.log(lastDate, "luuust")
                     let lastLiquidativeValue = masterSerie[lastDate].liquidativeValue
                     //calculate portfolioValue and costs
                     //calculate liquidative Value
@@ -152,7 +151,7 @@ class Portfolio {
             }
         })
         //console.log(companiesPerformanceImpact, "perfi")
-        console.log(masterSerie, "lo fucking tenemos")
+        //console.log(masterSerie, "lo fucking tenemos")
         return masterSerie
         
     }

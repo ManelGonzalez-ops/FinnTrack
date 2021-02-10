@@ -3,8 +3,8 @@ const { getUserByUsername, getPortfoliosByIds, proba } = require("../../db/servi
 
 const getTickerPrices = async (req, res) => {
     const possesions = req.body
-    console.log(possesions, "posesionses ostia")
-    console.log(req.body, "body")
+    //console.log(possesions, "posesionses ostia")
+    //console.log(req.body, "body")
     const { dates, missingTicker } = req.query
     let metadataArrPromise
 
@@ -15,7 +15,7 @@ const getTickerPrices = async (req, res) => {
     try {
         metadataArr = await Promise.all(metadataArrPromise)
         //console.log(metadataArr, "metadata")
-        console.log(metadataArr, "laametaaaadata")
+        //console.log(metadataArr, "laametaaaadata")
         if (!metadataArr.length) {
             return res.status(400).send("no metadata found")
         }
@@ -50,7 +50,7 @@ const getTickerPrices = async (req, res) => {
             //     console.log(pricesArrs, "error no result prices")
             //     return res.status(400).send("no prices found")
             // }
-            const priceInstance = new PriceService(possesions) 
+            const priceInstance = new PriceService(possesions, "puta2") 
             const pricesCollection = await priceInstance.init()
             res.status(200).send(pricesCollection)
         }
@@ -63,7 +63,7 @@ const getTickerPrices = async (req, res) => {
 
 const pruebaPort = (req, res) => {
     const possesions = req.body
-    const priceInstance = new PriceService(possesions)
+    const priceInstance = new PriceService(possesions, "puta1")
     priceInstance.init()
 }
 
@@ -79,8 +79,9 @@ class PriceService {
 
     usersPortfolioIds = []
 
-    constructor(posesions) {
-        this.possesions = posesions
+    constructor(possesions, koko) {
+        this.possesions = possesions
+        console.log(possesions, koko, "posesions classe iniciada")
     }
 
 
@@ -102,7 +103,7 @@ class PriceService {
             const mergedPrices = prices.map(item=>[...item])
             //console.log(JSON.stringify(prices, null, 2), "acabaaao")
             const mergedSeries = this.mergeSeries(mergedPrices)
-            console.log(mergedSeries, "acabaaao")
+            //console.log(mergedSeries, "acabaaao")
             return mergedSeries
         }
 
@@ -121,7 +122,7 @@ class PriceService {
 
 
     filterAssetType() {
-        console.log("dentruuu")
+        //console.log(this.possesions, "poosis")
         this.possesions.forEach(asset => {
             asset.assetType === "stock" ?
                 this.assets.stocks.push(asset)
@@ -131,18 +132,17 @@ class PriceService {
     }
 
     async getPortfoliosCotizacion() {
-        console.log("pero que mielda")
-        proba()
+       // console.log("pero que mielda")
         const usernames = this.assets.portfolioFunds.map(item => item.ticker)
-        console.log(usernames, "usernames")
+        //console.log(usernames, "usernames")
         try {
             const promiseUserArr = usernames.map(username => getUserByUsername(username))
             const usirs = await Promise.all(promiseUserArr)
-            console.log(usirs, "usuuuarios")
+            //console.log(usirs, "usuuuarios")
             const users = usirs.map(user => user[0])
             const promisePortfolioArr = users.map(user => this.getPortfolios(user.userId))
             const portfoliosArr = await Promise.all(promisePortfolioArr)
-            console.log(portfoliosArr, "portarrrrr")
+            //console.log(portfoliosArr, "portarrrrr")
             const portfoliosParsed = portfoliosArr
                 .map(item => item[0])
                 .map(item => {
@@ -212,15 +212,17 @@ class PriceService {
             })
             dataReady.push({[username]: pricePoints})
         })
-        console.log(dataReady, "lo teniim")
+       //console.log(dataReady, "lo teniim")
         return dataReady
     }
 
    async getMetadata() {
+      console.log(this.assets.stocks, "the stocks")
         const tickersArr = this.assets.stocks.map(item => fetcharM(item.ticker))
         try {
             const metadataArr = await Promise.all(tickersArr)
-            if (metadataArr.length) {
+            //console.log(metadataArr,metadataArr.length, "la pota metadata")
+            if (metadataArr.length > 0) {
                 this.metadata = metadataArr
                 return metadataArr
             } else {

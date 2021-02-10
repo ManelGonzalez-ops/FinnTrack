@@ -17,7 +17,7 @@ class PossesionsSeries {
         let valu
         userActivity.forEach(operation => {
             if (operation.isFirstOperation) {
-                console.log(operation.date)
+                //console.log(operation.date)
                 valu = convertHumanToUnixInit(operation.date)
             }
         })
@@ -27,10 +27,10 @@ class PossesionsSeries {
     getTotalDaysElapsed = (initialTime) => {
         //const initialTime = findFirstDate()
         const date = convertUnixToHuman(Date.now())
-        console.log(date, "duuuu")
+        //console.log(date, "duuuu")
         const todayUnix00 = convertHumanToUnixInit(date)
 
-        console.log(todayUnix00, "duuu2", initialTime)
+        //console.log(todayUnix00, "duuu2", initialTime)
         const totalMilisecons = todayUnix00 - initialTime
         if (totalMilisecons > 0) {
             return totalMilisecons / milisencondsInADay
@@ -47,8 +47,8 @@ class PossesionsSeries {
         //let initialTime = findFirstDate(state.userActivity)
         const range = this.getTotalDaysElapsed(initialTime)
         //let unixDate = initialTimeUnix.current
-        console.log(range, "raaango")
-        console.log(initialTime, "ostiatime")
+        //console.log(range, "raaango")
+        //console.log(initialTime, "ostiatime")
         Array.from(Array(range).keys()).forEach(_ => {
             lastDate += milisencondsInADay
             timelapse = [...timelapse, convertUnixToHuman(lastDate)]
@@ -327,7 +327,7 @@ class PossesionsSeries {
                     }
                 }
             })
-            console.log(masterHistory, "aveeer nena")
+            //console.log(masterHistory, "aveeer nena")
             resolve(masterHistory)
         })
     }
