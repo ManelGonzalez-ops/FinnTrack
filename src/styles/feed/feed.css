@@ -1,0 +1,65 @@
+.feed-wrapper {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  margin-bottom: 10px;
+}
+
+.feed-wrapper .tall-part {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.feed-wrapper .feed-main {
+  background-color: transparent;
+}
+
+.tall-part img {
+  height: 50px;
+  width: 50px;
+  border-radius: 100%;
+  margin-bottom: 5px;
+}
+
+.tall-part .line-wrapper {
+  height: 100%;
+  padding: 0 5px;
+}
+
+.tall-part .line-wrapper p.line {
+  height: 100%;
+  width: 5px;
+  background-color: #edeff1;
+}
+
+.tall-part .line-wrapper:hover .line {
+  background-color: orange;
+}
+
+.feed-main header.feed-header {
+  display: flex;
+}
+
+.feed-main .feed-body {
+  background-color: transparent;
+  margin-bottom: 10px;
+}
+
+.feed-main .feed-body .feed-footer {
+  display: flex;
+}
+
+.feed-main .feed-body .editor-wrapper {
+  padding-left: 10px;
+}
+
+.RichEditor-root {
+  background: #fff;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.RichEditor-root .RichEditor-editor {
+  padding: 15px;
+}

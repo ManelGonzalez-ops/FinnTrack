@@ -1,11 +1,9 @@
-const { reject } = require("core-js/fn/promise")
-const { resolve } = require("path")
-const { query } = require("./db")
+
 const db = require("./db")
 
 module.exports = {
     createUserTable: (cb) => {
-        db.query("create table if not exists users (userId int auto_increment,  firstName char(30) not null, lastName char(30) not null, email char(50) not null unique, primary key(userId))", err => {
+        db.query("create table if not exists users (userId int auto_increment,  firstName char(30) not null, lastName char(30) not null, email char(50) not null unique, username char(50) unique, primary key(userId))", err => {
             if (err) cb(err)
 
             cb(false)
@@ -13,11 +11,11 @@ module.exports = {
         })
     },
 
-    addNewUser: (user) =>
+    addNewUser: (user, username) =>
         new Promise((resolve, reject) => {
             const { firstName, lastName, email } = user.profile
-            db.query("insert into users (firstName , lastName, email) values (?,?,?)",
-                [firstName, lastName, email], err => {
+            db.query("insert into users (firstName , lastName, email, username) values (?,?,?)",
+                [firstName, lastName, email, username], err => {
                     if (err) {
                         reject(err)
                     }
@@ -26,7 +24,7 @@ module.exports = {
         }),
 
     createOperationTable: (cb) => {
-        db.query("create table if not exists operations (orderId int auto_increment, opdate date, operationtype char(30), ticker char(30), amount int, price int, isFirstOperation boolean, userId int, primary key (orderId), foreign key (userId) references users (userId))", err => {
+        db.query("create table if not exists operations (orderId int auto_increment, opdate date, operationtype char(30), ticker char(30), amount int, price int, isFirstOperation boolean, assetType char(20), userId int, primary key (orderId), foreign key (userId) references users (userId))", err => {
             if (err) {
                 cb(err)
             }
@@ -51,11 +49,24 @@ module.exports = {
                 })
         })
     },
+    findUserById: (id) => {
+        return new Promise((resolve, reject) => {
+            db.query("select * from users where userId = ?",
+                [id], (err, data) => {
+                    if (err) {
+                        console.log(err, "errur 1")
+                        reject(err)
+                    }
+                    resolve(data[0])
+                    console.log("success baby")
+                })
+        })
+    },
     addOperation: (operation, userId) => {
         return new Promise((resolve, reject) => {
-            const { operationType, date, ticker, amount, isFirstOperation, price } = operation
-            db.query("insert into operations (operationtype , opdate, ticker, amount, price, isFirstOperation, userId) values (?,?,?,?,?,?,?)",
-                [operationType, date, ticker, amount, price, isFirstOperation, userId], err => {
+            const { operationType, date, ticker, amount, isFirstOperation, price, assetType } = operation
+            db.query("insert into operations (operationtype, opdate, ticker, amount, price, isFirstOperation, assetType, userId) values (?,?,?,?,?,?,?,?)",
+                [operationType, date, ticker, amount, price, isFirstOperation, assetType, userId], err => {
                     if (err) {
                         reject(err)
                         console.log(err, "errur 2")
@@ -69,6 +80,17 @@ module.exports = {
     getOperations: (email) => {
         return new Promise((resolve, reject) => {
             db.query("SELECT * from operations where userId = (select userId from users where email = ?)", [email], (err, data) => {
+                if (err) {
+                    reject(err)
+                    console.log(err, "errur 3")
+                }
+                resolve(data)
+            })
+        })
+    },
+    getOperationsByUserId: (id) => {
+        return new Promise((resolve, reject) => {
+            db.query("SELECT * from operations where userId = ?", [id], (err, data) => {
                 if (err) {
                     reject(err)
                     console.log(err, "errur 3")
@@ -135,5 +157,132 @@ module.exports = {
             })
         })
 
+    },
+
+    getAllOperations: () => {
+        return new Promise((resolve, reject) => {
+            db.query("select * from operations", (err, data) => {
+                if (err) {
+                    reject(err)
+                }
+                resolve(data)
+            })
+        })
+    },
+    getAllUsers: () => {
+        return new Promise((resolve, reject) => {
+            db.query("select * from users", (err, data) => {
+                if (err) {
+                    reject(err)
+                }
+                resolve(data)
+            })
+        })
+    },
+    createPortfolioTable: () => {
+        return new Promise((resolve, reject) => {
+            db.query("create table if not exists portfolios (userId int, portfolio JSON, last_updated date, primary key (userId), foreign key (userId) references users (userId))", (err) => {
+                if (err) {
+                    reject(err)
+                }
+                resolve()
+            })
+        })
+    },
+    addPortfolioDB: (userId, portfolio, fecha) => {
+        return new Promise((resolve, reject) => {
+            db.query("insert into portfolios (userId, portfolio, last_updated) values ?", [userId, portfolio, fecha], (err) => {
+                if (err) {
+                    reject(err)
+                }
+                resolve()
+            })
+        })
+    },
+    //we have to update it everytime a user makes a new operation
+    updatePortfolioDB: (userId, portfolio, today) => {
+        //console.log(userId, portfolio, today, "que hostia")
+        return new Promise((resolve, reject) => {
+            db.query("update financeapp.portfolios set portfolio = ?, last_updated = ? where userId = ?", [JSON.stringify(portfolio), today, userId], (err) => {
+                if (err) {
+                    reject(err)
+                }
+                resolve()
+            })
+        })
+    },
+
+    getOutdatedPortfoliosDB: (today) => {
+        return new Promise((resolve, reject) => {
+            db.query("select * from portfolios where last_updated = ?", [today], (err, data) => {
+                if (err) {
+                    reject(err)
+                }
+                resolve(data)
+            })
+        })
+    },
+    getAllPortfoliosDB: () => {
+        return new Promise((resolve, reject) => {
+            db.query("select * from portfolios", (err, data) => {
+                if (err) {
+                    reject(err)
+                }
+                resolve(data)
+            })
+        })
+    },
+    portfolioExists: (userId) => {
+        return new Promise((resolve, reject) => {
+            db.query("select * from portfolios where userId = ?", [userId], (err, row) => {
+                if (err) {
+                    reject()
+                }
+                if (row && row.length) {
+                    resolve(true)
+                }
+                resolve(false)
+            })
+        })
+    },
+    getPortfoliosByIds: (ids) => {
+        console.log(ids, "el puto id")
+        return new Promise((resolve, reject) => {
+            db.query("select * from portfolios where userId = ?", [ids], (err, rows) => {
+                if (err) {
+                    reject(err)
+                }
+                if (!rows) {
+                    reject("no rows found")
+                }
+                resolve(rows)
+            })
+        })
+    },
+
+    proba: () => {
+        return new Promise((resolve, reject) => {
+            db.query("select * from portfolios", (err, rows) => {
+                if (err) {
+                    reject(err)
+                }
+                if (!rows || !rows.length) {
+                    reject("no rows found")
+                }
+                console.log(rows, "la data proba")
+            })
+        })
+    },
+    getUserByUsername: (usernames) => {
+        console.log(usernames)
+        return new Promise((resolve, reject) => {
+            db.query("select userId, username from users where username = ?", [usernames], (err, data) => {
+                if (err) {
+                    reject(err)
+                }
+                resolve(data)
+            })
+        })
     }
+
 }

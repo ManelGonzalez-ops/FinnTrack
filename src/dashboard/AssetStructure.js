@@ -15,16 +15,25 @@ export const AssetStructure = () => {
             console.log(state.portfolioHistoryByCompany)
             const stockHistory = state.portfolioHistoryByCompany[poss.ticker]
             console.log(stockHistory, "hastory")
-            const lastRegister = stockHistory[stockHistory.length - 1]
-            const lastRegisterClosePrice = lastRegister[2]
-            const marketVal = lastRegisterClosePrice * poss.amount
+            let marketVal;
+            if(stockHistory && stockHistory.length > 0){
+                const lastRegister = stockHistory[stockHistory.length - 1]
+                const lastRegisterClosePrice = lastRegister[2]
+                marketVal = lastRegisterClosePrice * poss.amount
+                
+            }else{
+                //here means that this is a new stock, and as we just update daily, the market value will be equal to its cost
+                const asset = state.currentPossesions.stocks. find(asset=>asset.ticker === poss.ticker)
+                marketVal = asset.amount * asset.unitaryCost
+            }
             totalMarketVal += marketVal
-            arrByCompany = [...arrByCompany,
-            {
-                ticker: poss.ticker,
-                marketVal
-            }]
+                arrByCompany = [...arrByCompany,
+                {
+                    ticker: poss.ticker,
+                    marketVal
+                }]
         })
+        console.log(arrByCompany, "elmarketall")
         return arrByCompany.map(item => {
             item["proportion"] = (item.marketVal / totalMarketVal) * 100
             return item

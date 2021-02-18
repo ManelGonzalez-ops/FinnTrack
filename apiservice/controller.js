@@ -1,6 +1,6 @@
 const fetch = require("node-fetch")
 const fs = require("fs")
-const { convertUnixToHuman } = require("./dateUtils")
+const { convertUnixToHuman } = require("./dataUtils")
 
 const fetcharS = async (search) => {
 
@@ -42,6 +42,7 @@ const fetcharN = async (search = null) => {
   })
   return await rawData.json()
 }
+
 const fetcharH = async (search, startDate, endDate, returnkey = false) => {
   console.log(search, startDate, endDate, "fechas")
   const rawData = await fetch(`https://api.tiingo.com/tiingo/daily/${search}/prices?startDate=${startDate}&endDate=${endDate}&token=7ca717775ec5e7e407b361a789d639ce27dc8224`, {

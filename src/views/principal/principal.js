@@ -28,11 +28,9 @@ export const Principal = ({ setSelection }) => {
             <>
                     <TickerBar2 />
                 <div style={{marginBottom: "200px"}}>
-                <GainersCarousel />
+                {/* <GainersCarousel /> */}
                 </div>
-                {/* <Searcher2/> */}
                 <Searcher4 setSelection={setSelection} />
-                {/* <Searcher setSelection={setSelection} /> */}
                 <div className="p-grid">
                     <div className="p-left radius">
                         <h3 style={titleStyles}>destacated News</h3>

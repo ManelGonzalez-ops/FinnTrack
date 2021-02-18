@@ -10,7 +10,7 @@ import { Paper } from '@material-ui/core';
 export const PerformanceStructure = () => {
     const [dataReady, setDataReady] = useState("")
     const { state, dispatch } = useDataLayer()
-    const { areHistoricPricesReady, areGeneratedSeriesReady, companiesChange } = state
+    const { areHistoricPricesReady, generatedSeries, companiesChange } = state
     const data1 = useRef([])
     const data2 = useRef([])
 
@@ -60,11 +60,11 @@ export const PerformanceStructure = () => {
             let change = 0
             //aqui deberiamos cojer solo las que tienen mayor % peso
             //ojo al generatedSeries que puede que no se haya creao aun
-            Object.keys(state.generatedSeries.dates).forEach(date => {
+            Object.keys(state.generatedSeries.data.dates).forEach(date => {
                 if (state.portfolioHistory[date] !== undefined) {
                     let unixDate = convertHumanToUnixInit(date)
                     Object.keys(state.portfolioHistory[date]).forEach(ticker => {
-                        const wasInPort = state.generatedSeries.dates[date].positions.find(item => ticker === item.ticker)
+                        const wasInPort = state.generatedSeries.data.dates[date].positions.find(item => ticker === item.ticker)
                         if (wasInPort) {
 
                             const { close } = state.portfolioHistory[date][ticker]
@@ -84,16 +84,18 @@ export const PerformanceStructure = () => {
                     })
                 }
             })
+            console.log(result, "compachnage")
             return result
         }
-        if (areHistoricPricesReady && areGeneratedSeriesReady) {
+        
+        if (areHistoricPricesReady && generatedSeries.ready) {
             const dataset = generateSeries()
             dispatch({type:"STORE_COMPANIES_CHANGE", payload: dataset})
             console.log(dataset, "reeeesullt")
             const _dataReady = prepareDataset(dataset)
             setDataReady(_dataReady)
         }
-    }, [areHistoricPricesReady, areGeneratedSeriesReady])
+    }, [areHistoricPricesReady, generatedSeries])
 
 
     const prepareDataset = (data) => {

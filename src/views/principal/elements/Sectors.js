@@ -14,7 +14,7 @@ export const Sectors = ({classnames}) => {
                 {loading && <p>loading...</p>}
                 {error && <p>{error}</p>}
                 {data.length > 0 && data.map(item =>
-                    <ListItem>
+                    <ListItem key={item.sector}>
                         <ListItemText>{item.sector}</ListItemText>
                         <ListItemText style={{ textAlign: "right" }}>{item.changesPercentage}</ListItemText>
                     </ListItem>)}

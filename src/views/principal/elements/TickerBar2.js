@@ -30,7 +30,7 @@ export const TickerBar2 = () => {
                     {({ index }) => (
                         <>{
                             data.map(item => (
-                                <span style={{ marginRight: "15px", whiteSpace: "nowrap" }}>{item.ticker} {item.price}
+                                <span key={item.ticker} style={{ marginRight: "15px", whiteSpace: "nowrap" }}>{item.ticker} {item.price}
                                     <span
                                         style={re.test(item.changes) ? { color: "red" } : { color: "green" }}
                                     >{item.changes} {item.changesPercentage}</span>

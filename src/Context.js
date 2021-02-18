@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useReducer } from 'react'
+import { getUnitaryCostMean } from './utils/financeCalculations'
 const Context = createContext()
 
 const checkLocalStorage = (field) => {
@@ -56,9 +57,10 @@ const initialState = {
     },
     // currentPossesions: checkLocalStorage("stockCurrentPossesions") || { tef: "", aapl: "", amzn: "" },
     generatedSeries: {
-        dates: {
-
-        }
+        data: {
+            dates: {}
+        },
+        ready: false
     }
     //acumulatedRendiments : ,
     ,
@@ -66,7 +68,8 @@ const initialState = {
     areGeneratedSeriesReady: false,
     setPruebaReady: false,
     stockLibrary: [],
-    missingTicker: ""
+    missingTicker: "",
+    following: []
 }
 
 const companyReducer = (state, action) => {
@@ -140,9 +143,9 @@ const companyReducer = (state, action) => {
                 ...state,
                 portfolioHistoryByCompany: action.payload
             }
+        //para que necesitamos esto si no lo
         case "STOCK_OPERATION":
             const { operationType, unitPrice } = action.payload
-            let balance = state.userCash - action.payload.cost
             let isFirstOperation = false
             if (state.userActivity.length === 0) {
                 isFirstOperation = true
@@ -152,7 +155,6 @@ const companyReducer = (state, action) => {
                 { priceSold: unitPrice }
             return {
                 ...state,
-                userCash: balance,
                 userActivity: [
                     ...state.userActivity,
                     {
@@ -188,7 +190,7 @@ const companyReducer = (state, action) => {
         case "ADD_PORTFOLIO_CURRENT_POSSESIONS":
             //OJO ESTE LO TENEMOS QUE QITAR
             //action.payload.cashNetOperation = 0
-            const { ticker, date } = action.payload
+            const { ticker, date, unitaryPrice, amount, assetType } = action.payload
             let newAmount;
             let updatedPosesions;
             const newCash = action.payload.operationType === "buy" ?
@@ -207,7 +209,12 @@ const companyReducer = (state, action) => {
                     updatedPosesions = state.currentPossesions.stocks.filter(asset => asset.ticker !== ticker)
                 } else {
                     updatedPosesions = state.currentPossesions.stocks.map(asset => {
-                        if (asset.ticker === ticker) asset.amount = newAmount
+                        if (asset.ticker === ticker) {
+                            asset.amount = newAmount
+                            if (action.payload.operationType === "buy") {
+                                asset.unitaryCost = getUnitaryCostMean(asset, amount, unitaryPrice)
+                            }
+                        }
                         return asset
                     })
                 }
@@ -218,14 +225,16 @@ const companyReducer = (state, action) => {
                     {
                         ticker,
                         amount: action.payload.amount,
-                        date
+                        date,
+                        unitaryCost: unitaryPrice,
+                        assetType
                     }
                 ]
 
                 return {
                     ...state,
                     currentPossesions: {
-                        ...state.stockCurrentPossesions,
+
                         userCash: newCash,
                         stocks: updatedPosesions
                     },
@@ -239,12 +248,11 @@ const companyReducer = (state, action) => {
             //         ...state.currentPossesions.stocks,
             //         { ticker, amount: newAmount }
             //     ]
-            
+
             //tenemos que eliminarlo si hemos vendido todas las acciones de un ticker
             return {
                 ...state,
                 currentPossesions: {
-                    ...state.stockCurrentPossesions,
                     userCash: newCash,
                     stocks: updatedPosesions
                 }
@@ -275,9 +283,21 @@ const companyReducer = (state, action) => {
         case "STORE_GENERATED_SERIES":
             return {
                 ...state,
-                generatedSeries: action.payload
+                generatedSeries: {
+                    data: action.payload,
+                    ready: true
+                }
             }
-        case "STORE_GENERATED_READY_SERIES":
+        case "RESTART_GENERATED_SERIES":
+            //we could just add new to existing, but lets simplify logic
+            return {
+                ...state,
+                generatedSeries: {
+                    data: "",
+                    ready: false
+                }
+            }
+        case "STORE_PORTFOLIO_SERIES":
             return {
                 ...state,
                 portfolioSeries: action.payload
@@ -286,11 +306,6 @@ const companyReducer = (state, action) => {
             return {
                 ...state,
                 areHistoricPricesReady: action.payload
-            }
-        case "SET_ARE_GENERATED_SERIES_READY":
-            return {
-                ...state,
-                areGeneratedSeriesReady: action.payload
             }
         case "ENABLE":
             console.log("eeenaaaabled")
@@ -310,16 +325,23 @@ const companyReducer = (state, action) => {
                 ...state,
                 companiesImpact: action.payload
             }
-            //ojo esto es formato gráfica
-        case "STORE_COMPANIES_CHANGE": 
+        //ojo esto es formato gráfica
+        case "STORE_COMPANIES_CHANGE":
             return {
                 ...state,
                 companiesChange: action.payload
+            }
+
+        case "STORE_USER_INTEREST":
+            return {
+                ...state,
+                following: action.payload
             }
         default:
             return state
     }
 }
+
 export const ContextProvider = ({ children }) => {
 
     const [state, dispatch] = useReducer(companyReducer, initialState)

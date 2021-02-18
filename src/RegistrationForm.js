@@ -6,6 +6,7 @@ import {useHistory} from "react-router-dom"
 const RegisterForm = () => {
     const { authService } = useOktaAuth();
     const [sessionToken, setSessionToken] = useState();
+    const [userName, setUserName] = useState();
     const [firstName, setFirstName] = useState();
     const [lastName, setLastName] = useState();
     const [email, setEmail] = useState();
@@ -20,7 +21,7 @@ const history = useHistory()
                 'Content-Type': 'application/json'
             },
             method: "POST",
-            body: JSON.stringify({ firstName, lastName, password, email, sessionToken: null })
+            body: JSON.stringify({userName, firstName, lastName, password, email, sessionToken: null })
         }).then(res => {
             console.log(res, "guuuuuu")
             const oktaAuth = new OktaAuth({
@@ -63,6 +64,13 @@ const history = useHistory()
                 //callback={responseFacebook} 
                 />
             <form onSubmit={handleSubmit}>
+                <label>
+                    username:
+        <input
+                        id="username" type="text"
+                        value={userName}
+                        onChange={(e) => { setUserName(e.target.value) }} />
+                </label>
                 <label>
                     FirstName:
         <input

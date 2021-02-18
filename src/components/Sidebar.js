@@ -136,13 +136,18 @@ export const Sidebar = ({ handleDrawerClose, handleDrawerOpen, expanded, handleS
         defaultEndIcon={<div style={{ width: 24 }} />}
         expanded={expanded}
         selected={selected}
-        onClick={handleDrawerOpen}
+        onMouseEnter={handleDrawerOpen}
+        onMouseLeave={handleDrawerClose}
         onNodeToggle={handleSidebarToggle}
         onNodeSelect={handleSelect}
       >
         <StyledTreeItem nodeId="13" labelText="Search" labelIcon={SearchIcon} isTitle
           ariaLabel="search"
           onLabelClick={() => { history.push("/") }}
+        />
+        <StyledTreeItem nodeId="14" labelText="People" labelIcon={SearchIcon} isTitle
+          ariaLabel="People"
+          onLabelClick={() => { history.push("/people") }}
         />
         <StyledTreeItem nodeId="1" labelText="Indexes" labelIcon={MailIcon} isTitle
 

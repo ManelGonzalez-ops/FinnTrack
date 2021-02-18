@@ -25,6 +25,7 @@ export const Overlay = () => {
                 in={showOverlay}
                 mountOnEnter
                 unmountOnExit
+                timeout={300}
             >
                 {state => (
                     <div
