@@ -99,7 +99,9 @@ class Logic {
 
     handleOutdatedPotfolios = async () => {
         for (let row of this.outdatedPortfolios) {
+            console.log(this.operations, "operi")
             const userOps = this.operations.filter(op => op.userId === row.userId)
+            console.log(userOps, "luser")
             if(userOps.length){
                 console.log(row.userId, "el puto user")
                 //if user has operations we generate portfolio

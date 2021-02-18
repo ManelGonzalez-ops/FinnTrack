@@ -55,17 +55,18 @@ export const CompanySection = React.forwardRef((props, ref) => {
             </Paper>
             <Paper
               className="stock-shop">
-                <CurrentPriceRP ticker={ticker}>
-                  {({currentPrice, loading, error})=>{
-                   return <StockShop {...{currentPrice, loading, error}}
+              <CurrentPriceRP ticker={ticker}>
+                {({ currentPrice, loading, error }) => {
+                  return <StockShop {...{ currentPrice, loading, error }}
                     ticker={ticker}
-                    />
-                  }}
-                </CurrentPriceRP>
+                    assetType="stock"
+                  />
+                }}
+              </CurrentPriceRP>
             </Paper>
             <Paper
               className={clasi ? "general overflown" : "general"}
-              style={clasi ? { height: `${listHeight + 30}px` } : {height: "100%"}}
+              style={clasi ? { height: `${listHeight + 30}px` } : { height: "100%" }}
               ref={keyMetricsRef}
             >
               <button onClick={() => { setClasi(prev => !prev) }}>change view</button>

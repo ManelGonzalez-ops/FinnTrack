@@ -68,7 +68,8 @@ const initialState = {
     areGeneratedSeriesReady: false,
     setPruebaReady: false,
     stockLibrary: [],
-    missingTicker: ""
+    missingTicker: "",
+    following: []
 }
 
 const companyReducer = (state, action) => {
@@ -233,7 +234,7 @@ const companyReducer = (state, action) => {
                 return {
                     ...state,
                     currentPossesions: {
-                        
+
                         userCash: newCash,
                         stocks: updatedPosesions
                     },
@@ -329,6 +330,12 @@ const companyReducer = (state, action) => {
             return {
                 ...state,
                 companiesChange: action.payload
+            }
+
+        case "STORE_USER_INTEREST":
+            return {
+                ...state,
+                following: action.payload
             }
         default:
             return state

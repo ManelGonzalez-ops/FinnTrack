@@ -3,7 +3,7 @@ const { getUserByUsername, getPortfoliosByIds, proba } = require("../../db/servi
 
 const getTickerPrices = async (req, res) => {
     const possesions = req.body
-    //console.log(possesions, "posesionses ostia")
+    console.log(possesions, "posesionses ostia")
     //console.log(req.body, "body")
     const { dates, missingTicker } = req.query
     let metadataArrPromise
@@ -121,8 +121,9 @@ class PriceService {
     } 
 
 
+
     filterAssetType() {
-        //console.log(this.possesions, "poosis")
+        console.log(this.possesions, "poosis")
         this.possesions.forEach(asset => {
             asset.assetType === "stock" ?
                 this.assets.stocks.push(asset)
@@ -142,7 +143,7 @@ class PriceService {
             const users = usirs.map(user => user[0])
             const promisePortfolioArr = users.map(user => this.getPortfolios(user.userId))
             const portfoliosArr = await Promise.all(promisePortfolioArr)
-            //console.log(portfoliosArr, "portarrrrr")
+            console.log(portfoliosArr, "portarrrrr")
             const portfoliosParsed = portfoliosArr
                 .map(item => item[0])
                 .map(item => {
@@ -183,8 +184,9 @@ class PriceService {
     }
 
     async getPortfolios(userIds) {
+        console.log(userIds, "iduser")
         const portfoliosArr = await getPortfoliosByIds(userIds)
-        //console.log(portfoliosArr, "que conxiiiiiii")
+        console.log(portfoliosArr, "que conxiiiiiii")
         return portfoliosArr
     }
 
@@ -245,7 +247,7 @@ class PriceService {
                 const startDate = this.assets.stocks.find(asset =>
                     asset.ticker.toUpperCase() === item.ticker.toUpperCase()
                 ).date
-
+                    console.log(startDate, "fecha inicio")
                 return fetcharH(item.ticker, startDate, item.endDate, true)
             }
             )

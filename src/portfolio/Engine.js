@@ -15,7 +15,7 @@ export const useEngine = () => {
     useLogicPruebas()
 
     const { state, dispatch } = useDataLayer()
-    const {missingTicker} = state
+    const { missingTicker } = state
     const { stocks } = state.currentPossesions
 
     //WHAT if we don't have any ticker yet?
@@ -114,59 +114,30 @@ export const useEngine = () => {
     // }
 
     const prepareData = (arr, cb) => {
-        let portfolioHistoryByDate = {}
-        let cleanPriceHistoryByCompanies = {};
-        console.log(arr, "tumuela")
-        arr.forEach(company => {
-            //we take the unique key which is the ticker
-            console.log(company, "webos")
-            const ticker = Object.keys(company)[0]
-            if (company[ticker].length > 0) {
-                console.log(company[ticker, "pooouto"])
-                company[ticker].forEach(register => {
-                    const isDateFormated = register.date.split("").find(char => char === "T")
-                    let date = isDateFormated ?
-                        register.date.split("T")[0]
-                        :
-                        register.date
+        
+        console.log(arr, "la arrey")
+        const worker = new Worker("worker.js")
+        worker.postMessage(arr)
+        worker.onmessage = e => {
+            const { portfolioHistoryByDate, portfolioHistoryByCompanies } = e.data
+            console.log(portfolioHistoryByDate, portfolioHistoryByCompanies, "errr work")
+            dispatch({ type: "STORE_PORTFOLIO_HISTORY_BY_COMPANY_CHART_READY", payload: portfolioHistoryByCompanies })
+            dispatch({ type: "STORE_PORTFOLIO_HISTORY_BY_DATE", payload: portfolioHistoryByDate })
+            cb()
+            console.log(portfolioHistoryByCompanies, "ku pusu")
 
-                    portfolioHistoryByDate[date] = {
-                        ...portfolioHistoryByDate[date],
-                        //aqui podriamos poner close high y todos
-                        [ticker]: {
-                            close: register.close
-                        }
-                    }
-                })
-            }
-        })
-        arr.forEach(({ ...company }) => {
-            const ticker = Object.keys(company)[0]
-            console.log(ticker, "weba")
-            const companyHistory = company[ticker].map(register => {
-                const date = register.date.split("T")[0]
-                return (
-                    [convertHumanToUnixInit(date),
-                    register["adjClose"],
-                    register["adjHigh"],
-                    register["adjLow"],
-                    register["adjOpen"]])
-            })
-            cleanPriceHistoryByCompanies[ticker] = companyHistory
-        })
-        console.log(cleanPriceHistoryByCompanies, "pooota")
-        dispatch({ type: "STORE_PORTFOLIO_HISTORY_BY_COMPANY_CHART_READY", payload: cleanPriceHistoryByCompanies })
-        console.log(cleanPriceHistoryByCompanies, "ku pusu")
-
-        console.log(arr, "averaaaa")
-        console.log(portfolioHistoryByDate, "master")
-        dispatch({ type: "STORE_PORTFOLIO_HISTORY_BY_DATE", payload: portfolioHistoryByDate })
-        cb()
+            console.log(arr, "averaaaa")
+            console.log(portfolioHistoryByDate, "master")
+        }
     }
 
     const __init = async () => {
         //get price data of the user possesions
+        console.log(stocks.length, "tokkee")
+        if (!stocks.length) return
         const initialData = await getPricesHistory()
+        console.log(initialData, "initialprices")
+         //ojo aquí el type que obtemenos de la initialData, 
         prepareData(initialData, () => {
             dispatch({ type: "SET_ARE_HISTORIC_PRICES_READY", payload: true })
         })
@@ -197,7 +168,7 @@ export const useEngine = () => {
     //         }
     //         asyncWrapper()
     //     }
-   
+
     // }, [missingTicker])
 
 

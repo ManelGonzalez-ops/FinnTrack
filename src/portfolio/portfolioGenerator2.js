@@ -6,9 +6,9 @@ import { convertUnixToHuman } from '../utils/datesUtils'
 export const usePortfolioGenerator = () => {
 
     const { state, dispatch } = useDataLayer()
-    const {portfolioHistory, generatedSeries, areHistoricPricesReady} = state
+    const { portfolioHistory, generatedSeries, areHistoricPricesReady } = state
     const userRefreshed = useRef(true)
-    const {userState: {info}} = useUserLayer()
+    const { userState: { info } } = useUserLayer()
     const validDates = useRef([])
     const polyfillPrices = useRef({})
     //option 1 : save masterSerie as a object
@@ -83,9 +83,9 @@ export const usePortfolioGenerator = () => {
     //     cb(seriesStep2Copy)
     // }
 
-    const getLastPrice =(lastDate, asset)=>{
+    const getLastPrice = (lastDate, asset) => {
         const theresLastPrice = portfolioHistory[lastDate][asset.ticker.toUpperCase()]
-        if(theresLastPrice){
+        if (theresLastPrice) {
             return portfolioHistory[lastDate][asset.ticker.toUpperCase()].close
         }
         return polyfillPrices.current[asset.ticker]
@@ -93,8 +93,8 @@ export const usePortfolioGenerator = () => {
 
     const calculadorMedia = (asset, stockPrice, date, lastDate, portfolioValue) => {
 
-        console.log(asset.amount, asset.price, portfolioValue, date, lastDate, asset.ticker, "rururu")
-        console.log(portfolioHistory, "historria")
+        //console.log(asset.amount, asset.price, portfolioValue, date, lastDate, asset.ticker, "rururu")
+        //console.log(portfolioHistory, "historria")
         const relativeSize = (asset.amount * stockPrice) / portfolioValue
         const lastPrice = getLastPrice(lastDate, asset)
         const change = (stockPrice - lastPrice) / lastPrice
@@ -130,6 +130,19 @@ export const usePortfolioGenerator = () => {
         }
     }
     const generateSerie = (cb) => {
+        const worker = new Worker("worker3.js")
+        worker.postMessage({ _portfolioHistory: portfolioHistory, _generatedSeries: generatedSeries })
+        worker.onmessage = e => {
+            const { portfolioSeries, companiesPerformanceImpact } = e.data
+            console.log(portfolioSeries, companiesPerformanceImpact, "portfolioSeries")
+            console.log("cooooommmmmmmme")
+            dispatch({ type: "STORE_IMPACT_BY_COMPANY", payload: companiesPerformanceImpact })
+            if(portfolioSeries){
+                cb(portfolioSeries)
+            }
+        }
+    }
+    const generateSeri = (cb) => {
         let masterSerie = {}
         let liquidativeInitial = 1000
         let accruedIncome = 0
@@ -177,7 +190,7 @@ export const usePortfolioGenerator = () => {
                     companiesPerformanceImpact[date] = []
                     let valueIncrement = 0
                     let lastDate = validDates.current[validDates.current.length - 1]
-                    console.log(lastDate, "luuust")
+                    //console.log(lastDate, "luuust")
                     let lastLiquidativeValue = masterSerie[lastDate].liquidativeValue
                     //calculate portfolioValue and costs
                     //calculate liquidative Value
@@ -201,7 +214,7 @@ export const usePortfolioGenerator = () => {
                         //     stockClosePrice = getLastValidPrice(asset.ticker.toUpperCase())
                         // }
                         const aportacion = isFirstRecord ? 0 : calculadorMedia(asset, stockClosePrice, date, lastDate, portfolioValue)
-                        console.log(aportacion, "jojo")
+                        //console.log(aportacion, "jojo")
                         valueIncrement += aportacion
                         addRelativePerformance(companiesPerformanceImpact, date, aportacion, asset)
 
@@ -232,23 +245,24 @@ export const usePortfolioGenerator = () => {
 
     console.log(generatedSeries, "muuu")
 
-    const storePortfolioDB =(portfolio)=>{
+    const storePortfolioDB = (portfolio) => {
         fetch("http://localhost:8001/api/v1/operations/update", {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({email: info.email, portfolio})
+            body: JSON.stringify({ email: info.email, portfolio })
             ,
             method: "POST"
         })
-        .then(res=>res.json())
-        .catch(err=>{throw err.message})
+            .then(res => res.json())
+            .catch(err => { throw err.message })
     }
 
     useEffect(() => {
         console.log(areHistoricPricesReady, "que cohone")
         if (areHistoricPricesReady && generatedSeries.ready) {
             generateSerie((result) => {
+                
                 dispatch({ type: "STORE_PORTFOLIO_SERIES", payload: result })
                 storePortfolioDB(result)
             })

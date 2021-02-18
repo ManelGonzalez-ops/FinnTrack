@@ -21,6 +21,7 @@ const makePortfolio = async (req, res) => {
     try {
         const logicInstance = new Logic()
         const peopleCollection = await logicInstance.initAll()
+        console.log(peopleCollection, "q cohone")
         res.status(200).send(peopleCollection)
     }
     catch (err) {

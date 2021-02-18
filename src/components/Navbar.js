@@ -16,6 +16,7 @@ import { useMesure } from "../utils/useMesure";
 import { Transition } from "react-transition-group";
 import { formatter } from "../utils/numFormatter";
 import { useOktaAuth } from '@okta/okta-react';
+import { CompanyNav } from "./subNavigations/CompanyNav";
 
 const drawerWidth = 240;
 
@@ -47,38 +48,17 @@ const useStyles = makeStyles((theme) => ({
   hide: {
     display: 'none',
   },
-  appBarCompany: {
-    flexDirection: "row",
-    alignItems: "center",
-    transition: theme.transitions.create(["top", "transform"], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    transform: "translateX(0px)",
-  },
-  appBarCompanyShift: {
-    transform: `translateX(${drawerWidth}px)`
-  },
-  tab: {
-    marginLeft: "60px",
-
-  },
-  white: {
-    borderColor: "white"
-  }
-
 }));
 
 export const Navbar = ({ handleDrawerOpen }) => {
   const { authState, authService } = useOktaAuth();
-  const [tabValue, setTabValue] = React.useState(0);
-  const topNavigation = useRef(null)
   const history = useHistory()
   const { state } = useDataLayer()
-  const { sidebarOpen, setMountApproval } = useUILayer()
+  const { sidebarOpen } = useUILayer()
   const location = useLocation()
+  const topNavigation = useRef(null)
   const [menuCompaniesOpen, setMenuCompaniesOpen] = useState(false)
-  const theme = useTheme()
+
   useEffect(() => {
     const masterRoute = location.pathname.split("/").filter(item => item !== "")
     console.log(masterRoute[0], "first pathname query")
@@ -93,38 +73,15 @@ export const Navbar = ({ handleDrawerOpen }) => {
   }, [location])
 
   console.log(location, "locationnnnnn")
-  const { height } = useMesure(topNavigation)
 
-  const classes = useStyles({ height });
-  function a11yProps(index) {
-    return {
-      id: `simple-tab-${index}`,
-      'aria-controls': `simple-tabpanel-${index}`,
-    };
-  }
 
-  const handleChange = (e, val) => {
-    setTabValue(val)
-  }
+  const classes = useStyles();
 
-  const menu2transitions = {
-    entering: {
-      top: `${height}px`,
-    },
-    entered: {
-      top: `${height}px`,
-    },
-    exiting: {
-      top: "0px",
-    },
-    exited: {
-      top: "0px"
-    }
-  }
+
 
   const button = authState.isAuthenticated ?
-  <button onClick={() => { authService.logout() }}>Logout</button> :
-  <button onClick={() => { history.push('/login') }}>Login</button>;
+    <button onClick={() => { authService.logout() }}>Logout</button> :
+    <button onClick={() => { history.push('/login') }}>Login</button>;
 
   return (
     <div>
@@ -169,35 +126,7 @@ export const Navbar = ({ handleDrawerOpen }) => {
           </div>
         </Toolbar>
       </AppBar>
-      <Transition
-        in={menuCompaniesOpen}
-        // mountOnEnter
-        // unmountOnExit
-        onExited={() => { setMountApproval(true) }}
-      >
-        {animationState => (
-          <AppBar
-            className={clsx(classes.appBarCompany, {
-              [classes.appBarCompanyShift]: sidebarOpen
-            })}
-            style={menu2transitions[animationState]}
-          >
-            <Tabs value={tabValue} onChange={handleChange} aria-label="simple tabs example"
-              classes={{ root: classes.tab }}
-            >
-              <Tab label="Overview" {...a11yProps(0)} onClick={() => { history.push(`/companies/overview/${state.currentCompany.ticker}`) }} />
-              <Tab label="Financials" {...a11yProps(1)} onClick={() => { history.push(`/companies/financials/${state.currentCompany.ticker}`) }} />
-              <Tab label="Key metrics" {...a11yProps(2)} onClick={() => { history.push(`/companies/keymetrics/${state.currentCompany.ticker}`) }} />
-              <Tab label="News" {...a11yProps(2)} onClick={() => { history.push(`/news/${state.currentCompany.ticker}`) }} />
-            </Tabs>
-            <Chip label="not owned" size="small" variant="outlined" style={{ color: "white" }}
-              classes={{
-                outlined: classes.white
-              }}
-            />
-          </AppBar>
-        )}
-      </Transition>
+      <CompanyNav {...{menuCompaniesOpen, topNavigation}} />
     </div>
   );
 };

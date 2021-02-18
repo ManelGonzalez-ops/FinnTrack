@@ -17,7 +17,7 @@ const findFirstDate = (userActivity) => {
     let valu
     userActivity.forEach(operation => {
         if (operation.isFirstOperation) {
-            console.log(operation.date)
+           // console.log(operation.date)
             valu = convertHumanToUnixInit(operation.date)
         }
     })
@@ -29,10 +29,10 @@ const findFirstDate = (userActivity) => {
 const getTotalDaysElapsed = (initialTime) => {
     //const initialTime = findFirstDate()
     const date = convertUnixToHuman(Date.now())
-    console.log(date, "duuuu")
+    //console.log(date, "duuuu")
     const todayUnix00 = convertHumanToUnixInit(date)
 
-    console.log(todayUnix00,"duuu2", initialTime)
+    //console.log(todayUnix00,"duuu2", initialTime)
     const totalMilisecons = todayUnix00 - initialTime
     if (totalMilisecons > 0) {
         return totalMilisecons / milisencondsInADay
@@ -55,8 +55,8 @@ export const useLogicPruebas = () => {
         //let initialTime = findFirstDate(state.userActivity)
         const range = getTotalDaysElapsed(initialTime)
         //let unixDate = initialTimeUnix.current
-        console.log(range, "raaango")
-        console.log(initialTime, "ostiatime")
+        //console.log(range, "raaango")
+        //console.log(initialTime, "ostiatime")
         Array.from(Array(range).keys()).forEach(_ => {
             lastDate += milisencondsInADay
             timelapse = [...timelapse, convertUnixToHuman(lastDate)]
@@ -183,12 +183,21 @@ export const useLogicPruebas = () => {
     //     cb(updatedSeries)
     // }
 
-    const generateSerieFromBegining = (userActivity, cb) => {
+    const generateSerieFromBegining = (userActivity, cb) =>{
+        const worker = new Worker("worker2.js")
+        worker.postMessage(userActivity)
+        worker.onmessage=(e)=>{
+            console.log(e.data, "posesions generated")
+            const possesionGenerated = e.data
+            cb(possesionGenerated)
+        }
+    }
+    const generateSerieFromBeginin = (userActivity, cb) => {
  
-        console.log(userActivity, "actividad usuario")
+       // console.log(userActivity, "actividad usuario")
         const initialTime = findFirstDate(userActivity)
-        console.log(initialTime, "tiempooo")
-        console.log(convertUnixToHuman(initialTime), "crazyy")
+       // console.log(initialTime, "tiempooo")
+        //console.log(convertUnixToHuman(initialTime), "crazyy")
         const timelapse = createTimelaspse(initialTime)
        
         let masterHistory;
@@ -196,7 +205,7 @@ export const useLogicPruebas = () => {
         masterHistory = {
             income: 0
         }
-        console.log(timelapse, "timelapse")
+        //console.log(timelapse, "timelapse")
         if (!timelapse.length) {
             masterHistory = {
                 ...masterHistory,
@@ -220,12 +229,12 @@ export const useLogicPruebas = () => {
         timelapse.forEach((date, index) => {
             let hasMadeOperationThatDate = false
             userActivity.forEach(operation => {
-                console.log(typeof operation.date,typeof date,date, "kostia")
-                console.log(operation.date, date, "kostia")
+                //console.log(typeof operation.date,typeof date,date, "kostia")
+                //console.log(operation.date, date, "kostia")
                 if (date === operation.date) {
-                    console.log(index, "iiii")
-                    console.log("hola")
-                    console.log(date, "first date")
+                    //console.log(index, "iiii")
+                    //console.log("hola")
+                    //console.log(date, "first date")
                     hasMadeOperationThatDate = true
                     let ticker = operation.details.ticker
                     let amount = operation.details.amount
@@ -234,10 +243,10 @@ export const useLogicPruebas = () => {
 
                     //tenemos que comprobar si teniamos alguna cantidad previamente de ese ticker
                     let lastAmount = 0
-                    console.log(JSON.parse(JSON.stringify(masterHistory)), JSON.parse(JSON.stringify(masterHistory.dates)), masterHistory.dates[date], date, "wata")
+                    //console.log(JSON.parse(JSON.stringify(masterHistory)), JSON.parse(JSON.stringify(masterHistory.dates)), masterHistory.dates[date], date, "wata")
                     const hasAlreadyOperatedThatDay = masterHistory["dates"][date].positions
                     if (hasAlreadyOperatedThatDay) {
-                        console.log(ticker, "operated twice that day")
+                        //console.log(ticker, "operated twice that day")
                         const alreadyInPortfolio = masterHistory.dates[date].positions.find(item => item.ticker === ticker)
                         if (alreadyInPortfolio) {
                             lastAmount = alreadyInPortfolio.amount
@@ -276,12 +285,12 @@ export const useLogicPruebas = () => {
                                 masterHistory.dates[date].positions.forEach(posesions => {
                                     if (posesions.ticker === ticker) {
                                         if (index === 0) {
-                                            console.log(posesions.unitaryCost,
-                                                amount, priceSold, "incomeee")
+                                           // console.log(posesions.unitaryCost,
+                                             //   amount, priceSold, "incomeee")
                                         }
                                         const { income } = handleSell(posesions.unitaryCost, amount, priceSold)
                                         if (index === 0) {
-                                            console.log(JSON.parse(JSON.stringify(income, "incomeee")))
+                                            //console.log(JSON.parse(JSON.stringify(income, "incomeee")))
                                         }
                                         operationIncome = income
 
@@ -336,7 +345,7 @@ export const useLogicPruebas = () => {
                     //if is the first iteration we now this is the initial operation so there're weren stocks before.
                     else {
                         const alreadyInPortfolio = index === 0 ? false : masterHistory.dates[timelapse[index - 1]].positions.find(item => item.ticker === ticker)
-                        console.log(alreadyInPortfolio, "que concho")
+                       // console.log(alreadyInPortfolio, "que concho")
                         if (alreadyInPortfolio) {
                             lastAmount = alreadyInPortfolio.amount
                             const newAmount =
@@ -344,7 +353,7 @@ export const useLogicPruebas = () => {
                                     lastAmount + amount : lastAmount - amount
                             if (operation.operationType === "buy") {
                                 const updatedInfo = masterHistory.dates[timelapse[index - 1]].positions.map(({ ...posesions }) => {
-                                    console.log(posesions, "cojones")
+                         //           console.log(posesions, "cojones")
                                     if (posesions.ticker === ticker) {
                                         posesions.amount = newAmount
                                         const unitaryCostMean =
@@ -415,7 +424,7 @@ export const useLogicPruebas = () => {
                             }
 
                             if (index === 0) {
-                                console.log(info, "info")
+                                //console.log(info, "info")
                                 //aunque sea el primer dia
                                 masterHistory = {
                                     ...masterHistory,
@@ -449,16 +458,16 @@ export const useLogicPruebas = () => {
                         }
                     }
                 }else{
-                    console.log("noooooooooo")
+                   // console.log("noooooooooo")
                 }
             })
             if (!hasMadeOperationThatDate) {
                 //si no hemos operado copiaremos el contenido del dia anterior
                 //console.log("no operation that day")
                 koko++
-                console.log(koko, "recuento")
+                //console.log(koko, "recuento")
                 const lastInfo = masterHistory.dates[timelapse[index - 1]]
-                console.log(lastInfo)
+                //console.log(lastInfo)
                 masterHistory = {
                     ...masterHistory,
                     dates: {

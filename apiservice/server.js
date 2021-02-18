@@ -13,7 +13,12 @@ const { convertUnixToHuman } = require("./dataUtils")
 const peopleRoutes = require("./routes/Personas.js")
 const operationRoutes = require("./routes/Operations.js")
 const pricesRoutes = require("./routes/Prices.js")
+const validationRoutes = require("./routes/Validation")
+const usersRoutes = require("./routes/Users")
+const postsRoutes = require("./routes/Posts")
 const db = require("../db/db")
+const { createInterestTable } = require("../db/services/interestsService")
+const { createPostRegister, createPostStructure } = require("../db/services/PostServices")
 
 createUserTable((err) => {
     console.log("que concha")
@@ -39,7 +44,25 @@ createCompaniesJsonTable((err) => {
         console.log(err, "error al crear usuarios")
     }
 })
-createPortfolioTable((err)=>{
+createPortfolioTable((err) => {
+    console.log("que conchu")
+    if (err) {
+        console.log(err, "error al crear portfolios")
+    }
+})
+createInterestTable((err) => {
+    console.log("que conchu")
+    if (err) {
+        console.log(err, "error al crear portfolios")
+    }
+})
+createPostRegister((err) => {
+    console.log("que conchu")
+    if (err) {
+        console.log(err, "error al crear portfolios")
+    }
+})
+createPostStructure((err) => {
     console.log("que conchu")
     if (err) {
         console.log(err, "error al crear portfolios")
@@ -53,7 +76,7 @@ createPortfolioTable((err)=>{
 app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
-  extended: true
+    extended: true
 }));
 //añadidos al hacer lo del okta
 app.use(express.urlencoded({ extended: false }));
@@ -65,6 +88,9 @@ app.use("/api/v1/people", peopleRoutes)
 app.use("/api/v1/operations", operationRoutes)
 //the url has to change to prices, is better name
 app.use("/api/v1/prices", pricesRoutes)
+app.use("/api/v1/validation", validationRoutes)
+app.use("/api/v1/users", usersRoutes)
+app.use("/api/v1/posts", postsRoutes)
 
 
 app.get("/", (req, res) => {
@@ -72,336 +98,336 @@ app.get("/", (req, res) => {
 })
 
 const dataExample = {
-	"2020-11-18": {
-		"portfolioCost": 928,
-		"portfolioValue": 915.84,
-		"accruedIncome": 0,
-		"liquidativeValue": 1000
-	},
-	"2020-11-19": {
-		"portfolioCost": 928,
-		"portfolioValue": 904.96,
-		"accruedIncome": 0,
-		"liquidativeValue": 1000
-	},
-	"2020-11-20": {
-		"portfolioCost": 928,
-		"portfolioValue": 906.24,
-		"accruedIncome": 0,
-		"liquidativeValue": 1001.4144271570013
-	},
-	"2020-11-23": {
-		"portfolioCost": 928,
-		"portfolioValue": 915.84,
-		"accruedIncome": 0,
-		"liquidativeValue": 1012.022630834512
-	},
-	"2020-11-24": {
-		"portfolioCost": 928,
-		"portfolioValue": 935.36,
-		"accruedIncome": 0,
-		"liquidativeValue": 1033.5926449787837
-	},
-	"2020-11-25": {
-		"portfolioCost": 928,
-		"portfolioValue": 927.68,
-		"accruedIncome": 0,
-		"liquidativeValue": 1025.1060820367752
-	},
-	"2020-11-27": {
-		"portfolioCost": 928,
-		"portfolioValue": 928.96,
-		"accruedIncome": 0,
-		"liquidativeValue": 1026.5205091937767
-	},
-	"2020-11-30": {
-		"portfolioCost": 928,
-		"portfolioValue": 920,
-		"accruedIncome": 0,
-		"liquidativeValue": 1016.6195190947667
-	},
-	"2020-12-01": {
-		"portfolioCost": 928,
-		"portfolioValue": 923.84,
-		"accruedIncome": 0,
-		"liquidativeValue": 1020.8628005657711
-	},
-	"2020-12-02": {
-		"portfolioCost": 928,
-		"portfolioValue": 930.88,
-		"accruedIncome": 0,
-		"liquidativeValue": 1028.642149929279
-	},
-	"2020-12-03": {
-		"portfolioCost": 928,
-		"portfolioValue": 935.36,
-		"accruedIncome": 0,
-		"liquidativeValue": 1033.592644978784
-	},
-	"2020-12-04": {
-		"portfolioCost": 928,
-		"portfolioValue": 945.28,
-		"accruedIncome": 0,
-		"liquidativeValue": 1044.5544554455448
-	},
-	"2020-12-07": {
-		"portfolioCost": 928,
-		"portfolioValue": 948.48,
-		"accruedIncome": 0,
-		"liquidativeValue": 1048.0905233380486
-	},
-	"2020-12-08": {
-		"portfolioCost": 928,
-		"portfolioValue": 985.92,
-		"accruedIncome": 0,
-		"liquidativeValue": 1089.46251768034
-	},
-	"2020-12-09": {
-		"portfolioCost": 928,
-		"portfolioValue": 1006.72,
-		"accruedIncome": 0,
-		"liquidativeValue": 1112.4469589816129
-	},
-	"2020-12-10": {
-		"portfolioCost": 928,
-		"portfolioValue": 982.08,
-		"accruedIncome": 0,
-		"liquidativeValue": 1085.2192362093356
-	},
-	"2020-12-11": {
-		"portfolioCost": 928,
-		"portfolioValue": 992.32,
-		"accruedIncome": 0,
-		"liquidativeValue": 1096.5346534653468
-	},
-	"2020-12-14": {
-		"portfolioCost": 928,
-		"portfolioValue": 977.6,
-		"accruedIncome": 0,
-		"liquidativeValue": 1080.2687411598304
-	},
-	"2020-12-15": {
-		"portfolioCost": 928,
-		"portfolioValue": 978.56,
-		"accruedIncome": 0,
-		"liquidativeValue": 1081.3295615275813
-	},
-	"2020-12-16": {
-		"portfolioCost": 928,
-		"portfolioValue": 969.28,
-		"accruedIncome": 0,
-		"liquidativeValue": 1071.074964639321
-	},
-	"2020-12-17": {
-		"portfolioCost": 928,
-		"portfolioValue": 947.84,
-		"accruedIncome": 0,
-		"liquidativeValue": 1047.3833097595475
-	},
-	"2020-12-18": {
-		"portfolioCost": 928,
-		"portfolioValue": 940.8,
-		"accruedIncome": 0,
-		"liquidativeValue": 1039.6039603960396
-	},
-	"2020-12-21": {
-		"portfolioCost": 928,
-		"portfolioValue": 928.32,
-		"accruedIncome": 0,
-		"liquidativeValue": 1025.8132956152758
-	},
-	"2020-12-22": {
-		"portfolioCost": 928,
-		"portfolioValue": 908.8,
-		"accruedIncome": 0,
-		"liquidativeValue": 1004.2432814710041
-	},
-	"2020-12-23": {
-		"portfolioCost": 928,
-		"portfolioValue": 920,
-		"accruedIncome": 0,
-		"liquidativeValue": 1016.6195190947667
-	},
-	"2020-12-24": {
-		"portfolioCost": 928,
-		"portfolioValue": 918.08,
-		"accruedIncome": 0,
-		"liquidativeValue": 1014.4978783592646
-	},
-	"2020-12-28": {
-		"portfolioCost": 928,
-		"portfolioValue": 913.6,
-		"accruedIncome": 0,
-		"liquidativeValue": 1009.5473833097597
-	},
-	"2020-12-29": {
-		"portfolioCost": 928,
-		"portfolioValue": 913.28,
-		"accruedIncome": 0,
-		"liquidativeValue": 1009.1937765205092
-	},
-	"2020-12-30": {
-		"portfolioCost": 928,
-		"portfolioValue": 911.68,
-		"accruedIncome": 0,
-		"liquidativeValue": 1007.4257425742575
-	},
-	"2020-12-31": {
-		"portfolioCost": 928,
-		"portfolioValue": 920.32,
-		"accruedIncome": 0,
-		"liquidativeValue": 1016.9731258840171
-	},
-	"2021-01-04": {
-		"portfolioCost": 928,
-		"portfolioValue": 942.08,
-		"accruedIncome": 0,
-		"liquidativeValue": 1041.0183875530413
-	},
-	"2021-01-05": {
-		"portfolioCost": 928,
-		"portfolioValue": 936.32,
-		"accruedIncome": 0,
-		"liquidativeValue": 1034.6534653465349
-	},
-	"2021-01-06": {
-		"portfolioCost": 928,
-		"portfolioValue": 954.56,
-		"accruedIncome": 0,
-		"liquidativeValue": 1054.8090523338049
-	},
-	"2021-01-07": {
-		"portfolioCost": 928,
-		"portfolioValue": 957.12,
-		"accruedIncome": 0,
-		"liquidativeValue": 1057.6379066478078
-	},
-	"2021-01-08": {
-		"portfolioCost": 928,
-		"portfolioValue": 928.64,
-		"accruedIncome": 0,
-		"liquidativeValue": 1026.1669024045261
-	},
-	"2021-01-11": {
-		"portfolioCost": 928,
-		"portfolioValue": 923.84,
-		"accruedIncome": 0,
-		"liquidativeValue": 1020.8628005657708
-	},
-	"2021-01-12": {
-		"portfolioCost": 928,
-		"portfolioValue": 920,
-		"accruedIncome": 0,
-		"liquidativeValue": 1016.6195190947666
-	},
-	"2021-01-13": {
-		"portfolioCost": 928,
-		"portfolioValue": 915.52,
-		"accruedIncome": 0,
-		"liquidativeValue": 1011.6690240452616
-	},
-	"2021-01-14": {
-		"portfolioCost": 928,
-		"portfolioValue": 937.28,
-		"accruedIncome": 0,
-		"liquidativeValue": 1035.7142857142858
-	},
-	"2021-01-15": {
-		"portfolioCost": 928,
-		"portfolioValue": 933.44,
-		"accruedIncome": 0,
-		"liquidativeValue": 1031.4710042432816
-	},
-	"2021-01-19": {
-		"portfolioCost": 928,
-		"portfolioValue": 926.4,
-		"accruedIncome": 0,
-		"liquidativeValue": 1023.6916548797739
-	},
-	"2021-01-20": {
-		"portfolioCost": 928,
-		"portfolioValue": 926.72,
-		"accruedIncome": 0,
-		"liquidativeValue": 1024.0452616690243
-	},
-	"2021-01-21": {
-		"portfolioCost": 928,
-		"portfolioValue": 922.56,
-		"accruedIncome": 0,
-		"liquidativeValue": 1019.4483734087696
-	},
-	"2021-01-22": {
-		"portfolioCost": 928,
-		"portfolioValue": 925.76,
-		"accruedIncome": 0,
-		"liquidativeValue": 1022.9844413012731
-	},
-	"2021-01-25": {
-		"portfolioCost": 928,
-		"portfolioValue": 931.52,
-		"accruedIncome": 0,
-		"liquidativeValue": 1029.3493635077793
-	},
-	"2021-01-26": {
-		"portfolioCost": 928,
-		"portfolioValue": 952,
-		"accruedIncome": 0,
-		"liquidativeValue": 1051.980198019802
-	},
-	"2021-01-27": {
-		"portfolioCost": 928,
-		"portfolioValue": 932.48,
-		"accruedIncome": 0,
-		"liquidativeValue": 1030.4101838755305
-	},
-	"2021-01-28": {
-		"portfolioCost": 928,
-		"portfolioValue": 921.6,
-		"accruedIncome": 0,
-		"liquidativeValue": 1018.3875530410185
-	},
-	"2021-01-29": {
-		"portfolioCost": 928,
-		"portfolioValue": 916.16,
-		"accruedIncome": 0,
-		"liquidativeValue": 1012.3762376237624
-	},
-	"2021-02-01": {
-		"portfolioCost": 928,
-		"portfolioValue": 916.8,
-		"accruedIncome": 0,
-		"liquidativeValue": 1013.0834512022631
-	},
-	"2021-02-02": {
-		"portfolioCost": 928,
-		"portfolioValue": 913.28,
-		"accruedIncome": 0,
-		"liquidativeValue": 1009.1937765205091
-	},
-	"2021-02-03": {
-		"portfolioCost": 928,
-		"portfolioValue": 912.32,
-		"accruedIncome": 0,
-		"liquidativeValue": 1008.1329561527582
-	},
-	"2021-02-04": {
-		"portfolioCost": 928,
-		"portfolioValue": 924.48,
-		"accruedIncome": 0,
-		"liquidativeValue": 1021.5700141442717
-	},
-	"2021-02-05": {
-		"portfolioCost": 928,
-		"portfolioValue": 925.76,
-		"accruedIncome": 0,
-		"liquidativeValue": 1050.9844413012731
-	}
+    "2020-11-18": {
+        "portfolioCost": 928,
+        "portfolioValue": 915.84,
+        "accruedIncome": 0,
+        "liquidativeValue": 1000
+    },
+    "2020-11-19": {
+        "portfolioCost": 928,
+        "portfolioValue": 904.96,
+        "accruedIncome": 0,
+        "liquidativeValue": 1000
+    },
+    "2020-11-20": {
+        "portfolioCost": 928,
+        "portfolioValue": 906.24,
+        "accruedIncome": 0,
+        "liquidativeValue": 1001.4144271570013
+    },
+    "2020-11-23": {
+        "portfolioCost": 928,
+        "portfolioValue": 915.84,
+        "accruedIncome": 0,
+        "liquidativeValue": 1012.022630834512
+    },
+    "2020-11-24": {
+        "portfolioCost": 928,
+        "portfolioValue": 935.36,
+        "accruedIncome": 0,
+        "liquidativeValue": 1033.5926449787837
+    },
+    "2020-11-25": {
+        "portfolioCost": 928,
+        "portfolioValue": 927.68,
+        "accruedIncome": 0,
+        "liquidativeValue": 1025.1060820367752
+    },
+    "2020-11-27": {
+        "portfolioCost": 928,
+        "portfolioValue": 928.96,
+        "accruedIncome": 0,
+        "liquidativeValue": 1026.5205091937767
+    },
+    "2020-11-30": {
+        "portfolioCost": 928,
+        "portfolioValue": 920,
+        "accruedIncome": 0,
+        "liquidativeValue": 1016.6195190947667
+    },
+    "2020-12-01": {
+        "portfolioCost": 928,
+        "portfolioValue": 923.84,
+        "accruedIncome": 0,
+        "liquidativeValue": 1020.8628005657711
+    },
+    "2020-12-02": {
+        "portfolioCost": 928,
+        "portfolioValue": 930.88,
+        "accruedIncome": 0,
+        "liquidativeValue": 1028.642149929279
+    },
+    "2020-12-03": {
+        "portfolioCost": 928,
+        "portfolioValue": 935.36,
+        "accruedIncome": 0,
+        "liquidativeValue": 1033.592644978784
+    },
+    "2020-12-04": {
+        "portfolioCost": 928,
+        "portfolioValue": 945.28,
+        "accruedIncome": 0,
+        "liquidativeValue": 1044.5544554455448
+    },
+    "2020-12-07": {
+        "portfolioCost": 928,
+        "portfolioValue": 948.48,
+        "accruedIncome": 0,
+        "liquidativeValue": 1048.0905233380486
+    },
+    "2020-12-08": {
+        "portfolioCost": 928,
+        "portfolioValue": 985.92,
+        "accruedIncome": 0,
+        "liquidativeValue": 1089.46251768034
+    },
+    "2020-12-09": {
+        "portfolioCost": 928,
+        "portfolioValue": 1006.72,
+        "accruedIncome": 0,
+        "liquidativeValue": 1112.4469589816129
+    },
+    "2020-12-10": {
+        "portfolioCost": 928,
+        "portfolioValue": 982.08,
+        "accruedIncome": 0,
+        "liquidativeValue": 1085.2192362093356
+    },
+    "2020-12-11": {
+        "portfolioCost": 928,
+        "portfolioValue": 992.32,
+        "accruedIncome": 0,
+        "liquidativeValue": 1096.5346534653468
+    },
+    "2020-12-14": {
+        "portfolioCost": 928,
+        "portfolioValue": 977.6,
+        "accruedIncome": 0,
+        "liquidativeValue": 1080.2687411598304
+    },
+    "2020-12-15": {
+        "portfolioCost": 928,
+        "portfolioValue": 978.56,
+        "accruedIncome": 0,
+        "liquidativeValue": 1081.3295615275813
+    },
+    "2020-12-16": {
+        "portfolioCost": 928,
+        "portfolioValue": 969.28,
+        "accruedIncome": 0,
+        "liquidativeValue": 1071.074964639321
+    },
+    "2020-12-17": {
+        "portfolioCost": 928,
+        "portfolioValue": 947.84,
+        "accruedIncome": 0,
+        "liquidativeValue": 1047.3833097595475
+    },
+    "2020-12-18": {
+        "portfolioCost": 928,
+        "portfolioValue": 940.8,
+        "accruedIncome": 0,
+        "liquidativeValue": 1039.6039603960396
+    },
+    "2020-12-21": {
+        "portfolioCost": 928,
+        "portfolioValue": 928.32,
+        "accruedIncome": 0,
+        "liquidativeValue": 1025.8132956152758
+    },
+    "2020-12-22": {
+        "portfolioCost": 928,
+        "portfolioValue": 908.8,
+        "accruedIncome": 0,
+        "liquidativeValue": 1004.2432814710041
+    },
+    "2020-12-23": {
+        "portfolioCost": 928,
+        "portfolioValue": 920,
+        "accruedIncome": 0,
+        "liquidativeValue": 1016.6195190947667
+    },
+    "2020-12-24": {
+        "portfolioCost": 928,
+        "portfolioValue": 918.08,
+        "accruedIncome": 0,
+        "liquidativeValue": 1014.4978783592646
+    },
+    "2020-12-28": {
+        "portfolioCost": 928,
+        "portfolioValue": 913.6,
+        "accruedIncome": 0,
+        "liquidativeValue": 1009.5473833097597
+    },
+    "2020-12-29": {
+        "portfolioCost": 928,
+        "portfolioValue": 913.28,
+        "accruedIncome": 0,
+        "liquidativeValue": 1009.1937765205092
+    },
+    "2020-12-30": {
+        "portfolioCost": 928,
+        "portfolioValue": 911.68,
+        "accruedIncome": 0,
+        "liquidativeValue": 1007.4257425742575
+    },
+    "2020-12-31": {
+        "portfolioCost": 928,
+        "portfolioValue": 920.32,
+        "accruedIncome": 0,
+        "liquidativeValue": 1016.9731258840171
+    },
+    "2021-01-04": {
+        "portfolioCost": 928,
+        "portfolioValue": 942.08,
+        "accruedIncome": 0,
+        "liquidativeValue": 1041.0183875530413
+    },
+    "2021-01-05": {
+        "portfolioCost": 928,
+        "portfolioValue": 936.32,
+        "accruedIncome": 0,
+        "liquidativeValue": 1034.6534653465349
+    },
+    "2021-01-06": {
+        "portfolioCost": 928,
+        "portfolioValue": 954.56,
+        "accruedIncome": 0,
+        "liquidativeValue": 1054.8090523338049
+    },
+    "2021-01-07": {
+        "portfolioCost": 928,
+        "portfolioValue": 957.12,
+        "accruedIncome": 0,
+        "liquidativeValue": 1057.6379066478078
+    },
+    "2021-01-08": {
+        "portfolioCost": 928,
+        "portfolioValue": 928.64,
+        "accruedIncome": 0,
+        "liquidativeValue": 1026.1669024045261
+    },
+    "2021-01-11": {
+        "portfolioCost": 928,
+        "portfolioValue": 923.84,
+        "accruedIncome": 0,
+        "liquidativeValue": 1020.8628005657708
+    },
+    "2021-01-12": {
+        "portfolioCost": 928,
+        "portfolioValue": 920,
+        "accruedIncome": 0,
+        "liquidativeValue": 1016.6195190947666
+    },
+    "2021-01-13": {
+        "portfolioCost": 928,
+        "portfolioValue": 915.52,
+        "accruedIncome": 0,
+        "liquidativeValue": 1011.6690240452616
+    },
+    "2021-01-14": {
+        "portfolioCost": 928,
+        "portfolioValue": 937.28,
+        "accruedIncome": 0,
+        "liquidativeValue": 1035.7142857142858
+    },
+    "2021-01-15": {
+        "portfolioCost": 928,
+        "portfolioValue": 933.44,
+        "accruedIncome": 0,
+        "liquidativeValue": 1031.4710042432816
+    },
+    "2021-01-19": {
+        "portfolioCost": 928,
+        "portfolioValue": 926.4,
+        "accruedIncome": 0,
+        "liquidativeValue": 1023.6916548797739
+    },
+    "2021-01-20": {
+        "portfolioCost": 928,
+        "portfolioValue": 926.72,
+        "accruedIncome": 0,
+        "liquidativeValue": 1024.0452616690243
+    },
+    "2021-01-21": {
+        "portfolioCost": 928,
+        "portfolioValue": 922.56,
+        "accruedIncome": 0,
+        "liquidativeValue": 1019.4483734087696
+    },
+    "2021-01-22": {
+        "portfolioCost": 928,
+        "portfolioValue": 925.76,
+        "accruedIncome": 0,
+        "liquidativeValue": 1022.9844413012731
+    },
+    "2021-01-25": {
+        "portfolioCost": 928,
+        "portfolioValue": 931.52,
+        "accruedIncome": 0,
+        "liquidativeValue": 1029.3493635077793
+    },
+    "2021-01-26": {
+        "portfolioCost": 928,
+        "portfolioValue": 952,
+        "accruedIncome": 0,
+        "liquidativeValue": 1051.980198019802
+    },
+    "2021-01-27": {
+        "portfolioCost": 928,
+        "portfolioValue": 932.48,
+        "accruedIncome": 0,
+        "liquidativeValue": 1030.4101838755305
+    },
+    "2021-01-28": {
+        "portfolioCost": 928,
+        "portfolioValue": 921.6,
+        "accruedIncome": 0,
+        "liquidativeValue": 1018.3875530410185
+    },
+    "2021-01-29": {
+        "portfolioCost": 928,
+        "portfolioValue": 916.16,
+        "accruedIncome": 0,
+        "liquidativeValue": 1012.3762376237624
+    },
+    "2021-02-01": {
+        "portfolioCost": 928,
+        "portfolioValue": 916.8,
+        "accruedIncome": 0,
+        "liquidativeValue": 1013.0834512022631
+    },
+    "2021-02-02": {
+        "portfolioCost": 928,
+        "portfolioValue": 913.28,
+        "accruedIncome": 0,
+        "liquidativeValue": 1009.1937765205091
+    },
+    "2021-02-03": {
+        "portfolioCost": 928,
+        "portfolioValue": 912.32,
+        "accruedIncome": 0,
+        "liquidativeValue": 1008.1329561527582
+    },
+    "2021-02-04": {
+        "portfolioCost": 928,
+        "portfolioValue": 924.48,
+        "accruedIncome": 0,
+        "liquidativeValue": 1021.5700141442717
+    },
+    "2021-02-05": {
+        "portfolioCost": 928,
+        "portfolioValue": 925.76,
+        "accruedIncome": 0,
+        "liquidativeValue": 1050.9844413012731
+    }
 }
 
-app.get("/probe", (req, res)=>{
+app.get("/probe", (req, res) => {
     //onst ixi = JSON.parse(dataExample)
-    db.query("update portfolios set portfolio = ? where userId = 2", [JSON.stringify(dataExample)], (err)=>{
-        if(err){
+    db.query("update portfolios set portfolio = ? where userId = 2", [JSON.stringify(dataExample)], (err) => {
+        if (err) {
             throw new Error(err.message)
         }
     })
@@ -800,7 +826,7 @@ app.get("/pricesIndex", (req, res) => {
 
 app.post('/api/users', (req, res, next) => {
     console.log(req.body, "queee pooooooooa")
-    const {username} = req.body 
+    const { email } = req.body
     if (!req.body) return res.sendStatus(400);
     const newUser = {
         profile: {
@@ -818,7 +844,7 @@ app.post('/api/users', (req, res, next) => {
     oktaClient
         .createUser(newUser)
         .then(user =>
-            addNewUser(user, username)
+            addNewUser(user, email)
                 .then(user => {
                     res.status(201);
                     res.send(user);
@@ -836,7 +862,7 @@ app.post('/api/users', (req, res, next) => {
 
 
 // app.post("/api/operations", async (req, res) => {
-    
+
 // })
 
 app.post("/api/companies_url", async (req, res) => {

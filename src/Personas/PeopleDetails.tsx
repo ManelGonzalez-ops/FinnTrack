@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { userActivity } from '../portfolio/logicPruebasConAdd'
+import { PortfolioPriceChart } from '../portfolio/PortfolioPriceChart'
 import { StockShop } from '../portfolio/StockShop'
 import { PeopleData } from './interfaces'
 interface ParamType {
@@ -64,10 +65,14 @@ export const PeopleDetails = () => {
         <div>
             {loading ? <p>Loading...</p>
                 : error ? <p>{error}</p>
-                    : <StockShop ticker={data?.user.username}
-                    {...shopProps}
-                />}
-            
+                    : <>
+                        <StockShop ticker={data?.user.username}
+                            {...shopProps}
+
+                        />
+                        <PortfolioPriceChart datos={data?.portfolio} title={`${data?.user.username} Portfolio`} />
+                    </>}
+
         </div>
     )
 }

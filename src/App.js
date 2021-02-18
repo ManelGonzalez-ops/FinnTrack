@@ -32,6 +32,7 @@ import { Overlay } from "./components/Overlay";
 import Formm from "./SignIn2";
 import { PersonasList } from "./Personas/PersonasList";
 import { PeopleRouter } from "./Personas/PeopleRouter";
+import { FeedViews } from "./views/seguidores/FeedViews";
 
 
 
@@ -95,6 +96,7 @@ const App = () => {
                 cash: res.userCash
               }
             })
+            res.interests && dispatch({ type: "STORE_USER_INTEREST", payload: res.interests });
             dispatch({ type: "SET_INITIAL_UNIQUE_STOCKS", payload: res.uniqueStocks })
             dispatch({ type: "ENABLE" })
           })
@@ -102,6 +104,14 @@ const App = () => {
       }
     }
   }, [userState])
+
+  useEffect(() => {
+    const worker = new Worker("worker.js")
+    worker.postMessage("comeme el culo")
+    worker.onmessage = e => {
+      console.log(e.data, "web worker funciona")
+    }
+  }, [])
 
   const history = useHistory()
   const location = useLocation()
@@ -137,6 +147,7 @@ const App = () => {
     }
   }, [selection])
 
+
   useEffect(() => {
     const { name, ticker } = state.currentCompany
     if (name && ticker) {
@@ -166,13 +177,12 @@ const App = () => {
     return <div>puto maricon ...</div>
   }
 
-console.log(selection, "seleeeection")
+  console.log(selection, "seleeeection")
 
   return (
 
-
     <div className={classes.root}>
-        <Overlay />
+      <Overlay />
       <CssBaseline />
       <Navbar handleDrawerOpen={handleDrawerOpen} auhtState={authState} />
       <Sidebar {...{ handleDrawerClose, handleDrawerOpen, handleSidebarToggle, expanded }} />
@@ -183,11 +193,10 @@ console.log(selection, "seleeeection")
           <Route path="/" exact >
             <Principal setSelection={setSelection} />
           </Route>
-          <Route path="/" exact >
+          {/* <Route path="/" exact >
             <Searcher setSelection={setSelection} selection={selection} />
-          </Route>
-                all company routes will have to be nested
-              {/* <Route path="/companies/overview/:company" exact>
+          </Route> */}
+          {/* <Route path="/companies/overview/:company" exact>
             <CompanySection ref={chart} />
           </Route> */}
           <Route path="/companies">
@@ -214,7 +223,7 @@ console.log(selection, "seleeeection")
             <Middleware component={UserMain} />
           </Route>
           <Route path="/people" >
-            <PeopleRouter/>
+            <PeopleRouter />
           </Route>
           <Route path="/proba" exact>
             <StackedColumn ticker="nflx" />
@@ -224,6 +233,9 @@ console.log(selection, "seleeeection")
             exact
           >
             <Formm />
+          </Route>
+          <Route path="/feed" exact>
+            <FeedViews />
           </Route>
         </Switch>
 
