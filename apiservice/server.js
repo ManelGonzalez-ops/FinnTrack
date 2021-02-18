@@ -19,6 +19,7 @@ const postsRoutes = require("./routes/Posts")
 const db = require("../db/db")
 const { createInterestTable } = require("../db/services/interestsService")
 const { createPostRegister, createPostStructure } = require("../db/services/PostServices")
+const authRoutes = require("./routes/Auth")
 
 createUserTable((err) => {
     console.log("que concha")
@@ -91,6 +92,7 @@ app.use("/api/v1/prices", pricesRoutes)
 app.use("/api/v1/validation", validationRoutes)
 app.use("/api/v1/users", usersRoutes)
 app.use("/api/v1/posts", postsRoutes)
+app.use("/api/v1/auth", authRoutes)
 
 
 app.get("/", (req, res) => {

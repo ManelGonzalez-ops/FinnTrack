@@ -33,6 +33,8 @@ import Formm from "./SignIn2";
 import { PersonasList } from "./Personas/PersonasList";
 import { PeopleRouter } from "./Personas/PeopleRouter";
 import { FeedViews } from "./views/seguidores/FeedViews";
+import { Login } from "./Auth/Login";
+import { ProtectedRoute } from "./Auth/ProtectedRoute";
 
 
 
@@ -236,6 +238,12 @@ const App = () => {
           </Route>
           <Route path="/feed" exact>
             <FeedViews />
+          </Route>
+          <Route path="/pruebaLogin" exact>
+            <Login />
+          </Route>
+          <Route path="/protectedRuta" exact>
+            <ProtectedRoute />
           </Route>
         </Switch>
 
