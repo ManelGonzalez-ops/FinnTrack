@@ -82,7 +82,6 @@ app.use(bodyParser.urlencoded({
 //añadidos al hacer lo del okta
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser())
-
 app.use(express.json())
 //app.use(express.json())
 app.use("/api/v1/people", peopleRoutes)

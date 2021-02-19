@@ -35,6 +35,7 @@ import { PeopleRouter } from "./Personas/PeopleRouter";
 import { FeedViews } from "./views/seguidores/FeedViews";
 import { Login } from "./Auth/Login";
 import { ProtectedRoute } from "./Auth/ProtectedRoute";
+import { Register } from "./Auth/Register";
 
 
 
@@ -241,6 +242,9 @@ const App = () => {
           </Route>
           <Route path="/pruebaLogin" exact>
             <Login />
+          </Route>
+          <Route path="/pruebaRegister" exact>
+            <Register />
           </Route>
           <Route path="/protectedRuta" exact>
             <ProtectedRoute />

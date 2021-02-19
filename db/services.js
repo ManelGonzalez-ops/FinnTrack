@@ -3,7 +3,7 @@ const db = require("./db")
 
 module.exports = {
     createUserTable: (cb) => {
-        db.query("create table if not exists users (userId int auto_increment,  firstName char(30) not null, lastName char(30) not null, email char(50) not null unique, username char(50) unique, primary key(userId))", err => {
+        db.query("create table if not exists users (userId int auto_increment,  firstName char(30), lastName char(30), password char(100), email char(50) not null unique, username char(50) unique, primary key(userId))", err => {
             if (err) cb(err)
 
             cb(false)
@@ -191,7 +191,7 @@ module.exports = {
     },
     addPortfolioDB: (userId, portfolio, fecha) => {
         return new Promise((resolve, reject) => {
-            db.query("insert into portfolios (userId, portfolio, last_updated) values ?", [userId, portfolio, fecha], (err) => {
+            db.query("insert into portfolios (userId, portfolio, last_updated) values (?,?,?)", [userId, JSON.stringify(portfolio), fecha], (err) => {
                 if (err) {
                     reject(err)
                 }

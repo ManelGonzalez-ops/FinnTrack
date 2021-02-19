@@ -9,6 +9,7 @@ module.exports = {
                 if (err) {
                     reject(err)
                 }
+                console.log(rows, "check if email exists")
                 if (rows && rows.length) {
                     reject("already exists an account associated to that email")
                 }
