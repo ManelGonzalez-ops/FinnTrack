@@ -246,7 +246,11 @@ const App = () => {
             <UserContextt.Consumer>
               {values => (
                 <PopulateOnScroll>
-                  <FollowingDispatcher valores={values} />
+                  {({ _setIsDataReadyScroll, currentChunk, setChunkCount }) => (
+                    <FollowingDispatcher valores={values}
+                      {...{ _setIsDataReadyScroll, currentChunk, setChunkCount }} />
+                  )
+                  }
                 </PopulateOnScroll>
               )}
             </UserContextt.Consumer>

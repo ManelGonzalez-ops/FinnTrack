@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 //import { usercontext, useUserLayer } from '../../UserContext'
 import { Post } from './Post'
+import gsap from "gsap"
 
 export class FollowingDispatcher extends React.Component {
 
@@ -13,12 +14,15 @@ export class FollowingDispatcher extends React.Component {
         data: null,
         error: null,
         responseType: null,
-        currentChunk: 0
     }
-
+    // messageRef = React.createRef()
+    // timeline = gsap.timeline()
 
     componentDidMount() {
+        if (this.props.valores.userState.ready) {
 
+            this.fetchInterests()
+        }
     }
 
     //we have to sort all message by date, and store them by chunks 
@@ -26,11 +30,15 @@ export class FollowingDispatcher extends React.Component {
         console.log(prevState, prevProps, "prevv propss")
         if (prevState.data !== this.state.data) {
             console.log(this.state.data, "data recibida")
+
         }
-        if (prevProps.valores !== this.props.valores)
-            if (prevProps.valores.userState.ready) {
+        //in case user navigate to /interests directly in url
+        if (prevProps.valores !== this.props.valores) {
+            console.log("valores change", this.props.valores.userState.ready)
+            if (this.props.valores.userState.ready) {
                 this.fetchInterests()
             }
+        }
     }
 
     prepareData(res) {
@@ -59,6 +67,7 @@ export class FollowingDispatcher extends React.Component {
     chunkData(arr, postsXChunk) {
         let result = []
         const chunkNumber = Math.round(arr.length / postsXChunk)
+        this.props.setChunkCount(chunkNumber)
         const sobrantes = arr.length - postsXChunk * chunkNumber
         let iteration = 0
         Array(chunkNumber).fill(null).forEach(() => {
@@ -74,18 +83,25 @@ export class FollowingDispatcher extends React.Component {
             .then(res => res.json())
             .then(res => {
                 this.setState({ responseType: res.type })
+                //this.props._setResponseType(res.type)
                 const readyData = this.prepareData(res)
                 console.log(readyData, "readyData bibor")
                 this.setState({
                     loading: false,
                     data: readyData,
                 })
+                if (this.state.responseType === "interests") {
+                    this.props._setIsDataReadyScroll(readyData !== null)
+                }
             })
             .catch(err => { this.setState({ laoding: false, error: err.message }) })
     }
     render() {
+        console.log(this.props.valores.userState, "wopo")
         //console.log(this.context.userState.info, "los proops")
-        const { data, loading, responseType, currentChunk } = this.state
+        const { data, loading, responseType } = this.state
+        console.log(data, "lo dataa")
+        const { currentChunk } = this.props
         if (loading) {
             return <h3>Loading...</h3>
         }
@@ -93,10 +109,12 @@ export class FollowingDispatcher extends React.Component {
         if (responseType === "interests") {
             return (
                 <div>
-                    {data &&
-                        data[currentChunk].map(message => (
-                            <Post {...{ message }} />
-                        ))
+                    {data && data.length &&
+                        data.slice(0, currentChunk).map((chunk, index) =>{
+                            console.log(chunk, "qe collons chu")
+                        return (<PostChunk key={index} {...{ chunk }} />
+                        )}
+                        )
                     }
                 </div>
             )
@@ -111,6 +129,28 @@ export class FollowingDispatcher extends React.Component {
             // </div>
         )
     }
+}
+
+const PostChunk = ({ chunk }) => {
+
+    const chunkRef = useRef(null)
+    const timeline = gsap.timeline()
+    console.log(chunk, "eel chunk")
+    useEffect(() => {
+        timeline.to(chunkRef.current.childNodes, {
+            //y: 100,
+            opacity: 1,
+            ease: "power4.inOut",
+            duration: 0.7,
+            stagger: 0.1
+        });
+    }, [])
+
+    return <div ref={chunkRef}>
+        {chunk.map(message => (
+            <Post key={message.id} {...{ message }} />
+        ))}
+    </div>
 }
 
 // export default withUserState(FollowingDispatcher)
