@@ -50,7 +50,7 @@ export const News = ({ principal = false, title, classnames }) => {
     const [showingSkeletong, setShowingSkeleton] = useState(false)
 console.log(intersection, "intersec")
 let debounceTimer
-    useEffect(() => {
+    useEffect(() => { 
         if (intersection && intersection.intersectionRatio < 1.5 && !debounce.current) {
             setNewsPerPage(prev => prev + 1)
             debounce.current = true

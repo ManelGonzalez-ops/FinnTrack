@@ -25,7 +25,7 @@ import { Middleware } from "./dashboard/Middleware2";
 import { useOktaAuth } from '@okta/okta-react';
 import { useTemporaryPossesions } from "./useTemporaryPossesions";
 import useAuth from "./useAuth";
-import { useUserLayer } from "./UserContext";
+import { UserContextt, useUserLayer } from "./UserContext";
 import { StackedColumn } from "./charts/StackedColumn";
 import { ControllerCompany } from "./views/company/ControllerCompany";
 import { Overlay } from "./components/Overlay";
@@ -35,6 +35,8 @@ import { PeopleRouter } from "./Personas/PeopleRouter";
 import { FeedViews } from "./views/seguidores/FeedViews";
 import { Login } from "./Auth/Login";
 import { ProtectedRoute } from "./Auth/ProtectedRoute";
+import { FollowingDispatcher } from "./views/seguidores/FollowingDispatcher";
+import { PopulateOnScroll } from "./views/seguidores/PopulateOnScroll";
 
 
 
@@ -78,6 +80,7 @@ const App = () => {
   useAuth()
   const { authState, authService } = useOktaAuth();
   const { userState } = useUserLayer()
+  console.log(userState.info, "infoo userstate")
   useEffect(() => {
     if (userState.info) {
       const { email } = userState.info
@@ -180,7 +183,7 @@ const App = () => {
   }
 
   console.log(selection, "seleeeection")
-
+  console.log(userState.info, "que colluns")
   return (
 
     <div className={classes.root}>
@@ -238,6 +241,15 @@ const App = () => {
           </Route>
           <Route path="/feed" exact>
             <FeedViews />
+          </Route>
+          <Route path="/interests" exact>
+            <UserContextt.Consumer>
+              {values => (
+                <PopulateOnScroll>
+                  <FollowingDispatcher valores={values} />
+                </PopulateOnScroll>
+              )}
+            </UserContextt.Consumer>
           </Route>
           <Route path="/pruebaLogin" exact>
             <Login />

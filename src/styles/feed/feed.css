@@ -63,3 +63,18 @@
 .RichEditor-root .RichEditor-editor {
   padding: 15px;
 }
+
+.post {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+}
+
+.post img.avatar {
+  width: 50px;
+  height: 50px;
+}
+
+.post .post-footer {
+  display: flex;
+  justify-content: space-between;
+}
