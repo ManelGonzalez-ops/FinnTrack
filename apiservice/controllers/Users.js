@@ -57,16 +57,20 @@ const populate = async (req, res, next) => {
             filter(proms => proms.value.response.status === 200)
             .flatMap(response => response.value.messages)
         console.log(validResults, "riiisult")
+        const validResultA = deleteDuplicates(validResults)
 
-
-        return res.status(200).send({ data: validResults, type: "interests" })
+        return res.status(200).send({ data: validResultA, type: "interests" })
     }
     catch (err) {
         //console.log(err)
+        throw new Error(err)
         next(err)
     }
 }
 
+const deleteDuplicates = (arr) => {
+    return arr.filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i)
+}
 const populateWithTrendingMessages = async (cb) => {
     console.log("executao")
     const fetchStockTwitsTrendingUsers = () => {

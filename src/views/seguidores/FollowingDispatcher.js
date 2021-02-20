@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 //import { usercontext, useUserLayer } from '../../UserContext'
 import { Post } from './Post'
 import gsap from "gsap"
+import { Backdrop } from '@material-ui/core'
 
 export class FollowingDispatcher extends React.Component {
 
@@ -14,6 +15,8 @@ export class FollowingDispatcher extends React.Component {
         data: null,
         error: null,
         responseType: null,
+        backdropOpen: false,
+        selectedPost: null
     }
     // messageRef = React.createRef()
     // timeline = gsap.timeline()
@@ -96,10 +99,16 @@ export class FollowingDispatcher extends React.Component {
             })
             .catch(err => { this.setState({ laoding: false, error: err.message }) })
     }
+
+    selectPost = (post) => {
+        console.log(this.data, "dataoo")
+        //const selection = this.state.data.find(post => post.id === id)
+        this.setState({ selectedPost: post, backdropOpen: true })
+    }
     render() {
         console.log(this.props.valores.userState, "wopo")
         //console.log(this.context.userState.info, "los proops")
-        const { data, loading, responseType } = this.state
+        const { data, loading, responseType, backdropOpen, selectedPost } = this.state
         console.log(data, "lo dataa")
         const { currentChunk } = this.props
         if (loading) {
@@ -108,34 +117,46 @@ export class FollowingDispatcher extends React.Component {
 
         if (responseType === "interests") {
             return (
-                <div>
-                    {data && data.length &&
-                        data.slice(0, currentChunk).map((chunk, index) =>{
-                            console.log(chunk, "qe collons chu")
-                        return (<PostChunk key={index} {...{ chunk }} />
-                        )}
-                        )
-                    }
-                </div>
+                <>
+                    <div>
+                        {data && data.length &&
+                            data.slice(0, currentChunk).map((chunk, index) => {
+                                console.log(chunk, "qe collons chu")
+                                return (<PostChunk key={index} {...{ chunk }}
+                                    selectPost={this.selectPost}
+                                />
+                                )
+                            }
+                            )
+                        }
+                    </div>
+                    {selectedPost &&
+                        <Backdrop open={backdropOpen} onClick={() => { this.setState({ backdropOpen: false }) }}>
+                            <Post message={selectedPost} isSelected={true} />
+                        </Backdrop>}
+                </>
             )
         }
-        return (
-            null
-            // <div>
-            //     {data && data.map(message => (
-            //         <Post {...{ message }} />
-            //     ))}
-            //     {type && type}
-            // </div>
-        )
+        if (responseType === "trending") {
+            return (
+                <>
+                    {data && <GsapFadeInStagger>
+                        {data.map(message => (
+                            <Post {...{ message }}
+                                selectPost={this.selectPost}
+                            />
+                        ))}
+                    </GsapFadeInStagger>}
+                </>
+            )
+        }
+        return <p>No responseType returned from server</p>
     }
 }
 
-const PostChunk = ({ chunk }) => {
-
+const GsapFadeInStagger = ({ children }) => {
     const chunkRef = useRef(null)
     const timeline = gsap.timeline()
-    console.log(chunk, "eel chunk")
     useEffect(() => {
         timeline.to(chunkRef.current.childNodes, {
             //y: 100,
@@ -145,12 +166,33 @@ const PostChunk = ({ chunk }) => {
             stagger: 0.1
         });
     }, [])
+    return (
+        <div ref={chunkRef}>
+            {children}
+        </div>
+    )
+}
 
-    return <div ref={chunkRef}>
-        {chunk.map(message => (
-            <Post key={message.id} {...{ message }} />
+const PostChunk = ({ chunk, selectPost }) => {
+
+    // const chunkRef = useRef(null)
+    // const timeline = gsap.timeline()
+    // console.log(chunk, "eel chunk")
+    // useEffect(() => {
+    //     timeline.to(chunkRef.current.childNodes, {
+    //         //y: 100,
+    //         opacity: 1,
+    //         ease: "power4.inOut",
+    //         duration: 0.7,
+    //         stagger: 0.1
+    //     });
+    // }, [])
+
+    return <GsapFadeInStagger>
+        {chunk.slice(0, 2).map((message, index) => (
+            <Post key={message.id} {...{ message, selectPost }} />
         ))}
-    </div>
+    </GsapFadeInStagger>
 }
 
 // export default withUserState(FollowingDispatcher)

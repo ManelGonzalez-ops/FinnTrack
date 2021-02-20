@@ -15,6 +15,7 @@ export const PopulateOnScroll = ({ children }) => {
 
     const debounce = useRef(false)
     useEffect(() => {
+        console.log(intersection, "interseccion baby")
         if (!isDataReadyScroll) return;
         if (intersection && intersection.intersectionRatio < 1.5 && currentChunk <= chunkCount) {
             console.log("interesected")
@@ -36,12 +37,12 @@ export const PopulateOnScroll = ({ children }) => {
                 ref={interestionRef}
             >
             </div> */}
-            { isDataReadyScroll &&
+
                 <div style={{ height: "20px" }}
                     ref={interestionRef}
                 >
                 </div>
-            }
+          
         </div>
     )
 }

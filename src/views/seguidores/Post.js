@@ -5,11 +5,11 @@ import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 
 
-export const Post = ({ message }) => {
+export const Post = ({ message, selectPost, fetchReplies = false, isSelected = false }) => {
     const [{ conversationData, error }, setConversationData] = useState({ conversationData: null, error: null })
     const { user, created_at } = message
     const time = new Date(created_at).getTime()
-    
+
     const getRandomNum = () => {
         const randomLike = [0, 0, 1, 3, Math.round(Math.random() * 10)]
         //console.log(randomLike, "la arr")
@@ -17,27 +17,31 @@ export const Post = ({ message }) => {
     }
     const randomNum = getRandomNum()
 
-    // useEffect(() => {
-    //     fetch(`https://api.stocktwits.com/api/2/streams/conversation/${message.id}.json`)
-    //         .then(res => res.json())
-    //         .then(res => {
-    //             //error means no replies found for message
-    //             if (res.errors) {
-    //                 setConversationData({ error: true })
-    //             }
-    //             setConversationData(prev =>
-    //                 ({ ...prev, conversationData: res }))
-    //         })
-    //         .catch(err => {
-    //             setConversationData(prev =>
-    //                 ({ error: true }))
-    //         })
-    // }, [])
-    // if (message.entities) {
-    //     console.log(message.entities, "entitieees")
-    // }
+    useEffect(() => {
+        if (!fetchReplies) return;
+
+        fetch(`https://api.stocktwits.com/api/2/streams/conversation/${message.id}.json`)
+            .then(res => res.json())
+            .then(res => {
+                //error means no replies found for message
+                if (res.errors) {
+                    setConversationData({ error: true })
+                }
+                setConversationData(prev =>
+                    ({ ...prev, conversationData: res }))
+            })
+            .catch(err => {
+                setConversationData(prev =>
+                    ({ error: true }))
+            })
+    }, [])
+    if (message.entities) {
+        console.log(message.entities, "entitieees")
+    }
     return (
-        <div className="post" style={{opacity: 0}}>
+        <div className="post" style={isSelected ? { opacity: 1 } : { opacity: 0 }}
+            onClick={() => { selectPost(message) }}
+        >
             <div className="post-avatar">
                 <img className="avatar" src={user.avatar_url} alt={user.username} />
             </div>
