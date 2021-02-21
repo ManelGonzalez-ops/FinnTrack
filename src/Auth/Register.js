@@ -85,8 +85,13 @@ export const Register = () => {
             method: "POST"
         })
             .then(res => {
-                if (!res.ok) throw new Error("what the hell")
+                if (!res.ok) throw new Error("what the hell");
+                return res
+            })
+            .then(res => res.json())
+            .then(res => {
                 userDispatch({ type: "SET_TOKEN", paylod: res.token })
+                localStorage.setItem("token", JSON.stringify(res.token))
                 setSuccess(true)
             })
             .catch(err => { setServerError(err.message) })

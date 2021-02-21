@@ -15,7 +15,7 @@ const login = async (req, res) => {
         //we generate a token
         //we don't really need to sign the username
         const token = jwt.sign({ username, email }, "caranchoa")
-        res.send({ token })
+        res.status(200).send({ token })
     }
     catch (err) {
         res.status(400).send(err)
