@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 //import { usercontext, useUserLayer } from '../../UserContext'
-import { Post } from './Post'
+import Post from './Post'
 import gsap from "gsap"
 import { Backdrop } from '@material-ui/core'
 
@@ -101,9 +101,12 @@ export class FollowingDispatcher extends React.Component {
     }
 
     selectPost = (post) => {
-        console.log(this.data, "dataoo")
+        // console.log(this.state.data, "dataoo")
         //const selection = this.state.data.find(post => post.id === id)
         this.setState({ selectedPost: post, backdropOpen: true })
+    }
+    unselectPost = () => {
+        { this.setState({ backdropOpen: false, selectedPost: null }) }
     }
     render() {
         console.log(this.props.valores.userState, "wopo")
@@ -131,9 +134,13 @@ export class FollowingDispatcher extends React.Component {
                         }
                     </div>
                     {selectedPost &&
-                        <Backdrop open={backdropOpen} onClick={() => { this.setState({ backdropOpen: false }) }}>
-                            <Post message={selectedPost} isSelected={true} />
-                        </Backdrop>}
+                        <ModalSelection
+                            isOpen={backdropOpen}
+                            unselectPost={this.unselectPost}>
+                            <Post message={selectedPost} selectPost={this.selectPost} isSelected={true} />
+                        </ModalSelection>
+                    }
+
                 </>
             )
         }
@@ -147,11 +154,32 @@ export class FollowingDispatcher extends React.Component {
                             />
                         ))}
                     </GsapFadeInStagger>}
+
+                    {selectedPost &&
+                        <ModalSelection
+                            isOpen={backdropOpen}
+                            unselectPost={this.unselectPost}>
+                            <Post message={selectedPost} selectPost={this.selectPost} isSelected={true} />
+                        </ModalSelection>
+                    }
+
                 </>
             )
         }
         return <p>No responseType returned from server</p>
     }
+}
+
+const ModalSelection = ({ unselectPost, children, isOpen }) => {
+
+    return (
+        <Backdrop open={isOpen}
+            onClick={unselectPost}
+            style={{ zIndex: 100 }}>
+
+            { children}
+        </Backdrop>
+    )
 }
 
 const GsapFadeInStagger = ({ children }) => {
@@ -189,7 +217,7 @@ const PostChunk = ({ chunk, selectPost }) => {
     // }, [])
 
     return <GsapFadeInStagger>
-        {chunk.slice(0, 2).map((message, index) => (
+        {chunk.map((message, index) => (
             <Post key={message.id} {...{ message, selectPost }} />
         ))}
     </GsapFadeInStagger>

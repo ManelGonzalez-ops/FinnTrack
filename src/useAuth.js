@@ -9,7 +9,7 @@ const useAuth = () => {
   useEffect(() => {
     if (!authState.isAuthenticated) {
       // When user isn't authenticated, forget any user info
-      //userDispatch({ type: "SET_USER_NULL" })
+      userDispatch({ type: "SET_USER_NULL" })
     } else {
       authService.getUser().then(info => {
         console.log("setting user", info)

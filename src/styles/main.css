@@ -811,6 +811,12 @@ img {
 .post {
   display: grid;
   grid-template-columns: 80px 1fr;
+  opacity: 0;
+}
+
+.post.is-selected {
+  background-color: white;
+  opacity: 1;
 }
 
 .post img.avatar {
