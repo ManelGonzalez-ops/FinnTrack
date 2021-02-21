@@ -124,6 +124,7 @@ export const Navbar = ({ handleDrawerOpen }) => {
               {formatter.format(state.currentPossesions.userCash)} $
             </Typography>
           </div>
+          <button onClick={()=>{history.push("/interests")}}>interests</button>
         </Toolbar>
       </AppBar>
       <CompanyNav {...{menuCompaniesOpen, topNavigation}} />

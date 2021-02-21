@@ -1,3 +1,4 @@
+const { myCallingFunction, debugLine } = require("../../apiservice/ErrorHandler")
 const db = require("../db")
 
 const fakeInterests = ["kaka", "culo", "pedo"]
@@ -14,14 +15,18 @@ module.exports = {
                 if (err) {
                     reject(err)
                 }
+                if (!rows) reject(debugLine("wtf, it should give empty array but gave us undefined"));
+                // if (!rows.length) reject(debugLine("user wasn't found or has no interests" ))
                 console.group(rows, "rwwors")
-                if(!rows || !rows.length){
-                    resolve(null)
+                if (!rows || !rows.length) {
+                    //this will eb an empty array
+                    resolve(rows)
                 }
                 resolve(rows)
             })
         })
     },
+
     addUserInterest: (username, interest) => {
         console.log(username, interest, "data")
         return new Promise((resolve, reject) => {

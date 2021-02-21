@@ -10,7 +10,9 @@ const getToken = () => {
 }
 const initialState = {
     isAuthenticated: false,
-    token: getToken()
+    token: getToken(),
+    info: { email: null },
+    ready: false
 }
 const userReducer = (state, action) => {
     switch (action.type) {
@@ -18,13 +20,15 @@ const userReducer = (state, action) => {
             return {
                 ...state,
                 isAuthenticated: true,
-                info: action.payload
+                info: action.payload,
+                ready: true
             }
         case "SET_USER_NULL":
             return {
                 ...state,
                 isAuthenticated: false,
-                info: null
+                info: { email: null },
+                ready: true
             }
         case "SET_TOKEN":
             return {
@@ -45,3 +49,5 @@ export const UserContext = ({ children }) => {
 }
 
 export const useUserLayer = () => useContext(context)
+//for class components
+export const UserContextt = context
