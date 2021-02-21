@@ -35,12 +35,9 @@ import { PeopleRouter } from "./Personas/PeopleRouter";
 import { FeedViews } from "./views/seguidores/FeedViews";
 import { Login } from "./Auth/Login";
 import { ProtectedRoute } from "./Auth/ProtectedRoute";
-<<<<<<< HEAD
 import { Register } from "./Auth/Register";
-=======
 import { FollowingDispatcher } from "./views/seguidores/FollowingDispatcher";
 import { PopulateOnScroll } from "./views/seguidores/PopulateOnScroll";
->>>>>>> following
 
 
 
