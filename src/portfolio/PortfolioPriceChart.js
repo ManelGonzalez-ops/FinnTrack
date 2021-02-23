@@ -5,8 +5,8 @@ import { useChartReflow } from '../utils/useChartReflow';
 import { Paper } from '@material-ui/core';
 
 Highcharts.setOptions({
-    global : {
-        useUTC : false
+    global: {
+        useUTC: false
     }
 });
 
@@ -16,17 +16,18 @@ export const PortfolioPriceChart = ({ datos, title }) => {
     useChartReflow(chart.current)
 
     const [dataset, setDataset] = useState("")
-    
+    const [availableTomorrow, setAvailableTomorrow] = useState(false)
+
     //la fecha de la grafica siempre es un dia menos respecto a las generatedseries
-    
+
     const prepareData = () => {
         let cleanData = []
         Object.keys(datos).forEach(date => {
-            console.log(date,"duuta")
+            console.log(date, "duuta")
             const actualDate = date.split("-").map((val) => parseInt(val));
             const formatedDate = new Date(
                 actualDate[0],
-                actualDate[1]-1,
+                actualDate[1] - 1,
                 actualDate[2]
             );
             console.log(formatedDate, "ttiiimo")
@@ -41,6 +42,8 @@ export const PortfolioPriceChart = ({ datos, title }) => {
     useEffect(() => {
         if (datos) {
             prepareData(datos)
+        } else {
+            setAvailableTomorrow(true)
         }
 
     }, [datos])
@@ -74,7 +77,7 @@ export const PortfolioPriceChart = ({ datos, title }) => {
         },
 
         title: {
-            text: {title},
+            text: { title },
             zoomType: "x",
         },
         rangeSelector: {
@@ -99,8 +102,9 @@ export const PortfolioPriceChart = ({ datos, title }) => {
 
     return (
         <Paper
-        className="portfolio-chart"
+            className="portfolio-chart"
         >
+            {availableTomorrow && <p>Data is not available untill next day after you submited a operation, if you submited in weekend wait till monday</p>}
             {
                 dataset &&
                 <HighchartsReact

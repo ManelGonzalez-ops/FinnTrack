@@ -19,7 +19,6 @@ import { CompanySection } from "./views/company/CompanySection";
 import { IndexesController } from "./views/indexes/IndexesController";
 import { useDataLayer } from "./Context";
 import { useEngine } from "./portfolio/Engine";
-import { userActivity } from "./portfolio/logicPruebas";
 import { UserMain } from "./dashboard/UserMain";
 import { Middleware } from "./dashboard/Middleware2";
 import { useOktaAuth } from '@okta/okta-react';
@@ -38,6 +37,8 @@ import { ProtectedRoute } from "./Auth/ProtectedRoute";
 import { Register } from "./Auth/Register";
 import { FollowingDispatcher } from "./views/seguidores/FollowingDispatcher";
 import { PopulateOnScroll } from "./views/seguidores/PopulateOnScroll";
+import { useIAuthh } from "./Auth/useIAuth";
+import { ContactDetails } from "./Auth/ContactDetails";
 
 
 
@@ -78,12 +79,14 @@ const useStyles = makeStyles((theme) => ({
 const App = () => {
 
   useEngine()
-  useAuth()
-  const { authState, authService } = useOktaAuth();
+  useIAuthh()
+  //useAuth()
+  //const { authState, authService } = useOktaAuth();
   const { userState } = useUserLayer()
   console.log(userState.info, "infoo userstate")
   useEffect(() => {
-    if (userState.info) {
+    if (userState.isAuthenticated) {
+      console.log(userState, "userState")
       const { email } = userState.info
       if (email) {
         fetch("http://localhost:8001/api/v1/operations", {
@@ -108,8 +111,11 @@ const App = () => {
           })
           .catch(err => { console.log(err) })
       }
+      else {
+        throw new Error("the user is authenticated but we don't have its credentials, wtf")
+      }
     }
-  }, [userState])
+  }, [userState.isAuthenticated])
 
   useEffect(() => {
     const worker = new Worker("worker.js")
@@ -178,19 +184,19 @@ const App = () => {
   const handleSidebarToggle = (e, nodeId) => {
     setExpanded(nodeId)
   }
-  console.log(authState, "tu muelo")
-  if (authState.isPending) {
-    return <div>puto maricon ...</div>
-  }
+  // console.log(authState, "tu muelo")
+  // if (authState.isPending) {
+  //   return <div>puto maricon ...</div>
+  // }
 
-  console.log(selection, "seleeeection")
-  console.log(userState.info, "que colluns")
+  // console.log(selection, "seleeeection")
+  // console.log(userState.info, "que colluns")
   return (
 
     <div className={classes.root}>
       <Overlay />
       <CssBaseline />
-      <Navbar handleDrawerOpen={handleDrawerOpen} auhtState={authState} />
+      <Navbar handleDrawerOpen={handleDrawerOpen} />
       <Sidebar {...{ handleDrawerClose, handleDrawerOpen, handleSidebarToggle, expanded }} />
       <main className={classes.content}>
         <div className={classes.toolbar} />
@@ -264,6 +270,9 @@ const App = () => {
           </Route>
           <Route path="/protectedRuta" exact>
             <ProtectedRoute />
+          </Route>
+          <Route path="/uploads">
+            <ContactDetails />
           </Route>
         </Switch>
 

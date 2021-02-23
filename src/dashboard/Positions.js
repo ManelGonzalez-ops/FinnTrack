@@ -46,7 +46,7 @@ export const Positions = () => {
     const [openSorter, setOpenSorter] = useState(null)
     useEffect(() => {
         //init requests
-        
+
         if (state.currentPossesions.stocks.length > 0) {
             console.log("axactua")
             requestAdditionalInfo(state.currentPossesions.stocks)
@@ -55,18 +55,25 @@ export const Positions = () => {
         }
     }, [state.currentPossesions])
 
+    const getCompanyChange = (ticker) => {
+        if (!companiesChange) {
+            return 0
+        }
+        const compChangeArr = companiesChange[ticker]
+        if (compChangeArr.length) {
+            return compChangeArr[compChangeArr.length - 1][1]
+        } else {
+            return 0
+        }
+    }
     useEffect(() => {
         console.log(successLogo, quotes, "quee coja")
-        if (successLogo && quotes && companiesChange) {
+
+        if (successLogo && quotes) {
             const stocks = [...state.currentPossesions.stocks]
             const stocksWithLogos = stocks.map(asset => {
-                const compChangeArr = companiesChange[asset.ticker]
-                if (compChangeArr.length) {
-                    asset["change"] = compChangeArr[compChangeArr.length - 1][1]
-                    console.log(asset.change, "kpchange")
-                } else {
-                    asset["change"] = 0
-                }
+
+                asset["change"] = getCompanyChange(asset.ticker)
                 const theStockLogo = logos.find(stock => asset.ticker.toUpperCase() === stock.ticker.toUpperCase())
                 const { logourl, weburl } = theStockLogo
                 //if logo is missing will come as empty string
@@ -133,7 +140,7 @@ export const Positions = () => {
             .catch(err => { dispatch({ type: "SET_ERROR", payload: err.message }) })
     }
 
-    
+
     const fetchQuotes = (tickers) => {
         fetch("http://localhost:8001/api/portfolio/quotes", {
             headers: {
@@ -169,55 +176,55 @@ export const Positions = () => {
                 <CustomCircularProgress />
                 :
                 <>
-                <header>
-                    <h3>My Assets</h3>
-                    <div>
-                        {openSearcher &&
-                            <SearcherPositions {...{ query, setQuery }} />
-                        }
-                        {openSorter &&
-                            <Sorter {...{ openSorter, setOpenSorter, setReadyState, handleSorting, handleSelected, selected }} />
-                        }
-                        <IconButton
-                            onClick={handleOpenSearcher}
-                        >
-                            <SearchIcon />
-                        </IconButton>
-                        <IconButton
-                            onClick={handleOpenSorter}
-                        >
-                            <SortByAlphaIcon />
-                        </IconButton>
-                    </div>
-                </header>
-            {/* <ul>
+                    <header>
+                        <h3>My Assets</h3>
+                        <div>
+                            {openSearcher &&
+                                <SearcherPositions {...{ query, setQuery }} />
+                            }
+                            {openSorter &&
+                                <Sorter {...{ openSorter, setOpenSorter, setReadyState, handleSorting, handleSelected, selected }} />
+                            }
+                            <IconButton
+                                onClick={handleOpenSearcher}
+                            >
+                                <SearchIcon />
+                            </IconButton>
+                            <IconButton
+                                onClick={handleOpenSorter}
+                            >
+                                <SortByAlphaIcon />
+                            </IconButton>
+                        </div>
+                    </header>
+                    {/* <ul>
                 {logos.map(item => <li>
                     {item.logo}
                 </li>)}
             </ul> */}
-            <div className="positions-body">
-                <ul>
-                    {readyState && readyState.map(item =>
-                        <>
-                            <Divider />
-                            <li>
-                                <img className="logo" src={item.logo} alt={`${item.ticker}-logo`} />
-                                <div className="additional-wrap">
-                                    <p className="field-2">
-                                        <h5>{item.ticker} ({item.name})</h5>
-                                        <p>Qty: {item.amount}</p>
-                                    </p>
-                                    <p className="field-3">
-                                        <p>{formatter.format(item.value)}</p>
-                                        <p>{item.change}%</p>
-                                    </p>
-                                </div>
-                            </li>
-                        </>
-                    )}
-                </ul>
-            </div>
-            </>}
+                    <div className="positions-body">
+                        <ul>
+                            {readyState && readyState.map(item =>
+                                <>
+                                    <Divider />
+                                    <li>
+                                        <img className="logo" src={item.logo} alt={`${item.ticker}-logo`} />
+                                        <div className="additional-wrap">
+                                            <p className="field-2">
+                                                <h5>{item.ticker} ({item.name})</h5>
+                                                <p>Qty: {item.amount}</p>
+                                            </p>
+                                            <p className="field-3">
+                                                <p>{formatter.format(item.value)}</p>
+                                                <p>{item.change}%</p>
+                                            </p>
+                                        </div>
+                                    </li>
+                                </>
+                            )}
+                        </ul>
+                    </div>
+                </>}
         </Paper>
     )
 }

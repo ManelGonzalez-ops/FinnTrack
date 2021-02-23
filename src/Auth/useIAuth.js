@@ -4,12 +4,12 @@ import { useUserLayer } from '../UserContext'
 export const useIAuth = () => {
     const [hasPermission, setHasPermission] = useState(false)
     const [loading, setLoading] = useState(true)
-    const { userState: { token } } = useUserLayer()
+    const { userState, userDispatch } = useUserLayer()
     useEffect(() => {
         setLoading(true)
         fetch("http://localhost:8001/api/v1/auth/post", {
             headers: {
-                "Authorization": `bearer ${token}`
+                "Authorization": `bearer ${userState.token}`
             },
         }).then(res => {
             console.log(res, "resposns")
@@ -25,6 +25,46 @@ export const useIAuth = () => {
             })
     }, [])
     return { hasPermission, loading }
+}
+export const useIAuthh = () => {
+    const [loading, setLoading] = useState(true)
+    const { userState, userDispatch } = useUserLayer()
+    useEffect(() => {
+        //if there's no token user will have to login
+        if (!userState.token) {
+            setLoading(false)
+            userDispatch({ type: "SET_USER_NULL" })
+            return
+        }
+        //if there's token we have to check if it's valid
+        else if (userState.token) {
+            setLoading(true)
+            fetch("http://localhost:8001/api/v1/auth/post", {
+                headers: {
+                    "Authorization": `bearer ${userState.token}`
+                },
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error("token not valid");
+                    return res
+                })
+                .then(res => res.json())
+                //if token is valid we extract the userData from the token itself and send it to the client
+                .then(res => {
+                    console.log(res, "resposns")
+                    userDispatch({ type: "SET_USER", payload: { email: res.userData.email } })
+                    console.log("success nena", res)
+                    setLoading(false)
+                })
+
+                .catch(err => {
+                    setLoading(false)
+                    //necesary to initialize components that needs to know if user information is ready, like FOllowingDispatcher
+                    userDispatch({ type: "SET_USER_NULL" })
+                    console.log(err.message)
+                })
+        }
+    }, [])
 }
 
 // export const useAuthLogin = (setHasTried, hasTried) => {

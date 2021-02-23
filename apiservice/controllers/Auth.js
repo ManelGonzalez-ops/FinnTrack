@@ -41,6 +41,16 @@ const protectedRoute = (req, res) => {
         return res.status(200).send({ message: "authorized", userData: decoded })
     })
 }
+const checkCredentials =(req, res)=>{
+    console.log(req.token, "ell tokeeun")
+    jwt.verify(req.token, "caranchoa", (err, decoded) => {
+        if (err) {
+            //if we put send instead of json the error won't be handle by .catch in the frontend, which is a fuckery
+            return res.status(400).json("error token not valid")
+        }
+        return res.status(200).send({ message: "authorized", userData: decoded })
+    })
+}
 
 const unpackToken = (req, res, next) => {
     console.log(req.method)
@@ -54,6 +64,7 @@ const unpackToken = (req, res, next) => {
     req.token = token
     next()
 }
+
 
 const hashPassword = (password) => {
     const saltRounds = 12
@@ -76,7 +87,7 @@ const register = async (req, res) => {
         //we have to check that email & username doesn't exists yet
         const hashedPwd = await hashPassword(password)
         await storeNewUser({ username, email, hashedPwd })
-        const token = jwt.sign({ username, password }, "caranchoa")
+        const token = jwt.sign({ username, email }, "caranchoa")
         return res.status(200).send({ token })
     }
     catch (err) {
@@ -95,4 +106,4 @@ class Register {
 
 }
 
-module.exports = { login, protectedRoute, unpackToken, register }
+module.exports = { login, protectedRoute, unpackToken, register, checkCredentials }

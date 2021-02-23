@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react'
 //import { usercontext, useUserLayer } from '../../UserContext'
 import Post from './Post'
 import gsap from "gsap"
-import { Backdrop } from '@material-ui/core'
-
+import { Backdrop, Button } from '@material-ui/core'
+import RefreshIcon from '@material-ui/icons/Refresh';
 export class FollowingDispatcher extends React.Component {
 
     //static contextType = usercontext
@@ -16,7 +16,8 @@ export class FollowingDispatcher extends React.Component {
         error: null,
         responseType: null,
         backdropOpen: false,
-        selectedPost: null
+        selectedPost: null,
+        rotatingIcon: false
     }
     // messageRef = React.createRef()
     // timeline = gsap.timeline()
@@ -82,7 +83,11 @@ export class FollowingDispatcher extends React.Component {
         return result
     }
     fetchInterests() {
-        fetch(`http://localhost:8001/api/v1/users/populate?email=${this.props.valores.userState.info.email}`)
+        this.setState({
+            rotatingIcon: true,
+            data: null,
+        })
+        fetch(`http://localhost:8001/api/v1/interests/populate?email=${this.props.valores.userState.info.email}`)
             .then(res => res.json())
             .then(res => {
                 this.setState({ responseType: res.type })
@@ -92,12 +97,13 @@ export class FollowingDispatcher extends React.Component {
                 this.setState({
                     loading: false,
                     data: readyData,
+                    rotatingIcon: false
                 })
                 if (this.state.responseType === "interests") {
                     this.props._setIsDataReadyScroll(readyData !== null)
                 }
             })
-            .catch(err => { this.setState({ laoding: false, error: err.message }) })
+            .catch(err => { this.setState({ laoding: false, error: err.message, rotatingIcon: false }) })
     }
 
     selectPost = (post) => {
@@ -111,7 +117,7 @@ export class FollowingDispatcher extends React.Component {
     render() {
         console.log(this.props.valores.userState, "wopo")
         //console.log(this.context.userState.info, "los proops")
-        const { data, loading, responseType, backdropOpen, selectedPost } = this.state
+        const { data, loading, responseType, backdropOpen, selectedPost, rotatingIcon } = this.state
         console.log(data, "lo dataa")
         const { currentChunk } = this.props
         if (loading) {
@@ -147,6 +153,12 @@ export class FollowingDispatcher extends React.Component {
         if (responseType === "trending") {
             return (
                 <>
+                    <Button
+                        startIcon={<RefreshIcon className={rotatingIcon ? "rotating-icon" : ""} />}
+                        onClick={() => { this.fetchInterests() }}
+                    >
+                        Refresh
+                </Button>
                     {data && <GsapFadeInStagger>
                         {data.map(message => (
                             <Post {...{ message }}

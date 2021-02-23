@@ -61,15 +61,16 @@ const initialState = {
             dates: {}
         },
         ready: false
-    }
+    },
     //acumulatedRendiments : ,
-    ,
+    companiesImpact: {},
     areHistoricPricesReady: false,
-    areGeneratedSeriesReady: false,
     setPruebaReady: false,
     stockLibrary: [],
     missingTicker: "",
-    following: []
+    following: [],
+    portfolioSeriesReady: false,
+
 }
 
 const companyReducer = (state, action) => {
@@ -300,7 +301,14 @@ const companyReducer = (state, action) => {
         case "STORE_PORTFOLIO_SERIES":
             return {
                 ...state,
-                portfolioSeries: action.payload
+                portfolioSeries: action.payload,
+                portfolioSeriesReady: true
+            }
+        case "SET_PORTFOLIO_SERIES_AWAITING":
+            return {
+                ...state,
+                portfolioSeries: null,
+                portfolioSeriesReady: true
             }
         case "SET_ARE_HISTORIC_PRICES_READY":
             return {
@@ -323,7 +331,18 @@ const companyReducer = (state, action) => {
         case "STORE_IMPACT_BY_COMPANY":
             return {
                 ...state,
-                companiesImpact: action.payload
+                companiesImpact: {
+                    data: action.payload,
+                    ready: true
+                }
+            }
+        case "COMPANIES_IMPACT_AWAITING":
+            return {
+                ...state,
+                companiesImpact: {
+                    data: null,
+                    ready: true
+                }
             }
         //ojo esto es formato gráfica
         case "STORE_COMPANIES_CHANGE":

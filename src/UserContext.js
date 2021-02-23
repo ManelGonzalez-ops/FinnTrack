@@ -3,6 +3,7 @@ import React, { useReducer, useContext } from 'react'
 const context = React.createContext()
 const getToken = () => {
     const token = localStorage.getItem("token")
+    if (token === "undefined") return ""
     return token ?
         JSON.parse(token)
         :
@@ -24,11 +25,13 @@ const userReducer = (state, action) => {
                 ready: true
             }
         case "SET_USER_NULL":
+            localStorage.removeItem("token")
             return {
                 ...state,
                 isAuthenticated: false,
                 info: { email: null },
-                ready: true
+                ready: true,
+                token: null
             }
         case "SET_TOKEN":
             return {

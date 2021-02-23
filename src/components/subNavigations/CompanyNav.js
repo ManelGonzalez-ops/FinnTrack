@@ -74,19 +74,27 @@ export const CompanyNav = forwardRef(({ menuCompaniesOpen, topNavigation }) => {
   }
 
   const handleFollow = () => {
-    fetch(`http://localhost:8001/api/v1/users/interests?email=${info.email}&interest=${currentCompany.ticker}`)
+    fetch(`http://localhost:8001/api/v1/interests/interests?email=${info.email}&interest=${currentCompany.ticker}`)
       .then(res => res.json())
-      .then(interest => { dispatch({ type: "STORE_USER_INTEREST", payload: interest }) })
-      .catch(err => {console.log(err.message, "can't update interest")})
+      .then(interest => {
+        if (typeof interest === "string") {
+          interest = [interest]
+        }
+        dispatch({ type: "STORE_USER_INTEREST", payload: interest })
+      })
+      .catch(err => { console.log(err.message, "can't update interest") })
   }
 
   const [isFollowing, setIsFollowing] = useState(false)
   useEffect(() => {
-    //hay que tener en cuenta si esta logeao o no
-    if (following.length) {
-      const _isFollowing = following.find(tag => tag === currentCompany.ticker)
-      setIsFollowing(!!_isFollowing)
+    if (!following.length) {
+      setIsFollowing(false)
+      return
     }
+    //hay que tener en cuenta si esta logeao o no
+    const _isFollowing = following.find(tag => tag === currentCompany.ticker)
+    setIsFollowing(!!_isFollowing)
+
   }, [following])
   return (
     <Transition

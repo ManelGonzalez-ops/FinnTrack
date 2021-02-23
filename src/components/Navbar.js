@@ -17,6 +17,7 @@ import { Transition } from "react-transition-group";
 import { formatter } from "../utils/numFormatter";
 import { useOktaAuth } from '@okta/okta-react';
 import { CompanyNav } from "./subNavigations/CompanyNav";
+import { useUserLayer } from "../UserContext";
 
 const drawerWidth = 240;
 
@@ -51,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const Navbar = ({ handleDrawerOpen }) => {
-  const { authState, authService } = useOktaAuth();
+  //const { authState, authService } = useOktaAuth();
   const history = useHistory()
   const { state } = useDataLayer()
   const { sidebarOpen } = useUILayer()
@@ -79,10 +80,15 @@ export const Navbar = ({ handleDrawerOpen }) => {
 
 
 
-  const button = authState.isAuthenticated ?
-    <button onClick={() => { authService.logout() }}>Logout</button> :
-    <button onClick={() => { history.push('/login') }}>Login</button>;
+  // const button = authState.isAuthenticated ?
+  //   <button onClick={() => { authService.logout() }}>Logout</button> :
+  //   <button onClick={() => { history.push('/login') }}>Login</button>;
 
+  const { userDispatch } = useUserLayer()
+  const logout = (cb) => {
+    userDispatch({ type: "SET_USER_NULL" })
+    cb()
+  }
   return (
     <div>
       <AppBar
@@ -114,6 +120,9 @@ export const Navbar = ({ handleDrawerOpen }) => {
             <Button variant="contained" color="primary"
               onClick={() => { history.push("/login") }}
             >login</Button>
+            <Button variant="contained" color="primary"
+              onClick={() => { logout(() => history.push("/login")) }}
+            >Logout</Button>
             <Button
               onClick={() => { history.push("/portfoliof") }}
               variant="contained"
@@ -124,10 +133,10 @@ export const Navbar = ({ handleDrawerOpen }) => {
               {formatter.format(state.currentPossesions.userCash)} $
             </Typography>
           </div>
-          <button onClick={()=>{history.push("/interests")}}>interests</button>
+          <button onClick={() => { history.push("/interests") }}>interests</button>
         </Toolbar>
       </AppBar>
-      <CompanyNav {...{menuCompaniesOpen, topNavigation}} />
+      <CompanyNav {...{ menuCompaniesOpen, topNavigation }} />
     </div>
   );
 };

@@ -14,12 +14,15 @@ const peopleRoutes = require("./routes/Personas.js")
 const operationRoutes = require("./routes/Operations.js")
 const pricesRoutes = require("./routes/Prices.js")
 const validationRoutes = require("./routes/Validation")
-const usersRoutes = require("./routes/Users")
+const interestsRoutes = require("./routes/Interests")
 const postsRoutes = require("./routes/Posts")
 const db = require("../db/db")
 const { createInterestTable } = require("../db/services/interestsService")
 const { createPostRegister, createPostStructure } = require("../db/services/PostServices")
 const authRoutes = require("./routes/Auth")
+const usersRoutes = require("./routes/Users")
+const { createUserDetails } = require("../db/services/UserService")
+const multer = require("multer")
 
 createUserTable((err) => {
     console.log("que concha")
@@ -69,6 +72,12 @@ createPostStructure((err) => {
         console.log(err, "error al crear portfolios")
     }
 })
+createUserDetails((err) => {
+    console.log("que conchu")
+    if (err) {
+        console.log(err, "error al crear portfolios")
+    }
+})
 
 // addNewUser({firstName: "manilox", lastName: "del nilox", email: "monilo@gmail.com"})
 // .then(res=>{console.log("succes baby")})
@@ -79,6 +88,17 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+
+const fileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "./images")
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + "---" + file.originalname)
+    }
+})
+
+const upload = multer({ storage: fileStorage })
 //añadidos al hacer lo del okta
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser())
@@ -89,11 +109,14 @@ app.use("/api/v1/operations", operationRoutes)
 //the url has to change to prices, is better name
 app.use("/api/v1/prices", pricesRoutes)
 app.use("/api/v1/validation", validationRoutes)
-app.use("/api/v1/users", usersRoutes)
+app.use("/api/v1/interests", interestsRoutes)
 app.use("/api/v1/posts", postsRoutes)
 app.use("/api/v1/auth", authRoutes)
-app.use((err, req, res, next)=>{
+app.use("/api/v1/users", usersRoutes)
+
+app.use((err, req, res, next) => {
     console.log(err, "error thrown at")
+    res.status(400).send(err)
     //console.log(err.stack, "trace error")
 })
 
@@ -101,6 +124,10 @@ app.get("/", (req, res) => {
     res.status(200).send("xuucla nena")
 })
 
+app.post("/uploads/single", upload.single("image"), (req, res) => {
+    console.log(req.file, "fiiiile");
+    res.status(200).send("single image upload success")
+})
 const dataExample = {
     "2020-11-18": {
         "portfolioCost": 928,
@@ -1012,5 +1039,6 @@ app.get("/api/direct_json", async (req, res) => {
 app.listen(8001, () => {
     console.log("essto funca")
 })
+
 
 //we have to save state.currentPossesions in the database too

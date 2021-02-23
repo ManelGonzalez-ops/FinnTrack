@@ -130,15 +130,24 @@ export const usePortfolioGenerator = () => {
         }
     }
     const generateSerie = (cb) => {
-        const worker = new Worker("worker3.js")
+        const worker = new Worker("/worker3.js")
         worker.postMessage({ _portfolioHistory: portfolioHistory, _generatedSeries: generatedSeries })
         worker.onmessage = e => {
             const { portfolioSeries, companiesPerformanceImpact } = e.data
             console.log(portfolioSeries, companiesPerformanceImpact, "portfolioSeries")
-            console.log("cooooommmmmmmme")
-            dispatch({ type: "STORE_IMPACT_BY_COMPANY", payload: companiesPerformanceImpact })
-            if(portfolioSeries){
+
+            //we won't store it in case it returns a empty object (means data missing due to is too earlie to get prices)
+            if (Object.keys(companiesPerformanceImpact).length) {
+                dispatch({ type: "STORE_IMPACT_BY_COMPANY", payload: companiesPerformanceImpact })
+            }else{
+                dispatch({type: "COMPANIES_IMPACT_AWAITING"})
+            }
+            //the same for portfolio price series
+            if (Object.keys(portfolioSeries).length) {
                 cb(portfolioSeries)
+            } else {
+                //we set the portfolioSeriesReady to true, because it has already been procesed but there's no data yet because firs purchases where made in the weekend. So when user visit dashboard intead of showing loading (as we were procesing) we'll show when data will be available.
+                dispatch({ type: "SET_PORTFOLIO_SERIES_AWAITING" })
             }
         }
     }
@@ -262,7 +271,6 @@ export const usePortfolioGenerator = () => {
         console.log(areHistoricPricesReady, "que cohone")
         if (areHistoricPricesReady && generatedSeries.ready) {
             generateSerie((result) => {
-                
                 dispatch({ type: "STORE_PORTFOLIO_SERIES", payload: result })
                 storePortfolioDB(result)
             })

@@ -84,3 +84,13 @@
   display: flex;
   justify-content: space-between;
 }
+
+.rotating-icon {
+  animation: spin 0.5s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

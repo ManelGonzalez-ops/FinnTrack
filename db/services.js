@@ -283,6 +283,19 @@ module.exports = {
                 resolve(data)
             })
         })
+    },
+    getUsername: (email) => {
+        return new Promise((resolve, reject) => {
+            db.query("select username from users where email = ?", [email], (err, row) => {
+                if (err) {
+                    reject(err)
+                }
+                if (!row || !row.length) {
+                    reject("no usernme found for given email")
+                }
+                resolve(row[0].username)
+            })
+        })
     }
 
 }

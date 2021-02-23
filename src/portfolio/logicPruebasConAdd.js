@@ -184,7 +184,7 @@ export const useLogicPruebas = () => {
     // }
 
     const generateSerieFromBegining = (userActivity, cb) =>{
-        const worker = new Worker("worker2.js")
+        const worker = new Worker("/worker2.js")
         worker.postMessage(userActivity)
         worker.onmessage=(e)=>{
             console.log(e.data, "posesions generated")
@@ -484,11 +484,13 @@ export const useLogicPruebas = () => {
     usePortfolioGenerator()
     useEffect(() => {
         //this needs to fire either when initialState is ready and everytime we add new operation (user activity changes), as we need this to calculate the changes in AssetStructure chart
-        console.log(state.userActivity, "actu")
+        console.log(state.userActivity, state.setPruebaReady, state.generatedSeries.ready, "actu")
         //setPruebaReady creo que es redundante aqui ya que cuando generatedSeries.status es falso significa que hemos realizado una nueva operacion (deberiamos impedir realizar nueva operacion hasta que no generatedSeries.status sea true again)
         if (state.userActivity.length > 0 && state.setPruebaReady && !state.generatedSeries.ready) {
+            console.log("exxecutao")
             //if no userActivity we wont run any code
                 generateSerieFromBegining(state.userActivity, (generatedSerie) => {
+                    console.log("exxecutao2")
                     dispatch({ type: "STORE_GENERATED_SERIES", payload: generatedSerie })
                 })
             //  else {

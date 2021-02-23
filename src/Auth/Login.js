@@ -10,8 +10,8 @@ export const Login = () => {
     const [password, setPassword] = useState("")
     const [{ error, loading }, setStatus] = useState({ error: null, loading: false })
     const { userDispatch } = useUserLayer()
-   
-    const {hasPermission} = useIAuth()
+
+    const { hasPermission } = useIAuth()
     const history = useHistory()
 
     const handleLogin = (e) => {
@@ -27,6 +27,7 @@ export const Login = () => {
             .then(res => {
                 localStorage.setItem("token", JSON.stringify(res.token))
                 userDispatch({ type: "SET_TOKEN", payload: res.token })
+                userDispatch({ type: "SET_USER", payload: { email } })
                 history.push("/protectedRuta")
                 setStatus(prev => ({ ...prev, loading: false }))
                 //setPermissionObtained(true)
@@ -50,16 +51,18 @@ export const Login = () => {
             <label>
                 <input type="text" name="email"
                     value={email}
-                    onChange={(e) => { 
-                        setEmail(e.target.value) }}
+                    onChange={(e) => {
+                        setEmail(e.target.value)
+                    }}
                     required
                 />
             </label>
             <label>
                 <input type="password" name="password"
                     value={password}
-                    onChange={(e) => { 
-                        setPassword(e.target.value) }}
+                    onChange={(e) => {
+                        setPassword(e.target.value)
+                    }}
                     required
                 />
             </label>

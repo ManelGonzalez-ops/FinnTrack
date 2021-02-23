@@ -1,11 +1,10 @@
 const express = require("express")
-const { addInterest, populate } = require("../controllers/Users")
+const { uploadImg } = require("../controllers/Users")
+const {upload} = require("../middlewares/imageUpload")
 const router = express.Router()
 
-router.route("/interests")
-.get(addInterest)
-router.route("/populate")
-.get(populate)
-
+router.use("/upload", upload.single("image"))
+router.route("/upload")
+.post(uploadImg)
 
 module.exports = router

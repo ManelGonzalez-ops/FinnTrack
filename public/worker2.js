@@ -1,5 +1,7 @@
 this.onmessage = e =>{
+    console.log("worker2 currando")
     const userActivity = e.data
+    console.log(userActivity, "worker2 currando")
     const possesionSeries = generateSerieFromBegining(userActivity) 
     this.postMessage(possesionSeries)
 }

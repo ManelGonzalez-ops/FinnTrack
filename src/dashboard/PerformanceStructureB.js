@@ -10,7 +10,9 @@ export const PerformanceStructureB = () => {
     const { state } = useDataLayer()
     const { generatedSeries } = state
     const [chartData, setChartData] = useState()
-    
+    const [loading, setLoading] = useState(false)
+    const [availableTomorrow, setAvailableTomorrow] = useState(false)
+
     const prepareDataset = () => {
         let readyData = {}
         Object.keys(state.companiesImpact).forEach(date => {
@@ -59,7 +61,17 @@ export const PerformanceStructureB = () => {
     }
     useEffect(() => {
         console.log(state.companiesImpact, generatedSeries, "sorios")
-        if (state.companiesImpact && generatedSeries.ready) {
+        if (!state.companiesImpact.ready || !generatedSeries.ready) {
+            setLoading(true)
+            return
+        }
+        if (!state.companiesImpact.data) {
+            setLoading(false)
+            setAvailableTomorrow(true)
+        }
+
+        if (state.companiesImpact.data) {
+            setLoading(false)
             const data = prepareDataset()
             prepareForChart(data, (result) => {
                 setChartData(result)
@@ -107,6 +119,9 @@ export const PerformanceStructureB = () => {
     }
     return (
         <Paper>
+            {loading && <p>Loading...</p>}
+            {availableTomorrow && <p>Data is not available untill next day after you submited a operation, if you submited in weekend wait till monday</p>}
+
             { chartData && <HighchartsReact
                 highcharts={Highcharts}
                 options={chartOptions}

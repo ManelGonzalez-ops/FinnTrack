@@ -116,7 +116,7 @@ export const useEngine = () => {
     const prepareData = (arr, cb) => {
         
         console.log(arr, "la arrey")
-        const worker = new Worker("worker.js")
+        const worker = new Worker("/worker.js")
         worker.postMessage(arr)
         worker.onmessage = e => {
             const { portfolioHistoryByDate, portfolioHistoryByCompanies } = e.data

@@ -11,6 +11,7 @@ export const PerformanceStructure = () => {
     const [dataReady, setDataReady] = useState("")
     const { state, dispatch } = useDataLayer()
     const { areHistoricPricesReady, generatedSeries, companiesChange } = state
+    const [availableTomorrow, setAvailableTomorrow] = useState(false)
     const data1 = useRef([])
     const data2 = useRef([])
 
@@ -87,10 +88,14 @@ export const PerformanceStructure = () => {
             console.log(result, "compachnage")
             return result
         }
-        
+
+        if (!Object.keys(state.portfolioHistory).length) {
+            setAvailableTomorrow(true)
+            return
+        }
         if (areHistoricPricesReady && generatedSeries.ready) {
             const dataset = generateSeries()
-            dispatch({type:"STORE_COMPANIES_CHANGE", payload: dataset})
+            dispatch({ type: "STORE_COMPANIES_CHANGE", payload: dataset })
             console.log(dataset, "reeeesullt")
             const _dataReady = prepareDataset(dataset)
             setDataReady(_dataReady)
@@ -153,6 +158,8 @@ export const PerformanceStructure = () => {
     }
     return (
         <Paper className="performance-chart1">
+
+            {availableTomorrow && <p>Data is not available untill next day after you submited a operation, if you submited in weekend wait till monday</p>}
             {
                 dataReady &&
                 <HighchartsReact
