@@ -56,6 +56,17 @@ const addRelativePerformance = (companiesPerformance, date, aportacion, asset) =
         ]
     }
 }
+//when generatedSeries has length 1 means our portfolio was created today.
+//portfolio history won't have any register
+//generating a provisional chart is easy, two points from 1000 to 1000*(price-cost)
+//so when user buys something the first day, we display the chart showing 1000 to the price that has currently in that moment (x axis will be in datetime)
+
+
+//when generatedSeries has length 2 means our portfolio was created yesterday.
+//portfolio history will have 1 register, and the price chart will show 1 point. We need to again get today's missing portofolioHistorypoint with the current price in the moment (fetch every time component is rendered)
+
+
+//if we are in the first day we need to fetch quotes for every ticker,
 
 const generateSerie = () => {
     let masterSerie = {}
@@ -75,6 +86,7 @@ const generateSerie = () => {
             let portfolioCost = 0
             let portfolioValue = 0
             generatedSeries.data.dates[date].positions.forEach(asset => {
+                stocksProcesed = [...stocksProcesed, asset.ticker.toUpperCase()]
                 portfolioCost += asset.amount * asset.unitaryCost
                 const stockRegister = portfolioHistory[date][asset.ticker.toUpperCase()]
                 let stockClosePrice;
@@ -137,7 +149,7 @@ const generateSerie = () => {
                     addRelativePerformance(companiesPerformanceImpact, date, aportacion, asset)
 
                 })
-
+                console.log(valueIncrement, "incrementovalor")
                 liquidativeValue = lastLiquidativeValue * (1 + valueIncrement)
 
                 masterSerie = {

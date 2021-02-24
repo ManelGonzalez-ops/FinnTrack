@@ -116,7 +116,7 @@ app.use("/api/v1/users", usersRoutes)
 
 app.use((err, req, res, next) => {
     console.log(err, "error thrown at")
-    res.status(400).send(err)
+    return res.status(400).send(err)
     //console.log(err.stack, "trace error")
 })
 

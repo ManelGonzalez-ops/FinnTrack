@@ -213,6 +213,7 @@ export const useLogicPruebas = () => {
                 }
             }
         }
+        //**deberiamos tener en cuenta si es fin de semana o no, ya que el finde no cambia nada, por lo que es redundante
         timelapse.forEach(date => {
             masterHistory = {
                 ...masterHistory,

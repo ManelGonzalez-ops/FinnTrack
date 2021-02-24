@@ -15,8 +15,8 @@ export const PerformanceStructureB = () => {
 
     const prepareDataset = () => {
         let readyData = {}
-        Object.keys(state.companiesImpact).forEach(date => {
-            state.companiesImpact[date].forEach(asset => {
+        Object.keys(state.companiesImpact.data).forEach(date => {
+            state.companiesImpact.data[date].forEach(asset => {
                 if (readyData[asset.ticker] === undefined) {
                     readyData = {
                         ...readyData,
@@ -25,7 +25,7 @@ export const PerformanceStructureB = () => {
                 }
                 const unixDate = convertHumanToUnixInit(date)
                 //we are clasifying "other" as a ticker/category
-                const isThereAndRelevant = state.companiesImpact[date].find(item => item.ticker === asset.ticker)
+                const isThereAndRelevant = state.companiesImpact.data[date].find(item => item.ticker === asset.ticker)
                 if (isThereAndRelevant) {
                     readyData[asset.ticker] = [
                         ...readyData[asset.ticker],
@@ -71,6 +71,7 @@ export const PerformanceStructureB = () => {
         }
 
         if (state.companiesImpact.data) {
+            console.log(state.companiesImpact.data, "company impct")
             setLoading(false)
             const data = prepareDataset()
             prepareForChart(data, (result) => {

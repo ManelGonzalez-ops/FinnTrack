@@ -91,6 +91,7 @@ export const Register = () => {
             .then(res => res.json())
             .then(res => {
                 userDispatch({ type: "SET_TOKEN", paylod: res.token })
+                userDispatch({ type: "SET_USER", payload: { email } })
                 localStorage.setItem("token", JSON.stringify(res.token))
                 setSuccess(true)
             })

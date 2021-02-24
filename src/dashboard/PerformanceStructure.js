@@ -7,11 +7,10 @@ import { rounder } from '../utils/numFormatter';
 import { Paper } from '@material-ui/core';
 
 
-export const PerformanceStructure = () => {
+export const PerformanceStructure = ({ available, loading }) => {
     const [dataReady, setDataReady] = useState("")
     const { state, dispatch } = useDataLayer()
-    const { areHistoricPricesReady, generatedSeries, companiesChange } = state
-    const [availableTomorrow, setAvailableTomorrow] = useState(false)
+    const { companiesChange } = state
     const data1 = useRef([])
     const data2 = useRef([])
 
@@ -31,76 +30,16 @@ export const PerformanceStructure = () => {
 
 
     useEffect(() => {
-        // const getFirstDate = () => {
-        //     const firstOperation = state.userActivity.find(item => item.isFirstOperation === true)
-        //     let initialDate = firstOperation.date
-        //     if (state.portfolioHistory[initialDate] === undefined) {
-        //         const unixInitialDate = convertHumanToUnixInit(initialDate)
-        //         let found = false
-        //         let unixPreviousDate = unixInitialDate
-        //         while (!found) {
-        //             unixPreviousDate -= milisencondsInADay
-        //             const previousDate = convertUnixToHuman(unixPreviousDate)
-        //             if (state.portfolioHistory[previousDate] !== undefined) {
-        //                 initialDate = previousDate
-        //                 found = true
-        //             }
-        //         }
-        //     }
-        //     Object.keys(state.portfolioHistory)
-        // }
-        const generateSeries = () => {
-            let result = {}
-            //inicialize our object with ticker keys as empty arr
-            state.currentPossesions.stocks.forEach(({ ticker }) => {
-                result = {
-                    ...result,
-                    [ticker]: []
-                }
-            })
-            let change = 0
-            //aqui deberiamos cojer solo las que tienen mayor % peso
-            //ojo al generatedSeries que puede que no se haya creao aun
-            Object.keys(state.generatedSeries.data.dates).forEach(date => {
-                if (state.portfolioHistory[date] !== undefined) {
-                    let unixDate = convertHumanToUnixInit(date)
-                    Object.keys(state.portfolioHistory[date]).forEach(ticker => {
-                        const wasInPort = state.generatedSeries.data.dates[date].positions.find(item => ticker === item.ticker)
-                        if (wasInPort) {
-
-                            const { close } = state.portfolioHistory[date][ticker]
-                            const prevDayPrice = result[ticker] && result[ticker].length > 0 && result[ticker][result[ticker].length - 1][2]
-                            if (prevDayPrice) {
-                                change = (close - prevDayPrice) * 100 / prevDayPrice
-                            }
-                            result = {
-                                ...result,
-                                [ticker]:
-                                    [
-                                        ...result[ticker],
-                                        [unixDate, rounder(change), close]
-                                    ]
-                            }
-                        }
-                    })
-                }
-            })
-            console.log(result, "compachnage")
-            return result
-        }
-
-        if (!Object.keys(state.portfolioHistory).length) {
-            setAvailableTomorrow(true)
+        if (loading) {
             return
         }
-        if (areHistoricPricesReady && generatedSeries.ready) {
-            const dataset = generateSeries()
-            dispatch({ type: "STORE_COMPANIES_CHANGE", payload: dataset })
-            console.log(dataset, "reeeesullt")
-            const _dataReady = prepareDataset(dataset)
-            setDataReady(_dataReady)
+        if (!available) {
+            return
         }
-    }, [areHistoricPricesReady, generatedSeries])
+        const _dataReady = prepareDataset(companiesChange)
+        setDataReady(_dataReady)
+
+    }, [available])
 
 
     const prepareDataset = (data) => {
@@ -119,6 +58,7 @@ export const PerformanceStructure = () => {
         })
         return readyData
     }
+
     const chartOptions = {
         chart: {
             type: "column",
@@ -156,10 +96,14 @@ export const PerformanceStructure = () => {
         series: dataReady
 
     }
+
+    if (loading) {
+        return <p>loading...</p>
+    }
     return (
         <Paper className="performance-chart1">
 
-            {availableTomorrow && <p>Data is not available untill next day after you submited a operation, if you submited in weekend wait till monday</p>}
+            {!available && <p>Data is not available untill next day after you submited a operation, if you submited in weekend wait till monday</p>}
             {
                 dataReady &&
                 <HighchartsReact

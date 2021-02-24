@@ -21,5 +21,15 @@ module.exports = {
                 resolve()
             })
         })
+    },
+    setPortfolio: (email, date) => {
+        return new Promise((resolve, reject) => {
+            db.query("update users set portfolioInitial = ? where email=?", [date, email], (err, row) => {
+                if (err) {
+                    reject(err)
+                }
+                resolve()
+            })
+        })
     }
 }

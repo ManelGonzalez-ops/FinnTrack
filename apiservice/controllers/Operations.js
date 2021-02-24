@@ -1,5 +1,6 @@
 const { getOperations, findUser, addPortfolioDB, updatePortfolioDB, portfolioExists, addOperation } = require("../../db/services")
 const { getUserInterests } = require("../../db/services/interestsService")
+const { setPortfolio } = require("../../db/services/UserService")
 const { prepareStoredOperations, setInitialPossesions } = require("../dataPreparation")
 const { convertUnixToHuman } = require("../dataUtils")
 
@@ -53,8 +54,22 @@ const updatePortfolio = async (req, res) => {
     }
 }
 
-const addOperationDB = (req, res) => {
+const registerPortfolio = async (email, date) => {
+    await setPortfolio(email, date)
+}
+const addOperationDB = async (req, res, next) => {
     const email = req.body.user
+    const { isFirstOperation, date } = req.body.order
+
+    if (isFirstOperation) {
+        try {
+            await registerPortfolio(email, date)
+
+        }
+        catch (err) {
+            next(err)
+        }
+    }
     console.log(req.body.user, "la faking user")
     console.log(req.body.order, "la faking order")
     //const {operationType, ticker, amount, price} = req.body.order

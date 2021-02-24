@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom'
 import { useDataLayer } from '../Context'
 // import { useEngine } from '../portfolio/Engine'
 import { PortfolioPriceChart } from '../portfolio/PortfolioPriceChart'
+import { useCompaniesChange } from '../portfolio/useCompaniesChange'
 import { useUserLayer } from '../UserContext'
 import { AssetStructure } from './AssetStructure'
 import { LateralSection } from './LateralSection'
@@ -17,10 +18,11 @@ export const Middleware = (props) => {
     const { state } = useDataLayer()
     const { portfolioSeriesReady } = state
     const { userState } = useUserLayer()
+    const [dataReady, setDataReady] = useState(false)
     //we need to check that potfolio history is not empty before render userMain
     //and we need to check we have all posesion's historical prices
 
-
+    const { available, loading } = useCompaniesChange()
     if (!userState.isAuthenticated) {
         return <Redirect to={{ pathname: "/pruebaLogin" }} />
     }
@@ -36,8 +38,7 @@ export const Middleware = (props) => {
             </div> */}
 
                     {portfolioSeriesReady ? <PortfolioPriceChart datos={state.portfolioSeries} title="profitability over investment" /> : <p>Loading...</p>}
-
-                    <PerformanceStructure />
+                    <PerformanceStructure {...{available, loading}} />
                     <PerformanceStructureB />
                 </div>
                 <div className="secondary">
