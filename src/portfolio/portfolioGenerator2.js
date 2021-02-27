@@ -6,11 +6,13 @@ import { convertUnixToHuman } from '../utils/datesUtils'
 export const usePortfolioGenerator = () => {
 
     const { state, dispatch } = useDataLayer()
-    const { portfolioHistory, generatedSeries, areHistoricPricesReady } = state
+    const { portfolioHistory, generatedSeries, areHistoricPricesReady, stockLibrary, portfolioSeriesReady, simulation, addFirstSerie } = state
     const userRefreshed = useRef(true)
     const { userState: { info } } = useUserLayer()
     const validDates = useRef([])
     const polyfillPrices = useRef({})
+
+    const initialDate = useRef(null)
     //option 1 : save masterSerie as a object
     //option 2 : save masterSerie as a array
 
@@ -129,9 +131,26 @@ export const usePortfolioGenerator = () => {
             ]
         }
     }
-    const generateSerie = (cb) => {
+    const fetchQuotes = () => {
+        return fetch("http://localhost:8001/api/portfolio/quotes", {
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ tickers: stockLibrary }),
+            method: "POST"
+        })
+            .then(res => res.json())
+            .then(res => {
+                console.log("hola")
+                dispatch({ type: "SET_SIMULATION_QUOTES", payload: res[0] })
+                return
+            })
+            .catch(err => { throw new Error(err) })
+    }
+    const generateSerie = (cb, quotes = null, initialDate = null) => {
+        console.log(quotes, initialDate, "worker running")
         const worker = new Worker("/worker3.js")
-        worker.postMessage({ _portfolioHistory: portfolioHistory, _generatedSeries: generatedSeries })
+        worker.postMessage({ _portfolioHistory: portfolioHistory, _generatedSeries: generatedSeries, quotes, initialDate })
         worker.onmessage = e => {
             const { portfolioSeries, companiesPerformanceImpact } = e.data
             console.log(portfolioSeries, companiesPerformanceImpact, "portfolioSeries")
@@ -139,8 +158,8 @@ export const usePortfolioGenerator = () => {
             //we won't store it in case it returns a empty object (means data missing due to is too earlie to get prices)
             if (Object.keys(companiesPerformanceImpact).length) {
                 dispatch({ type: "STORE_IMPACT_BY_COMPANY", payload: companiesPerformanceImpact })
-            }else{
-                dispatch({type: "COMPANIES_IMPACT_AWAITING"})
+            } else {
+                dispatch({ type: "COMPANIES_IMPACT_AWAITING" })
             }
             //the same for portfolio price series
             if (Object.keys(portfolioSeries).length) {
@@ -266,16 +285,63 @@ export const usePortfolioGenerator = () => {
             .then(res => res.json())
             .catch(err => { throw err.message })
     }
+    const getInitialDate = async () => {
+        const res = await fetch("http://localhost:8001/api/v1/operations/initial", {
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: info.email }),
+            method: "POST"
+        })
+        const data = await res.json()
+        return data.split("T")[0]
+    }
+    const asynquer = async () => {
+        initialDate.current = await getInitialDate()
+        fetchQuotes()
+            .then(() => {
+                console.log("hola2")
+                console.log(state.simulation, "quootas")
+                generateSerie((result) => {
+                    dispatch({ type: "STORE_PORTFOLIO_SERIES", payload: result })
+                    //storePortfolioDB(result)
+                })
+            })
+            .catch(err => { throw new Error(err) })
+    }
+
+    //triggered after action after fetchquotes is dispatch and state i updated 
+    useEffect(() => {
+        if (addFirstSerie) {
+            if (simulation.quotes) {
+                generateSerie((result) => {
+                    dispatch({ type: "STORE_PORTFOLIO_SERIES", payload: result })
+                    //storePortfolioDB(result)
+                }, simulation.quotes, initialDate.current)
+            }
+        }
+    }, [simulation])
+
+    const handleSimulatedSeries = async () => {
+        initialDate.current = await getInitialDate()
+        //that will trigger the useeffect with [siulation] deps of above
+        //we do it like this becuase reactContext Consumer is not in sync with Provider inmediately.
+        fetchQuotes()
+    }
 
     useEffect(() => {
         console.log(areHistoricPricesReady, "que cohone")
-        if (areHistoricPricesReady && generatedSeries.ready) {
-            generateSerie((result) => {
-                dispatch({ type: "STORE_PORTFOLIO_SERIES", payload: result })
-                storePortfolioDB(result)
-            })
+        if (areHistoricPricesReady && generatedSeries.ready && !portfolioSeriesReady) {
+            //firstDay
+            if (addFirstSerie) {
+                handleSimulatedSeries()
+            } else {
+                //default mode
+                generateSerie((result) => {
+                    dispatch({ type: "STORE_PORTFOLIO_SERIES", payload: result })
+                    //storePortfolioDB(result)
+                })
+            }
         }
 
-    }, [generatedSeries, areHistoricPricesReady])
+    }, [generatedSeries, areHistoricPricesReady, portfolioSeriesReady])
 
 }

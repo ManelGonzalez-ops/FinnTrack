@@ -38,7 +38,7 @@ const getTotalDaysElapsed = (initialTime) => {
         return totalMilisecons / milisencondsInADay
     } else {
         //this will only run in the day 0 
-        return 1
+        return 0
     }
 }
 
@@ -482,7 +482,7 @@ export const useLogicPruebas = () => {
         cb(masterHistory)
     }
     //solo se recalcularan las series cuando el ususario haya echo una nueva operacion y o cuando haya entrado en portolio dashboard
-    usePortfolioGenerator()
+    //usePortfolioGenerator()
     useEffect(() => {
         //this needs to fire either when initialState is ready and everytime we add new operation (user activity changes), as we need this to calculate the changes in AssetStructure chart
         console.log(state.userActivity, state.setPruebaReady, state.generatedSeries.ready, "actu")

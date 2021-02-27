@@ -1,5 +1,5 @@
 const express = require("express")
-const { getReadyOperations, updatePortfolio, addOperationDB } = require("../controllers/Operations")
+const { getReadyOperations, updatePortfolio, addOperationDB, getPortfolioInitialDate } = require("../controllers/Operations")
 
 const router = express.Router()
 
@@ -13,5 +13,8 @@ router.route("/update")
 
 router.route("/addoperation")
 .post(addOperationDB)
+
+router.route("/initial")
+.post(getPortfolioInitialDate)
 
 module.exports = router

@@ -31,5 +31,18 @@ module.exports = {
                 resolve()
             })
         })
+    },
+    getPortfolioInitialDay: (email) => {
+        return new Promise((resolve, reject) => {
+            db.query("select portfolioInitial from users where email = ?", [email], (err, row) => {
+                if (err) {
+                    reject(err)
+                }
+                if (!row || !row.length) {
+                    reject(new Error("portfolio initial date not found"))
+                }
+                resolve(row[0].portfolioInitial)
+            })
+        })
     }
 }

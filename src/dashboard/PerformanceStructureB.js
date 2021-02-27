@@ -36,7 +36,7 @@ export const PerformanceStructureB = () => {
             })
         })
         console.log(readyData, "ruuudi")
-        if (readyData.other.length > 0) {
+        if (readyData.other && readyData.other.length > 0) {
             //if sum of all others is less than absolute 0.1 we won't show category other for that date neither
             const relevantOthers = readyData.other.filter(item => Math.abs(item[1]) > 0.1)
             readyData = { ...readyData, relevantOthers }

@@ -62,7 +62,7 @@ const getTotalDaysElapsed = (initialTime) => {
         return totalMilisecons / milisencondsInADay
     } else {
         //this will only run in the day 0 
-        return 1
+        return 0
     }
 }
 
@@ -77,6 +77,7 @@ const createTimelaspse = (initialTime) => {
     //console.log(initialTime, "ostiatime")
     Array.from(Array(range).keys()).forEach(_ => {
         lastDate += milisencondsInADay
+        
         timelapse = [...timelapse, convertUnixToHuman(lastDate)]
     })
     return timelapse

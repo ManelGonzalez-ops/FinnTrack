@@ -1,5 +1,5 @@
 import { Button, TextField } from '@material-ui/core'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { CustomCircularProgress } from '../components/components/CustomCircularProgress'
 import { useDataLayer } from '../Context'
 import useAuth from '../useAuth'
@@ -27,16 +27,33 @@ export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) =
     const [orderTotal, setOrderTotal] = useState("")
     const [modalOpen, setModalOpen] = React.useState(false);
     const [operationType, setOperationType] = React.useState("")
-
+    const restartPortfolio = useRef(false)
     useEffect(() => {
         if (currentPrice) {
             setOrderTotal(currentPrice * qty)
         }
     }, [qty, currentPrice])
 
+    const enableRealtime = () => {
+        restartPortfolio.current = true
+        //because first day we make real time updates, in normal conditions this is false and portfolioSeries don't get recalculated 
+        dispatch({ type: "SET_ARE_HISTORIC_PRICES_READY", payload: true })
+        dispatch({ type: "SET_FIRST_SERIE", payload: true })
+    }
     const submitOrder = () => {
         if (userState.info.email) {
             let isFirstOperation = state.userActivity.length > 0 ? false : true
+            if (isFirstOperation) {
+                enableRealtime()
+                localStorage.setItem("firstDate", JSON.stringify(Date.now()))
+            } else {
+                //check if it's still in the first day
+                const firstOp = state.userActivity.find(item => item.isFirstOperation)
+                if (firstOp.date === date) {
+                    enableRealtime()
+                }
+            }
+
             fetch("http://localhost:8001/api/v1/operations/addoperation", {
                 headers: {
                     Accept: 'application/json',
@@ -86,6 +103,9 @@ export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) =
                         }
                     })
                     dispatch({ type: "RESTART_GENERATED_SERIES" })
+                    if (restartPortfolio.current) {
+                        dispatch({ type: "RESTART_PORTFOLIO_SERIES" })
+                    }
 
                 })
                 .catch(err => { console.log(err, "pputa falló") })
