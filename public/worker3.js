@@ -7,7 +7,7 @@ this.onmessage = e => {
     generatedSeries = _generatedSeries
     //id addfirstSerie=false, quotes and initialDate will be null
     const portfolioInstance = new PortfolioGenerator(initialDate, quotes)
-    const { masterSerie, companiesPerformanceImpact } = portfolioInstance.generateSerie()
+    const { masterSerie, companiesPerformanceImpact } = portfolioInstance.generateSerie2()
     this.postMessage({ portfolioSeries: masterSerie, companiesPerformanceImpact })
 
 }
@@ -27,6 +27,159 @@ class PortfolioGenerator {
     isFirstDay = () => this.date === this.initialDate
     isToday = () => this.initialDate === this.today
     isTodayFirstDay = () => this.isFirstDay() && this.isToday()
+    isWeekend = (date) => {
+        const day = new Date(convertHumanToUnixInit(date))
+        if (day.getDay() === 6 || day.getDay() === 0) {
+            return true
+        }
+        return false
+    }
+
+    getPortfolioStats = () => {
+        let masterInfo = {}
+        Object.keys(generatedSeries.data.dates).forEach(date => {
+            let portfolioCost = 0;
+            let portfolioValue = 0;
+            let companiesPrice = {}
+            generatedSeries.data.dates[date].positions.forEach(asset => {
+                //we have to omit weekend days because when we start the portfolio in the weekend prices will be undefined
+                this.setDate(date)
+                let stockRegister;
+                let stockClosePrice;
+                if (this.isTodayFirstDay()) {
+                    console.log("pasa por aquiii")
+                    //la primera serie no debe ser guardada...
+                    stockRegister = this.quotes.find(item => item.ticker === asset.ticker)
+                    stockClosePrice = stockRegister.priceInfo.adjClose
+                } else {
+                    //ojo con esto que puede dar a problemss en generateSeries2
+                    if (!portfolioHistory[date]) {
+                        if (this.isWeekend(date)) {
+                            console.log(date, "is weekend")
+                            companiesPrice = {
+                                ...companiesPrice,
+                                [asset.ticker]: asset.unitaryCost
+                            }
+                            const val = asset.unitaryCost * asset.amount
+                            portfolioValue += val
+                            portfolioCost += val
+                            return
+                        }
+                        //else we continue as we should have polyfilled price already set
+                    }
+                    stockRegister = portfolioHistory[date][asset.ticker.toUpperCase()]
+                    stockClosePrice = stockRegister.close
+
+                    if (stockRegister === undefined) {
+                        let lastValidPrice = polyfillPrices[asset.ticker]
+                        stockClosePrice = lastValidPrice ? lastValidPrice : asset.unitaryCost
+                        polyfillPrices[asset.ticker] = stockClosePrice
+                    } else {
+                        stockClosePrice = stockRegister.close
+                        polyfillPrices[asset.ticker] = stockClosePrice
+                    }
+                }
+
+                companiesPrice = {
+                    ...companiesPrice,
+                    [asset.ticker]: stockClosePrice
+                }
+                const positionVal = stockClosePrice * asset.amount
+                portfolioValue += positionVal
+                portfolioCost += asset.amount * asset.unitaryCost
+            })
+
+            masterInfo = {
+                ...masterInfo,
+                [date]: {
+                    portfolioCost,
+                    portfolioValue,
+                    companiesPrice
+                }
+            }
+        })
+
+        return masterInfo
+    }
+
+    generateSerie2 = () => {
+        let masterSerie = {}
+        let liquidativeInitial = 1000
+        let accruedIncome = 0
+        let liquidativeValue
+        let companiesPerformanceImpact = {}
+        let validDates = []
+        const dateKeys = Object.keys(generatedSeries.data.dates)
+        const masterInfo = this.getPortfolioStats()
+        console.log(masterInfo, "masterInnnfo")
+
+        dateKeys.forEach(date => {
+
+            companiesPerformanceImpact[date] = []
+            let valueIncrement = 0
+            let lastLiquidativeValue
+            let lastDate;
+            const portfolioCost = masterInfo[date].portfolioCost
+            const portfolioValue = masterInfo[date].portfolioValue
+
+            if (!validDates.length) {
+                lastLiquidativeValue = 1000
+            } else {
+                lastDate = validDates[validDates.length - 1]
+                console.log(validDates, lastDate, "ka ous")
+                //console.log(lastDate, "luuust")
+                lastLiquidativeValue = masterSerie[lastDate].liquidativeValue
+            }
+
+            generatedSeries.data.dates[date].positions.forEach(asset => {
+                this.setDate(date)
+                //
+                const stockClosePrice = masterInfo[date].companiesPrice[asset.ticker]
+
+                // aportacion = isFirstRecord ? 0 : this.calculadorMedia(asset, stockClosePrice, lastDate, portfolioValue)
+                const aportacion = this.calculadorMedia(asset, stockClosePrice, lastDate, portfolioValue)
+
+
+                this.addRelativePerformance(companiesPerformanceImpact, date, aportacion, asset)
+                //
+                valueIncrement += aportacion
+
+            })
+
+            if (this.isTodayFirstDay()) {
+                const initialPerformance = portfolioValue / portfolioCost
+                liquidativeValue = liquidativeInitial * initialPerformance
+                masterSerie = {
+                    ...masterSerie,
+                    [date]: {
+                        portfolioCost,
+                        portfolioValue,
+                        accruedIncome,
+                        liquidativeValue
+                    }
+                }
+            }
+            else {
+
+                liquidativeValue = lastLiquidativeValue * (1 + valueIncrement)
+
+                masterSerie = {
+                    ...masterSerie,
+                    [date]: {
+                        portfolioCost,
+                        portfolioValue,
+                        accruedIncome,
+                        liquidativeValue
+                    }
+                }
+                //we should store this array in the context to acces easily in the updateSeries
+            }
+
+            validDates = [...validDates, date]
+        })
+        return { masterSerie, companiesPerformanceImpact }
+    }
+
 
     generateSerie = () => {
 
@@ -57,7 +210,7 @@ class PortfolioGenerator {
             //when initialDate = today
             generatedSeries.data.dates[date].positions.forEach(asset => {
                 let stockClosePrice;
-                //stocksProcesed = [...stocksProcesed, asset.ticker.toUpperCase()]
+                stocksProcesed = [...stocksProcesed, asset.ticker.toUpperCase()]
                 portfolioCost += asset.amount * asset.unitaryCost
                 if (this.isTodayFirstDay()) {
                     //la primera serie no debe ser guardada...
@@ -103,73 +256,73 @@ class PortfolioGenerator {
                 }
             }
 
-            
-                companiesPerformanceImpact[date] = []
-                let valueIncrement = 0
-                let lastLiquidativeValue
-                let lastDate;
-                if (!validDates.length) {
-                    lastLiquidativeValue = 1000
+
+            companiesPerformanceImpact[date] = []
+            let valueIncrement = 0
+            let lastLiquidativeValue
+            let lastDate;
+            if (!validDates.length) {
+                lastLiquidativeValue = 1000
+            } else {
+                lastDate = validDates[validDates.length - 1]
+                console.log(validDates, lastDate, "ka ous")
+                //console.log(lastDate, "luuust")
+                lastLiquidativeValue = masterSerie[lastDate].liquidativeValue
+            }
+            //calculate portfolioValue and costs
+            //calculate liquidative Value
+            //T Esto sale nulo el primer día
+            generatedSeries.data.dates[date].positions.forEach(asset => {
+                let stockClosePrice;
+                let aportacion;
+                let stockRegister;
+                if (this.isTodayFirstDay()) {
+                    stockRegister = this.quotes.find(item => item.ticker === asset.ticker)
+                    stockClosePrice = stockRegister.priceInfo.adjClose
+                    aportacion = this.calculadorMedia(asset, stockClosePrice, lastDate, portfolioValue)
                 } else {
-                    lastDate = validDates[validDates.length - 1]
-                    console.log(validDates, lastDate, "ka ous")
-                    //console.log(lastDate, "luuust")
-                    lastLiquidativeValue = masterSerie[lastDate].liquidativeValue
-                }
-                //calculate portfolioValue and costs
-                //calculate liquidative Value
-                //T Esto sale nulo el primer día
-                generatedSeries.data.dates[date].positions.forEach(asset => {
-                    let stockClosePrice;
-                    let aportacion;
-                    let stockRegister;
-                    if (this.isTodayFirstDay()) {
-                        stockRegister = this.quotes.find(item => item.ticker === asset.ticker)
-                        stockClosePrice = stockRegister.priceInfo.adjClose
-                        aportacion = this.calculadorMedia(asset, stockClosePrice, lastDate, portfolioValue)
-                    } else {
-                        let isFirstRecord = false
-                        // if (!stocksProcesed.includes(asset.ticker.toUpperCase())) {
-                        //     stocksProcesed = [...stocksProcesed, asset.ticker.toUpperCase()]
-                        //     isFirstRecord = true
-                        // }
-
-                        if (!portfolioHistory[date]) {
-                            return
-                        }
-                        stockRegister = portfolioHistory[date][asset.ticker.toUpperCase()]
-
-                        if (stockRegister === undefined) {
-                            stockClosePrice = polyfillPrices[asset.ticker]
-                        } else {
-                            stockClosePrice = stockRegister.close
-                            //polyfillPrices[asset.ticker] = stockClosePrice
-                        }
-
-                        aportacion = isFirstRecord ? 0 : this.calculadorMedia(asset, stockClosePrice, lastDate, portfolioValue)
-                    }
-
-                    // if (stockClosePrice === undefined) {
-                    //     stockClosePrice = getLastValidPrice(asset.ticker.toUpperCase())
+                    let isFirstRecord = false
+                    // if (!stocksProcesed.includes(asset.ticker.toUpperCase())) {
+                    //     stocksProcesed = [...stocksProcesed, asset.ticker.toUpperCase()]
+                    //     isFirstRecord = true
                     // }
-                    valueIncrement += aportacion
-                    this.addRelativePerformance(companiesPerformanceImpact, date, aportacion, asset)
 
-                })
-                console.log(valueIncrement, "incrementovalor")
-                liquidativeValue = lastLiquidativeValue * (1 + valueIncrement)
-
-                masterSerie = {
-                    ...masterSerie,
-                    [date]: {
-                        portfolioCost,
-                        portfolioValue,
-                        accruedIncome,
-                        liquidativeValue
+                    if (!portfolioHistory[date]) {
+                        return
                     }
+                    stockRegister = portfolioHistory[date][asset.ticker.toUpperCase()]
+
+                    if (stockRegister === undefined) {
+                        stockClosePrice = polyfillPrices[asset.ticker]
+                    } else {
+                        stockClosePrice = stockRegister.close
+                        //polyfillPrices[asset.ticker] = stockClosePrice
+                    }
+
+                    aportacion = isFirstRecord ? 0 : this.calculadorMedia(asset, stockClosePrice, lastDate, portfolioValue)
                 }
-                //we should store this array in the context to acces easily in the updateSeries
-                validDates = [...validDates, date]
+
+                // if (stockClosePrice === undefined) {
+                //     stockClosePrice = getLastValidPrice(asset.ticker.toUpperCase())
+                // }
+                valueIncrement += aportacion
+                this.addRelativePerformance(companiesPerformanceImpact, date, aportacion, asset)
+
+            })
+            console.log(valueIncrement, "incrementovalor")
+            liquidativeValue = lastLiquidativeValue * (1 + valueIncrement)
+
+            masterSerie = {
+                ...masterSerie,
+                [date]: {
+                    portfolioCost,
+                    portfolioValue,
+                    accruedIncome,
+                    liquidativeValue
+                }
+            }
+            //we should store this array in the context to acces easily in the updateSeries
+            validDates = [...validDates, date]
 
 
         })
@@ -257,7 +410,16 @@ const convertUnixToHuman = (unix) => {
 }
 
 
-
+const convertHumanToUnixInit = (date) => {
+    const actualDate = date.split("-")
+    const mongol = parseInt(actualDate[1]) - 1
+    const formatedDate = new Date(
+        actualDate[0],
+        mongol.toString(),
+        actualDate[2]
+    );
+    return formatedDate.getTime();
+}
 
 
 

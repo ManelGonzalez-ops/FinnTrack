@@ -32,12 +32,16 @@ export const useCompaniesChange = () => {
                 Object.keys(portfolioHistory[date]).forEach(ticker => {
                     const wasInPort = generatedSeries.data.dates[date].positions.find(item => ticker === item.ticker)
                     if (wasInPort) {
-
+                        console.log(wasInPort, "wasInport")
                         const { close } = portfolioHistory[date][ticker]
                         const prevDayPrice = result[ticker] && result[ticker].length > 0 && result[ticker][result[ticker].length - 1][2]
                         if (prevDayPrice) {
                             //mira aqui
                             change = (close - prevDayPrice) * 100 / prevDayPrice
+                        } else {
+                            console.log(close, "clooose")
+
+                            change = (close - wasInPort.unitaryCost) * 100 / wasInPort.unitaryCost
                         }
                         result = {
                             ...result,
