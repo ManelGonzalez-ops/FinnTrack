@@ -27,11 +27,10 @@
     }
     .general {
         grid-area: general;
-        overflow: scroll;
-        height: auto;
+       // overflow: scroll;
         transition: all 1s linear !important;
         &.overflown {
-            overflow: auto;
+           // overflow: auto;
         }
         ul {
             padding: 0.5rem;

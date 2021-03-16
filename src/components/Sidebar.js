@@ -11,7 +11,7 @@ import {
   useTheme,
 } from "@material-ui/core";
 import clsx from "clsx";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ListItem from "@material-ui/core/ListItem";
@@ -32,18 +32,19 @@ import SearchIcon from '@material-ui/icons/Search';
 import { useUILayer } from "../ContextUI";
 import { useDataLayer } from "../Context";
 import { useViewport } from "../utils/useViewport";
+import { ProfileSidebar } from "../Auth/ProfileSidebar";
+import { useLocation } from "react-use";
 
-const drawerWidth = 240;
 
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
-    width: drawerWidth,
+    width: ({ drawerWidth }) => drawerWidth,
     flexShrink: 0,
     whiteSpace: "nowrap",
   },
   drawerOpen: {
-    width: drawerWidth,
+    width: ({ drawerWidth }) => drawerWidth,
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -56,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
     }),
     overflowX: "hidden",
     width: theme.spacing(7) + 1,
-    [theme.breakpoints.down("sm")]:{
+    [theme.breakpoints.down("sm")]: {
       width: 0
     },
     [theme.breakpoints.up("sm")]: {
@@ -82,18 +83,22 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     textOverflow: "ellipsis",
     overflow: "hidden"
-  }
+  },
+  // drawerDashboard: {
+  //   width: 300
+  // },
 }));
 
 //ad open if not works
 export const Sidebar = ({ handleDrawerClose, handleDrawerOpen, expanded, handleSidebarToggle }) => {
   const history = useHistory()
-  
+  const location = useLocation()
   const theme = useTheme();
-  const {viewport} = useViewport()
-  const { sidebarOpen } = useUILayer()
+  const { viewport } = useViewport()
+  const { sidebarOpen, setSidebarOpen, drawerWidth, setDrawerWidth } = useUILayer()
   const { state } = useDataLayer()
-  const classes = useStyles({viewport});
+  const classes = useStyles({ viewport, drawerWidth });
+  const [dashboardMode, setDashboardMode] = useState(false)
 
   const [selected, setSelected] = React.useState("");
 
@@ -101,10 +106,24 @@ export const Sidebar = ({ handleDrawerClose, handleDrawerOpen, expanded, handleS
     setSelected(nodeIds);
   };
 
+  useEffect(() => {
+    if (!location.pathname) return;
+
+    const isInDashboard = location.pathname.split("/").find(route => route === "portfoliof")
+    if (isInDashboard) {
+      setSidebarOpen(true)
+      setDrawerWidth(300)
+    } else {
+      setDrawerWidth(240)
+    }
+  }, [location.pathname])
+
+  console.log(location, "localizacioone")
+
 
   return (
     <Drawer
-    variant={viewport > 600 ? "permanent":"temporary"}
+      variant={viewport > 600 ? "permanent" : "temporary"}
       className={clsx(classes.drawer, {
         [classes.drawerOpen]: sidebarOpen,
         [classes.drawerClose]: !sidebarOpen,
@@ -113,6 +132,7 @@ export const Sidebar = ({ handleDrawerClose, handleDrawerOpen, expanded, handleS
         paper: clsx({
           [classes.drawerOpen]: sidebarOpen,
           [classes.drawerClose]: !sidebarOpen,
+          // [classes.drawerDashboard]: dashboardMode
         }),
       }}
       //this is for the movile version
@@ -123,10 +143,11 @@ export const Sidebar = ({ handleDrawerClose, handleDrawerOpen, expanded, handleS
           {theme.direction === "rtl" ? (
             <ChevronRightIcon />
           ) : (
-              <ChevronLeftIcon />
-            )}
+            <ChevronLeftIcon />
+          )}
         </IconButton>
       </div>
+      <ProfileSidebar />
       <Divider />
       <TreeView
         style={{ margin: "1rem 0" }}

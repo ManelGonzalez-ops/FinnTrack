@@ -1,7 +1,14 @@
-import { Button, Menu, MenuItem, withStyles } from '@material-ui/core';
+import { Button, makeStyles, Menu, MenuItem, withStyles } from '@material-ui/core';
 import React, {useState, useEffect, useRef} from 'react'
 
+const useStyles = makeStyles({
+  root: {
+    padding: 0
+  }
+})
+
 export const Sorter = ({ openSorter, setOpenSorter, handleSorting, handleSelected, selected}) => {
+  const styles = useStyles()
 
   const firstRender = useRef(true)
   useEffect(()=>{
@@ -14,8 +21,9 @@ export const Sorter = ({ openSorter, setOpenSorter, handleSorting, handleSelecte
   const StyledMenuItem = withStyles({
     root: {
       '&:hover': {
-        backgroundColor: 'transparent',
+        backgroundColor: 'antiquewhite',
       },
+      backgroundColor: "antiquewhite"
     },
   })(MenuItem);
 
@@ -37,6 +45,7 @@ export const Sorter = ({ openSorter, setOpenSorter, handleSorting, handleSelecte
           vertical: 'top',
           horizontal: 'right',
         }}
+        classes={{list: styles.root}}
       >
         <StyledMenuItem>Sort By:</StyledMenuItem>
         <MenuItem onClick={() => { handleSelected("alphabetical") }}

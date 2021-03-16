@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   },
   appBarShift: {
     marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
+    width: ({ drawerWidth }) => `calc(100% - ${drawerWidth}px)`,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -55,7 +55,7 @@ export const Navbar = ({ handleDrawerOpen }) => {
   //const { authState, authService } = useOktaAuth();
   const history = useHistory()
   const { state } = useDataLayer()
-  const { sidebarOpen } = useUILayer()
+  const { sidebarOpen, drawerWidth } = useUILayer()
   const location = useLocation()
   const topNavigation = useRef(null)
   const [menuCompaniesOpen, setMenuCompaniesOpen] = useState(false)
@@ -76,13 +76,9 @@ export const Navbar = ({ handleDrawerOpen }) => {
   console.log(location, "locationnnnnn")
 
 
-  const classes = useStyles();
+  const classes = useStyles({ drawerWidth });
 
 
-
-  // const button = authState.isAuthenticated ?
-  //   <button onClick={() => { authService.logout() }}>Logout</button> :
-  //   <button onClick={() => { history.push('/login') }}>Login</button>;
 
   const { userDispatch } = useUserLayer()
   const logout = (cb) => {
@@ -92,6 +88,7 @@ export const Navbar = ({ handleDrawerOpen }) => {
   return (
     <div>
       <AppBar
+        data-testid="navbar"
         position="fixed"
         className={clsx(classes.appBar, {
           [classes.appBarShift]: sidebarOpen,

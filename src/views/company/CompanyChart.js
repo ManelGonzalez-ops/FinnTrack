@@ -18,7 +18,6 @@ export const CompanyChart = React.forwardRef(({ ticker }, ref) => {
     const { state, dispatch } = useDataLayer()
     //we dont inicialize chart till data is ready because highchart is soo unreliable with updates
     const [dataset, setDataset] = useState(null);
-    const [isBuilding, setIsBuilding] = useState(false)
 
     const hookOptions = {
         explicitUrl: false
@@ -34,7 +33,6 @@ export const CompanyChart = React.forwardRef(({ ticker }, ref) => {
     useEffect(() => {
 
         if (datos.data && datos.data.length > 0) {
-            setIsBuilding(true)
             if (typeof datos.data[0].date === "string") {
 
                 const cleanData = datos.data.map((item) => {
@@ -43,7 +41,7 @@ export const CompanyChart = React.forwardRef(({ ticker }, ref) => {
                     const actualDate = date.split("-").map((val) => parseInt(val));
                     const formatedDate = new Date(
                         actualDate[0],
-                        actualDate[1],
+                        actualDate[1] - 1,
                         actualDate[2]
                     );
                     item.date = formatedDate.getTime();

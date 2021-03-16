@@ -1,4 +1,4 @@
-import { Button, TextField } from '@material-ui/core'
+import { Button, ButtonGroup, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@material-ui/core'
 import React, { useEffect, useRef, useState } from 'react'
 import { CustomCircularProgress } from '../components/components/CustomCircularProgress'
 import { useDataLayer } from '../Context'
@@ -146,6 +146,48 @@ export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) =
             { !setPruebaReady ? <div>Loading initial data...</div>
                 : currentPrice &&
                 <div>
+                    <Dialogo1 />
+                    <ButtonGroup variant="contained" aria-label="buy or sell">
+                        {["buy", "sell"].map((type, index) => (
+                            <Button
+                                onClick={() => {
+                                    setOperationType(type)
+                                    setModalOpen(true)
+                                }}
+                                variant="contained"
+                                color={index / 1 === 1 ? "secondary" : "primary"}
+                            >
+                                {type}
+                            </Button>
+                        ))}
+                    </ButtonGroup>
+
+
+
+
+                    <PurchaseDialog
+                        {...{ modalOpen, setModalOpen, qty, orderTotal, ticker, submitOrder, operationType }}
+                    />
+                </div>
+            }
+        </div>
+    )
+}
+
+const Dialogo1 = () => {
+    return (
+        <Dialog
+            open={open}
+            TransitionComponent={Transition}
+            keepMounted
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-slide-title"
+            aria-describedby="alert-dialog-slide-description"
+        >
+            <DialogTitle id="alert-dialog-slide-title">{"Use Google's location service?"}</DialogTitle>
+            <DialogContent>
+                <DialogContentText
+                    id="alert-dialog-slide-description">
                     <p>{formatter.format((currentPrice))}</p>
                     <TextField
                         type="number"
@@ -156,25 +198,16 @@ export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) =
                         className="total-price">
                         {formatter.format(orderTotal)}
                     </div>
-                    {["buy", "sell"].map(type => (
-                        <Button
-                            onClick={() => {
-                                setOperationType(type)
-                                setModalOpen(true)
-                            }}
-                            variant="contained"
-                            color="primary"
-                        >
-                            {type}
-                        </Button>
-                    ))}
-
-
-                    <PurchaseDialog
-                        {...{ modalOpen, setModalOpen, qty, orderTotal, ticker, submitOrder, operationType }}
-                    />
-                </div>
-            }
-        </div>
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleClose} color="primary">
+                    Disagree
+          </Button>
+                <Button onClick={handleClose} color="primary">
+                    Agree
+          </Button>
+            </DialogActions>
+        </Dialog>
     )
 }

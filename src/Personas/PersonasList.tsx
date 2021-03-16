@@ -47,7 +47,10 @@ export const PersonasList = () => {
             .then(res => {
                 return res.map((item: any) => {
                     const { portfolio } = item
-                    const parsedPortfolio = JSON.parse(portfolio)
+                    let parsedPortfolio = portfolio
+                    if (typeof portfolio === "string") {
+                        parsedPortfolio = JSON.parse(portfolio)
+                    }
                     return { ...item, portfolio: parsedPortfolio }
                 })
             })
@@ -59,8 +62,9 @@ export const PersonasList = () => {
     }, [data])
     const divStilos: React.CSSProperties = {
         display: "flex",
-        justifyContent: "space-around",
-        flexWrap: "wrap"
+        flexWrap: "wrap",
+        justifyContent: "space-evenly",
+        
     }
 
     useEffect(() => {

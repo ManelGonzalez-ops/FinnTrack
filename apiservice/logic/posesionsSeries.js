@@ -65,8 +65,7 @@ class PossesionsSeries {
         return new Promise(resolve => {
 
             const initialTime = this.findFirstDate(userActivity)
-            console.log(initialTime, "tiempooo")
-            console.log(convertUnixToHuman(initialTime), "crazyy")
+
             const timelapse = this.createTimelaspse(initialTime)
 
             let masterHistory;
@@ -74,7 +73,7 @@ class PossesionsSeries {
             masterHistory = {
                 income: 0
             }
-            console.log(timelapse, "timelapse")
+            //console.log(timelapse, "timelapse")
             if (!timelapse.length) {
                 masterHistory = {
                     ...masterHistory,
@@ -93,7 +92,7 @@ class PossesionsSeries {
             })
 
             //here we initialize an empty array for each date
-            console.log(timelapse, "timelapse")
+           // console.log(timelapse, "timelapse")
             timelapse.forEach((date, index) => {
                 let hasMadeOperationThatDate = false
                 userActivity.forEach(operation => {
@@ -147,7 +146,7 @@ class PossesionsSeries {
                                         if (posesions.ticker === ticker) {
                                             const { income } = this.handleSell(posesions.unitaryCost, amount, priceSold)
                                             if (index === 0) {
-                                                console.log(JSON.parse(JSON.stringify(income)), "incomeee")
+                                                //console.log(JSON.parse(JSON.stringify(income)), "incomeee")
                                             }
                                             operationIncome = income
 

@@ -1,0 +1,14 @@
+.profile-sidebar {
+  height: 150px;
+  background: lightcoral;
+  display: flex;
+}
+
+.profile-sidebar .section {
+  flex: 1;
+}
+
+.profile-sidebar .section img {
+  height: 100%;
+  object-fit: cover;
+}

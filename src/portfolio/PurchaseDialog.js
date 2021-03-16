@@ -6,6 +6,11 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { formatter } from '../utils/numFormatter';
+import { Grow } from '@material-ui/core';
+
+const GrowTransition = React.forwardRef((props, ref) => (
+    <Grow ref={ref} {...props} />
+))
 
 export const PurchaseDialog = ({
     modalOpen,
@@ -19,6 +24,7 @@ export const PurchaseDialog = ({
 
     const handleClose = () => {
         setModalOpen(false);
+        
     };
 
     return (
@@ -26,6 +32,7 @@ export const PurchaseDialog = ({
             <Dialog
                 open={modalOpen}
                 onClose={handleClose}
+                TransitionComponent={GrowTransition}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
@@ -36,11 +43,15 @@ export const PurchaseDialog = ({
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color="primary">
-                        Disagree
+                    <Button onClick={handleClose} style={{background: "red"}}
+                    variant="contained"
+                    >
+                        Cancel
           </Button>
-                    <Button onClick={submitOrder} color="primary" autoFocus>
-                        Agree
+                    <Button onClick={submitOrder} color="primary"
+                    variant="contained"
+                    autoFocus>
+                        Confirm
           </Button>
                 </DialogActions>
             </Dialog>

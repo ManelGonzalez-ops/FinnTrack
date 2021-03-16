@@ -6,10 +6,25 @@ this.onmessage = e => {
     portfolioHistory = _portfolioHistory
     generatedSeries = _generatedSeries
     //id addfirstSerie=false, quotes and initialDate will be null
-    const portfolioInstance = new PortfolioGenerator(initialDate, quotes)
+    const portfolioInstance = new PortfolioGenerator(portfolioHistory, generatedSeries, initialDate, quotes)
     const { masterSerie, companiesPerformanceImpact } = portfolioInstance.generateSerie2()
     this.postMessage({ portfolioSeries: masterSerie, companiesPerformanceImpact })
 
+}
+
+
+class ImpactHelper {
+
+    valueIncrement = 0
+    constructor(masterInfo) {
+        this.masterInfo = masterInfo
+    }
+    addValueIncrement = (val) => {
+        this.valueIncrement += val
+    }
+    resetValueIncrement = () => {
+        this.valueIncrement = 0
+    }
 }
 
 class PortfolioGenerator {
@@ -17,7 +32,12 @@ class PortfolioGenerator {
     quotes;
     today;
     date;
-    constructor(initialDate, quotes) {
+    portfolioHistory
+    generatedSeries
+    publicHolidays = []
+    constructor(portfolioHistory, generatedSeries, initialDate, quotes) {
+        this.portfolioHistory = portfolioHistory
+        this.generatedSeries = generatedSeries
         this.initialDate = initialDate;
         this.quotes = quotes
         this.today = convertUnixToHuman(Date.now())
@@ -25,7 +45,7 @@ class PortfolioGenerator {
 
     setDate = (date) => { this.date = date }
     isFirstDay = () => this.date === this.initialDate
-    isToday = () => this.initialDate === this.today
+    isToday = () => this.date === this.today
     isTodayFirstDay = () => this.isFirstDay() && this.isToday()
     isWeekend = (date) => {
         const day = new Date(convertHumanToUnixInit(date))
@@ -34,14 +54,32 @@ class PortfolioGenerator {
         }
         return false
     }
+    addPublicHoliday = (date) => {
+        this.publicHolidays.push(date)
+    }
+    isPublicHolidays = (date) => {
+        return this.publicHolidays.find(item => item === date)
+    }
+
+    workingDays = () => {
+        const koko = Object.keys(this.generatedSeries.data.dates).filter(date => this.isWeekend(date))
+        return koko
+    }
+    removeWeekends = (obj) => {
+        Object.keys(obj).forEach(date => {
+            this.isWeekend(date) && delete obj[date]
+        })
+
+        return obj
+    }
 
     getPortfolioStats = () => {
         let masterInfo = {}
-        Object.keys(generatedSeries.data.dates).forEach(date => {
+        Object.keys(this.generatedSeries.data.dates).forEach(date => {
             let portfolioCost = 0;
             let portfolioValue = 0;
             let companiesPrice = {}
-            generatedSeries.data.dates[date].positions.forEach(asset => {
+            this.generatedSeries.data.dates[date].positions.forEach(asset => {
                 //we have to omit weekend days because when we start the portfolio in the weekend prices will be undefined
                 this.setDate(date)
                 let stockRegister;
@@ -53,7 +91,7 @@ class PortfolioGenerator {
                     stockClosePrice = stockRegister.priceInfo.adjClose
                 } else {
                     //ojo con esto que puede dar a problemss en generateSeries2
-                    if (!portfolioHistory[date]) {
+                    if (!this.portfolioHistory[date]) {
                         if (this.isWeekend(date)) {
                             console.log(date, "is weekend")
                             companiesPrice = {
@@ -65,10 +103,25 @@ class PortfolioGenerator {
                             portfolioCost += val
                             return
                         }
+                        else {
+                            //means is today
+                            if (this.isToday()) {
+                                console.log("hoy mooooooo", date)
+                                return
+                            }
+                            else {
+                                this.addPublicHoliday(date)
+                            }
+                        }
                         //else we continue as we should have polyfilled price already set
                     }
-                    stockRegister = portfolioHistory[date][asset.ticker.toUpperCase()]
-                    stockClosePrice = stockRegister.close
+                    console.log(date, "fechaau")
+                    if (this.portfolioHistory[date]) {
+                        stockRegister = this.portfolioHistory[date][asset.ticker.toUpperCase()]
+                        stockClosePrice = stockRegister.close
+                    } else {
+                        stockRegister = undefined
+                    }
 
                     if (stockRegister === undefined) {
                         let lastValidPrice = polyfillPrices[asset.ticker]
@@ -102,6 +155,32 @@ class PortfolioGenerator {
         return masterInfo
     }
 
+    generateImpact = (impactHelper, lastDate, portfolioValue, companiesPerformanceImpact) => {
+        this.generatedSeries.data.dates[this.date].positions.forEach((asset, index) => {
+
+            if (this.isToday() && !this.isTodayFirstDay()) {
+                //if is today and is not first day we will omit it,
+                //if today is first day we don0t want to omit as we want to show de generated serie
+                console.log(this.date, this.today, this.isToday(), "qe cojinis")
+                return
+            }
+
+            const stockClosePrice = impactHelper.masterInfo[this.date].companiesPrice[asset.ticker]
+
+
+            // aportacion = isFirstRecord ? 0 : this.calculadorMedia(asset, stockClosePrice, lastDate, portfolioValue)
+            const aportacion = this.calculadorMedia(asset, stockClosePrice, lastDate, portfolioValue)
+            if (asset.ticker === "MRNA") {
+                console.log(stockClosePrice, portfolioValue, this.date, aportacion, "qa wabs")
+            }
+
+            this.addRelativePerformance(companiesPerformanceImpact, this.date, aportacion, asset)
+            //
+            impactHelper.addValueIncrement(aportacion)
+
+        })
+    }
+
     generateSerie2 = () => {
         let masterSerie = {}
         let liquidativeInitial = 1000
@@ -109,13 +188,14 @@ class PortfolioGenerator {
         let liquidativeValue
         let companiesPerformanceImpact = {}
         let validDates = []
-        const dateKeys = Object.keys(generatedSeries.data.dates)
+        const dateKeys = Object.keys(this.generatedSeries.data.dates)
         const masterInfo = this.getPortfolioStats()
         console.log(masterInfo, "masterInnnfo")
-
+        const impactHelper = new ImpactHelper(masterInfo)
         dateKeys.forEach(date => {
 
             companiesPerformanceImpact[date] = []
+            this.setDate(date)
             let valueIncrement = 0
             let lastLiquidativeValue
             let lastDate;
@@ -127,24 +207,14 @@ class PortfolioGenerator {
             } else {
                 lastDate = validDates[validDates.length - 1]
                 console.log(validDates, lastDate, "ka ous")
-                //console.log(lastDate, "luuust")
                 lastLiquidativeValue = masterSerie[lastDate].liquidativeValue
             }
 
-            generatedSeries.data.dates[date].positions.forEach(asset => {
-                this.setDate(date)
-                //
-                const stockClosePrice = masterInfo[date].companiesPrice[asset.ticker]
+            if (this.isWeekend(date) || this.isPublicHolidays(date)) {
+                return
+            }
 
-                // aportacion = isFirstRecord ? 0 : this.calculadorMedia(asset, stockClosePrice, lastDate, portfolioValue)
-                const aportacion = this.calculadorMedia(asset, stockClosePrice, lastDate, portfolioValue)
-
-
-                this.addRelativePerformance(companiesPerformanceImpact, date, aportacion, asset)
-                //
-                valueIncrement += aportacion
-
-            })
+            this.generateImpact(impactHelper, lastDate, portfolioValue, companiesPerformanceImpact)
 
             if (this.isTodayFirstDay()) {
                 const initialPerformance = portfolioValue / portfolioCost
@@ -160,8 +230,12 @@ class PortfolioGenerator {
                 }
             }
             else {
-
-                liquidativeValue = lastLiquidativeValue * (1 + valueIncrement)
+                console.log("weeen")
+                if (this.isToday()) {
+                    return
+                }
+                console.log(impactHelper.valueIncrement, "valincre")
+                liquidativeValue = lastLiquidativeValue * (1 + impactHelper.valueIncrement)
 
                 masterSerie = {
                     ...masterSerie,
@@ -175,8 +249,12 @@ class PortfolioGenerator {
                 //we should store this array in the context to acces easily in the updateSeries
             }
 
+            impactHelper.resetValueIncrement()
+
             validDates = [...validDates, date]
+            console.log(validDates, "fechas validss")
         })
+
         return { masterSerie, companiesPerformanceImpact }
     }
 
@@ -192,7 +270,7 @@ class PortfolioGenerator {
         //polifill, if some price is unexpectly missing we will use the last valid price.
         let validDates = []
         let stocksProcesed = []
-        const dateKeys = Object.keys(generatedSeries.data.dates)
+        const dateKeys = Object.keys(this.generatedSeries.data.dates)
         console.log(dateKeys, "dataKeyss")
         let firstIteration = true
         const calculateLiquidative = (asset) => {
@@ -208,7 +286,7 @@ class PortfolioGenerator {
             let portfolioCost = 0
             let portfolioValue = 0
             //when initialDate = today
-            generatedSeries.data.dates[date].positions.forEach(asset => {
+            this.generatedSeries.data.dates[date].positions.forEach(asset => {
                 let stockClosePrice;
                 stocksProcesed = [...stocksProcesed, asset.ticker.toUpperCase()]
                 portfolioCost += asset.amount * asset.unitaryCost
@@ -219,10 +297,10 @@ class PortfolioGenerator {
                     stockClosePrice = stockRegister.priceInfo.adjClose
                 }
                 else {
-                    if (!portfolioHistory[date]) {
+                    if (!this.portfolioHistory[date]) {
                         return
                     }
-                    const stockRegister = portfolioHistory[date][asset.ticker.toUpperCase()]
+                    const stockRegister = this.portfolioHistory[date][asset.ticker.toUpperCase()]
                     stockClosePrice = stockRegister.close
                     //stockRegister shouldn't be undefined anymore
 
@@ -272,7 +350,7 @@ class PortfolioGenerator {
             //calculate portfolioValue and costs
             //calculate liquidative Value
             //T Esto sale nulo el primer día
-            generatedSeries.data.dates[date].positions.forEach(asset => {
+            this.generatedSeries.data.dates[date].positions.forEach(asset => {
                 let stockClosePrice;
                 let aportacion;
                 let stockRegister;
@@ -287,10 +365,10 @@ class PortfolioGenerator {
                     //     isFirstRecord = true
                     // }
 
-                    if (!portfolioHistory[date]) {
+                    if (!this.portfolioHistory[date]) {
                         return
                     }
-                    stockRegister = portfolioHistory[date][asset.ticker.toUpperCase()]
+                    stockRegister = this.portfolioHistory[date][asset.ticker.toUpperCase()]
 
                     if (stockRegister === undefined) {
                         stockClosePrice = polyfillPrices[asset.ticker]
@@ -332,12 +410,12 @@ class PortfolioGenerator {
     }
 
     getLastPrice = (lastDate, asset) => {
-        if (!portfolioHistory[lastDate]) {
+        if (!this.portfolioHistory[lastDate]) {
             return asset.unitaryCost
         }
-        const theresLastPrice = portfolioHistory[lastDate][asset.ticker.toUpperCase()]
+        const theresLastPrice = this.portfolioHistory[lastDate][asset.ticker.toUpperCase()]
         if (theresLastPrice) {
-            return portfolioHistory[lastDate][asset.ticker.toUpperCase()].close
+            return this.portfolioHistory[lastDate][asset.ticker.toUpperCase()].close
         }
         return polyfillPrices[asset.ticker]
     }
@@ -345,7 +423,8 @@ class PortfolioGenerator {
     calculadorMedia = (asset, stockPrice, lastDate, portfolioValue) => {
 
         //console.log(asset.amount, asset.price, portfolioValue, date, lastDate, asset.ticker, "rururu")
-        //console.log(portfolioHistory, "historria")
+        //console.log(this.portfolioHistory, "historria")
+        console.log(asset.ticker, "tikku")
         const relativeSize = (asset.amount * stockPrice) / portfolioValue
         let lastPrice;
         if (this.isTodayFirstDay()) {
@@ -354,10 +433,14 @@ class PortfolioGenerator {
             lastPrice = this.getLastPrice(lastDate, asset)
         }
         const change = (stockPrice - lastPrice) / lastPrice
+
         //console.log(relativeSize, "rururu")
         //console.log((currentPrice - lastPrice) / lastPrice, "rururu")
         //console.log(change, relativeSize, "rururu")
         const koko = relativeSize * change
+        if (asset.ticker === "MRNA") {
+            console.log(stockPrice, lastPrice, change, koko, lastDate, "mrana")
+        }
         return koko
     }
 
@@ -423,7 +506,7 @@ const convertHumanToUnixInit = (date) => {
 
 
 
-//when generatedSeries has length 1 means our portfolio was created today.
+//when this.generatedSeries has length 1 means our portfolio was created today.
 //portfolio history won't have any register
 //generating a provisional chart is easy, two points from 1000 to 1000*(price-cost)
 //so when user buys something the first day, we display the chart showing 1000 to the price that has currently in that moment (x axis will be in datetime)
@@ -438,11 +521,5 @@ const convertHumanToUnixInit = (date) => {
 //**las acciones que se compran el fin de semana se dejan en espera, ya que queremos eliminar los findes de las generatedSeries
 
 //al final el initialDate ya no es hoy, las series se crearan como antes. 
-const isInitialDate = (intialDate) => {
-    const today = convertUnixToHuman(Date.now())
-    if (initialDate === today) {
-        return true
-    }
-    return false
-}
+
 

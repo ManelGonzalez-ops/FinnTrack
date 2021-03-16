@@ -8,10 +8,7 @@ export const DonutChart = ({data}) => {
             type: 'pie',
         },
         title: {
-            text: 'Contents of Highsoft\'s weekly fruit delivery'
-        },
-        subtitle: {
-            text: '3D donut in Highcharts'
+            text: undefined,
         },
         plotOptions: {
             pie: {

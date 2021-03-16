@@ -1,6 +1,6 @@
 const { getUsername } = require("../../db/services")
 const { getUserInterests, updateUserInterest, addUserInterest } = require("../../db/services/interestsService")
-const { debugLine } = require("../ErrorHandler")
+
 
 
 const addInterest = async (req, res) => {

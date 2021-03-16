@@ -201,8 +201,8 @@ const GsapFadeInStagger = ({ children }) => {
         timeline.to(chunkRef.current.childNodes, {
             //y: 100,
             opacity: 1,
-            ease: "power4.inOut",
-            duration: 0.7,
+            ease: "power3.inOut",
+            duration: 0.4,
             stagger: 0.1
         });
     }, [])
@@ -215,19 +215,6 @@ const GsapFadeInStagger = ({ children }) => {
 
 const PostChunk = ({ chunk, selectPost }) => {
 
-    // const chunkRef = useRef(null)
-    // const timeline = gsap.timeline()
-    // console.log(chunk, "eel chunk")
-    // useEffect(() => {
-    //     timeline.to(chunkRef.current.childNodes, {
-    //         //y: 100,
-    //         opacity: 1,
-    //         ease: "power4.inOut",
-    //         duration: 0.7,
-    //         stagger: 0.1
-    //     });
-    // }, [])
-
     return <GsapFadeInStagger>
         {chunk.map((message, index) => (
             <Post key={message.id} {...{ message, selectPost }} />
@@ -235,15 +222,6 @@ const PostChunk = ({ chunk, selectPost }) => {
     </GsapFadeInStagger>
 }
 
-// export default withUserState(FollowingDispatcher)
-
-// const withUserState = (component) => {
-//     const { userState } = useUserLayer()
-//     const Component = component
-//     return function (props) {
-//         return <Component {...props} email={userState.info.email} />
-//     }
-// }
 
 const Koko = ({ message }) => {
     return <div>{message.body}</div>

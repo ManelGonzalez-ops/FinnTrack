@@ -39,6 +39,7 @@ export const AssetStructure = () => {
             return item
         })
     }
+    
     const prepareData =(data, cb)=>{
         cb(data.map(item=>[item.ticker, item.proportion]))
     }
@@ -48,6 +49,7 @@ export const AssetStructure = () => {
             prepareData(data, (result)=>{
                 setReadyData(result)
             })
+
         }
     }, [stocks, state.areHistoricPricesReady])
     return (

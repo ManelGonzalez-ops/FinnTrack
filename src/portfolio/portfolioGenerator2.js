@@ -162,9 +162,12 @@ export const usePortfolioGenerator = () => {
                 dispatch({ type: "COMPANIES_IMPACT_AWAITING" })
             }
             //the same for portfolio price series
+            console.log("cuuuuuu")
             if (Object.keys(portfolioSeries).length) {
+                console.log("cuuuuuuco")
                 cb(portfolioSeries)
             } else {
+                
                 //we set the portfolioSeriesReady to true, because it has already been procesed but there's no data yet because firs purchases where made in the weekend. So when user visit dashboard intead of showing loading (as we were procesing) we'll show when data will be available.
                 dispatch({ type: "SET_PORTFOLIO_SERIES_AWAITING" })
             }
@@ -294,27 +297,15 @@ export const usePortfolioGenerator = () => {
         const data = await res.json()
         return data.split("T")[0]
     }
-    const asynquer = async () => {
-        initialDate.current = await getInitialDate()
-        fetchQuotes()
-            .then(() => {
-                console.log("hola2")
-                console.log(state.simulation, "quootas")
-                generateSerie((result) => {
-                    dispatch({ type: "STORE_PORTFOLIO_SERIES", payload: result })
-                    //storePortfolioDB(result)
-                })
-            })
-            .catch(err => { throw new Error(err) })
-    }
 
+    
     //triggered after action after fetchquotes is dispatch and state i updated 
     useEffect(() => {
         if (addFirstSerie) {
             if (simulation.quotes) {
                 generateSerie((result) => {
                     dispatch({ type: "STORE_PORTFOLIO_SERIES", payload: result })
-                    //storePortfolioDB(result)
+                    storePortfolioDB(result)
                 }, simulation.quotes, initialDate.current)
             }
         }
@@ -336,8 +327,9 @@ export const usePortfolioGenerator = () => {
             } else {
                 //default mode
                 generateSerie((result) => {
+                    console.log("what de hell")
                     dispatch({ type: "STORE_PORTFOLIO_SERIES", payload: result })
-                    //storePortfolioDB(result)
+                    storePortfolioDB(result)
                 })
             }
         }

@@ -18,7 +18,6 @@ db.query("create database if not exists financeapp", err => {
 })
 
 
-
 db.query("use financeapp", err => {
     if (err) throw err
     console.log("using finance app");

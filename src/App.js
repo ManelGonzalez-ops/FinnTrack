@@ -40,6 +40,9 @@ import { PopulateOnScroll } from "./views/seguidores/PopulateOnScroll";
 import { useIAuthh } from "./Auth/useIAuth";
 import { ContactDetails } from "./Auth/ContactDetails";
 import { convertUnixToHuman } from "./utils/datesUtils";
+import { AuthMiddleware, UpdateInfoView } from "./Auth/UpdateInfoView";
+import { useRemoveCredits } from "./utils/useRemoveCredits";
+import { ProfileSidebar } from "./Auth/ProfileSidebar";
 
 
 
@@ -80,7 +83,8 @@ const date = convertUnixToHuman(Date.now())
 const App = () => {
 
   useEngine()
-  useIAuthh()
+
+  const { loading } = useIAuthh()
   //useAuth()
   //const { authState, authService } = useOktaAuth();
   const { userState } = useUserLayer()
@@ -106,12 +110,21 @@ const App = () => {
                 cash: res.userCash
               }
             })
+            console.log("hellow")
             res.interests && dispatch({ type: "STORE_USER_INTEREST", payload: res.interests });
+            console.log("hellowa")
             dispatch({ type: "SET_INITIAL_UNIQUE_STOCKS", payload: res.uniqueStocks })
-            if (res.initialDate.split("T")[0] === date) {
-              //this is set as well in the stock shop everytime wew buy firstDay, but this will handle user refresh situation.
+            console.log("hellowaa")
+            if (!res.initialDate) {
+              //means portfolio has been created today
               dispatch({ type: "SET_FIRST_SERIE", payload: true })
+            } else {
+              if (res.initialDate.split("T")[0] === date) {
+                //this is set as well in the stock shop everytime wew buy firstDay, but this will handle user refresh situation.
+                dispatch({ type: "SET_FIRST_SERIE", payload: true })
+              }
             }
+            console.log("hellowaai")
             dispatch({ type: "ENABLE" })
           })
           .catch(err => { console.log(err) })
@@ -156,6 +169,7 @@ const App = () => {
   console.log(state.areHistoricPricesReady, "ostiau")
 
   useEffect(() => {
+    console.log(selection, "seleccciooon")
     if (selection) {
       console.log(selection, "que webox")
       const { name, ticker } = selection
@@ -196,6 +210,10 @@ const App = () => {
 
   // console.log(selection, "seleeeection")
   // console.log(userState.info, "que colluns")
+
+  if (loading) {
+    return <h4>Checking credentials</h4>
+  }
   return (
 
     <div className={classes.root}>
@@ -277,7 +295,9 @@ const App = () => {
             <ProtectedRoute />
           </Route>
           <Route path="/uploads">
-            <ContactDetails />
+            <AuthMiddleware>
+              <UpdateInfoView />
+            </AuthMiddleware>
           </Route>
         </Switch>
 

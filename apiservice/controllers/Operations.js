@@ -5,6 +5,7 @@ const { setPortfolio, getPortfolioInitialDay} = require("../../db/services/UserS
 const { prepareStoredOperations, setInitialPossesions } = require("../dataPreparation")
 const { convertUnixToHuman } = require("../dataUtils")
 
+
 const getReadyOperations = async (req, res) => {
     const { email } = req.body
     console.log(email, "emaillll")
@@ -32,6 +33,7 @@ const userInterests = async (email) => {
         :
         null
 }
+
 
 //creo ue no necesitamos esto
 const updatePortfolio = async (req, res) => {

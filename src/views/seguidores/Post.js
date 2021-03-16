@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { time_ago } from "../../utils/datesUtils"
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import { GiphyFetch } from '@giphy/js-fetch-api'
 
 
 
@@ -11,13 +12,30 @@ const Post = ({ message, selectPost, isSelected = false }) => {
     const { user, created_at } = message
     const time = useRef(time_ago(new Date(created_at).getTime()))
 
+    const chart = message.entities.chart ? message.entities.chart : null
+    const giphy = message.entities.giphy ? message.entities.giphy : null
+    //id ratio
+    const [{ gifUrl, gifLoading, gifError }, setGif] = useState({ gifUrl: "", gifLoading: false, gifError: null })
+
     const getRandomNum = () => {
         const randomLike = [0, 0, 1, 3, Math.round(Math.random() * 10)]
         //console.log(randomLike, "la arr")
         return randomLike[Math.round(Math.random() * 4)]
     }
     const randomNum = useRef(getRandomNum())
+
     console.log("rereeenderoo")
+
+    useEffect(() => {
+        if (giphy) {
+            setGif(prev => ({ ...prev, loading: true }))
+            const gf = new GiphyFetch('dly39yAKgF2Yppvpsyxi9mLIG35m1eiR')
+            gf.gif(giphy.id)
+                //.then(res => res.json())
+                .then(({ data }) => { setGif(prev => ({ ...prev, gifLoading: false, gifUrl: data.embed_url })) })
+                .catch(err => { setGif(prev => ({ ...prev, gifLoading: false, gifError: err.message })) })
+        }
+    }, [])
     useEffect(() => {
         //if (!isSelected) return;
         console.log("mounting again")
@@ -63,7 +81,11 @@ const Post = ({ message, selectPost, isSelected = false }) => {
                 </div>
                 <p>
                     {message.body}
+                    {/* {giphy && <span style={{ background: "lightblue" }}>{JSON.stringify(giphy)}</span>}
+                    {JSON.stringify(message)} */}
                 </p>
+                {chart && <img src={chart.original} alt="chart caption"/>}
+                {giphy && <Giff {...{ gifUrl, gifLoading, gifError }} />}
                 <div className="post-footer">
                     <Badge badgeContent={randomNum.current} color="secondary">
                         <FavoriteBorderIcon />
@@ -92,6 +114,18 @@ const Post = ({ message, selectPost, isSelected = false }) => {
             </div>
         </div>
     )
+}
+
+const Giff = ({ gifUrl, gifLoading, gifError }) => {
+
+    return (
+        <> { gifLoading ? <p>Loading...</p>
+            : gifError ? <p>{gifError}</p>
+                :
+                <iframe src={gifUrl} width="480" height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>}
+        </>
+    )
+
 }
 Post.defaultProps = {
     selectPost: (param) => null

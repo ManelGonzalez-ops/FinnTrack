@@ -1,0 +1,18 @@
+.portfolio-chart--people {
+    height: 300px;
+    margin: 0 0.7rem;
+    margin-bottom: 2rem;
+}
+
+
+
+@media (min-width: 300px) {
+    .portfolio-chart--people {
+        width: calc(max(30%, 280px));
+    }
+}
+@media (min-width: 800px) {
+    .portfolio-chart--people {
+        width: calc(max(22%, 350px));
+    }
+}

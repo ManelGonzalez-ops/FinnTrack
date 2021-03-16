@@ -1,5 +1,5 @@
 const db = require("../db")
-const { debugLine } = require("../../apiservice/ErrorHandler")
+
 module.exports = {
     createUserDetails: () => {
         //ojo si cambiamos el idioma, quiz-as "masculino" en moro es larguisimoo
@@ -42,6 +42,63 @@ module.exports = {
                     reject(new Error("portfolio initial date not found"))
                 }
                 resolve(row[0].portfolioInitial)
+            })
+        })
+    },
+
+    addContactInfo: (userId, fieldsObj) => {
+        console.log(fieldsObj)
+        const fieldKeys = Object.keys(fieldsObj)
+        const fields = ["userId", ...fieldKeys]
+        //add extra ? for userId
+        const values = [...Array(fieldKeys.length + 1).fill("?")]
+        const update = fieldKeys.map(key => `${key}=values(${key})`)
+        const inputs = fieldKeys.map(key => fieldsObj[key])
+        const query = `insert into userDetails (${fields}) values(${values}) on duplicate key update ${update}`
+        console.log(query, "aver query")
+        return new Promise((resolve, reject) => {
+            db.query(query, [userId, ...inputs], (err, row) => {
+                if (err) {
+                    return reject(err)
+                }
+                console.log(row, "tha row", typeof row)
+                if (typeof row === "object") {
+                    //mean we received okPacket, which is succesg¡full
+                    console.log("resolviendo")
+                    return resolve()
+                }
+                //this is wrong because row.length will be always false as that won't be an array
+                if (!row || !row.length) {
+                    return reject(new Error("error inserting or updating"))
+                }
+                resolve()
+            })
+        })
+    },
+// initial state of User details view
+    getUserDetailsDB: (userId)=>{
+        return new Promise((resolve, reject)=>{
+            db.query("select * from userDetails where userId = ?", [userId], (err, row)=>{
+                if(err){
+                    return reject(err)
+                }
+                if(!row || !row.length){
+                    return reject(new Error("no data returned"))
+                }
+                resolve(row)
+            })
+        })
+    },
+    getUserImageDB: (userId)=>{
+        return new Promise((resolve, reject)=>{
+            db.query("select image from userDetails where userId = ?", [userId], (err, row)=>{
+                if(err){
+                    return reject(err)
+                }
+                if(!row || !row.length){
+                    return reject(new Error("no data returned"))
+                }
+                resolve(row[0].image)
             })
         })
     }

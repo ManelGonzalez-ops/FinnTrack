@@ -9,54 +9,53 @@ const Container = styled.div({
     width: "600px",
     margin: "0 auto"
 })
-export const ContactDetails = () => {
-    const [imageUpload, setImageUpload] = useState("")
-    const [response, setResponse] = useState("")
-    const [generatedUrl, setGeneratedUrl] = useState("")
+const cleanDate = (date) => {
+    return date.split("T")[0]
+}
+
+///props come directly from ajax call
+export const ContactDetails = ({ userInfo }) => {
     const { userState } = useUserLayer()
-    const [country, setCountry] = useState("")
-    const [gender, setGender] = useState("")
-    const [dateBirth, setDateBirth] = useState("")
-    const [{ firstName, lastName }, setNames] = useState({ firstName: "", lastName: "" })
-    const handleImageUpload = (e) => {
-        setImageUpload(e.target.files[0])
-        setGeneratedUrl(URL.createObjectURL(e.target.files[0]))
-    }
+    const [country, setCountry] = useState(userInfo.country ? userInfo.country : "")
+    const [gender, setGender] = useState(userInfo.gender ? userInfo.gender : "")
+    const [dateBirth, setDateBirth] = useState(userInfo.nacimiento ? cleanDate(userInfo.nacimiento) : "")
+    const [{ firstName, lastName }, setNames] =
+        useState({
+            firstName: userInfo.firstName ? userInfo.firstName : "",
+            lastName: userInfo.lastName ? userInfo.lastName : ""
+        })
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const imageData = new FormData()
-        imageData.append("image", imageUpload)
-        imageData.append("email", userState.info.email)
-        fetch("http://localhost:8001/api/v1/users/upload", {
-            body: imageData,
+        const body = {
+            country, gender, dateBirth, firstName, lastName,
+            email: userState.info.email
+        }
+        fetch("http://localhost:8001/api/v1/users/complete", {
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
             method: "POST"
         })
-            .then(res => res.blob())
-            .then(image => {
-                setGeneratedUrl(URL.createObjectURL(image))
-            })
-            .catch(err => { setResponse(JSON.stringify(err)) })
+            .then(res => { console.log(res); return res })
+            .then(res => res.json())
+            .catch(err => { throw new Error(err) })
     }
+
+
     return (
         <div className="contact-details">
             {/* {generatedUrl && <img src={generatedUrl} />} */}
             <form onSubmit={handleSubmit}>
-                <label style={{ height: "100px", width: "100px", background: "red", display: "block" }} htmlFor="upload">
-                    {generatedUrl && <img src={generatedUrl} style={{ height: "100%" }} />}
-                    <input
-                        type="file"
-                        onChange={handleImageUpload}
-                        style={{ display: "none" }}
-                        id="upload"
-                    />
-                    {/* <button type="submit">submit</button> */}
-                </label>
+                <CountrySelect {...{ country, setCountry }} />
+                <Gender {...{ gender, setGender }} />
+                <DateOfBirth {...{ dateBirth, setDateBirth }} />
+                <Names {...{ firstName, lastName, setNames }} />
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                >submit</Button>
             </form>
-            <CountrySelect {...{ country, setCountry }} />
-            <Gender {...{ gender, setGender }} />
-            <DateOfBirth {...{ dateBirth, setDateBirth }} />
-            <Names {...{ firstName, lastName, setNames }} />
         </div>
     )
 }
@@ -110,14 +109,14 @@ const Gender = ({ gender, setGender }) => {
     )
 }
 
-const DateOfBirth = ({ setDateBirth }) => {
+const DateOfBirth = ({ setDateBirth, dateBirth }) => {
     const [focused, setFocused] = useState(false)
     return (
         <div className="form-group">
             <Label {...{ focused }}>Birthdate</Label>
             <TextField
                 type="date"
-                defaultValue="2017-05-24"
+                defaultValue={dateBirth}
                 onChange={(e) => { setDateBirth(e.target.value) }}
                 InputLabelProps={{
                     shrink: true,

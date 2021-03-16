@@ -23,6 +23,7 @@ const authRoutes = require("./routes/Auth")
 const usersRoutes = require("./routes/Users")
 const { createUserDetails } = require("../db/services/UserService")
 const multer = require("multer")
+const { handleError } = require("./handleError")
 
 createUserTable((err) => {
     console.log("que concha")
@@ -115,9 +116,8 @@ app.use("/api/v1/auth", authRoutes)
 app.use("/api/v1/users", usersRoutes)
 
 app.use((err, req, res, next) => {
-    console.log(err, "error thrown at")
-    return res.status(400).send(err)
-    //console.log(err.stack, "trace error")
+    console.log(err.message)
+    handleError(err, res)
 })
 
 app.get("/", (req, res) => {
@@ -1039,6 +1039,8 @@ app.get("/api/direct_json", async (req, res) => {
 app.listen(8001, () => {
     console.log("essto funca")
 })
+
+
 
 
 //we have to save state.currentPossesions in the database too

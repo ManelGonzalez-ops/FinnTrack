@@ -87,13 +87,6 @@ export const PerformanceStructureB = () => {
             alignTicks: false,
         },
 
-        // rangeSelector: {
-        //     selected: 1
-        // },
-
-        title: {
-            text: 'AAPL Stock Volume'
-        },
         plotOptions: {
             column: {
                 stacking: "normal"
