@@ -4,17 +4,19 @@ import { useUserLayer } from '../UserContext'
 import { ContactDetails } from './ContactDetails'
 import { ImageUploader } from './ImageUploader'
 
+//the user has to signin to access this route
 export const UpdateInfoView = () => {
-
+    
     const userInfo = useFetchUser("populate")
-    const image = useFetchUser("image")
+    //const image = useFetchUser("image") 
 
     return (
         <div>
 
-            {image.data && <ImageUploader image={image.data} />}
-
-            <StatusHandler
+             <ImageUploader />
+           <ContactDetails/> 
+           
+            {/* <StatusHandler
                 loading={userInfo.loading}
                 error={userInfo.error}
                 data={userInfo.data}
@@ -22,7 +24,7 @@ export const UpdateInfoView = () => {
                 {(userInfo) => {
                     return <ContactDetails {...{ userInfo }} />
                 }}
-            </StatusHandler>
+            </StatusHandler> */}
 
         </div>
     )
@@ -60,6 +62,7 @@ export const useFetchUser = (query) => {
 
     return { data, loading, error }
 }
+
 
 export const AuthMiddleware = ({ children }) => {
     const { userState } = useUserLayer()

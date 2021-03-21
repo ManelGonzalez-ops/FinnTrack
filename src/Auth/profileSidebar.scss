@@ -1,17 +1,23 @@
 .profile-sidebar {
-    height: 150px;
-    background: lightcoral;
+    height: 90px;
     display: flex;
+    padding: 0.5rem 5px;
 
-    .section {
-        flex: 1;
+    .section-image {
+        flex: 0.7;
+        text-align: end;
 
         img {
             height: 100%;
+            max-width: 100%;
             object-fit: cover;
         }
-
+    }
+    .section-text {
+        flex: 1;
+        padding-left: 1rem;
         h3 {
+            font-size: 20px;
         }
 
         p {

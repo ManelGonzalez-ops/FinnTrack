@@ -17,7 +17,7 @@ ReactDOM.render(
       <ContextProvider>
         <UIProvider>
           <BrowserRouter>
-            <AppWithRouterAccess />
+            <App />
           </BrowserRouter>
         </UIProvider>
       </ContextProvider>

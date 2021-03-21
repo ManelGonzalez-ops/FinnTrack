@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 //import { usercontext, useUserLayer } from '../../UserContext'
 import Post from './Post'
 import gsap from "gsap"
-import { Backdrop, Button } from '@material-ui/core'
+import { Backdrop, Button, Dialog } from '@material-ui/core'
 import RefreshIcon from '@material-ui/icons/Refresh';
 export class FollowingDispatcher extends React.Component {
 
@@ -185,12 +185,15 @@ export class FollowingDispatcher extends React.Component {
 const ModalSelection = ({ unselectPost, children, isOpen }) => {
 
     return (
-        <Backdrop open={isOpen}
+        <Dialog open={isOpen}
             onClick={unselectPost}
-            style={{ zIndex: 100 }}>
+            //style={{ zIndex: 100 }}
+            maxWidth={false}
+            //fullScreen
+            >
 
             { children}
-        </Backdrop>
+        </Dialog>
     )
 }
 

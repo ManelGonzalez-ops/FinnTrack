@@ -68,6 +68,7 @@
   display: grid;
   grid-template-columns: 80px 1fr;
   opacity: 0;
+  width: 800px;
 }
 
 .post.is-selected {

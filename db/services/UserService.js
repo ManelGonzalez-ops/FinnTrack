@@ -75,27 +75,40 @@ module.exports = {
             })
         })
     },
-// initial state of User details view
-    getUserDetailsDB: (userId)=>{
-        return new Promise((resolve, reject)=>{
-            db.query("select * from userDetails where userId = ?", [userId], (err, row)=>{
-                if(err){
+    // initial state of User details view
+    getUserDetailsDB: (userId) => {
+        return new Promise((resolve, reject) => {
+            db.query("select * from userDetails where userId = ?", [userId], (err, row) => {
+                if (err) {
                     return reject(err)
                 }
-                if(!row || !row.length){
+                if (!row || !row.length) {
                     return reject(new Error("no data returned"))
                 }
                 resolve(row)
             })
         })
     },
-    getUserImageDB: (userId)=>{
-        return new Promise((resolve, reject)=>{
-            db.query("select image from userDetails where userId = ?", [userId], (err, row)=>{
-                if(err){
+    getUserDetailsDBEmail: (email) => {
+        return new Promise((resolve, reject) => {
+            db.query("select * from userDetails where userId = (select userId from users where email = ?) ", [email], (err, row) => {
+                if (err) {
                     return reject(err)
                 }
-                if(!row || !row.length){
+                if (!row || !row.length) {
+                    return reject(new Error("no data returned"))
+                }
+                resolve(row)
+            })
+        })
+    },
+    getUserImageDB: (userId) => {
+        return new Promise((resolve, reject) => {
+            db.query("select image from userDetails where userId = ?", [userId], (err, row) => {
+                if (err) {
+                    return reject(err)
+                }
+                if (!row || !row.length) {
                     return reject(new Error("no data returned"))
                 }
                 resolve(row[0].image)

@@ -38,6 +38,27 @@ const userReducer = (state, action) => {
                 ...state,
                 token: action.payload
             }
+        case "ADD_USER_INFO":
+            // const { image, ...rest } = action.payload
+            // const imageUrl = URL.createObjectURL(image)
+            // console.log(image, "imagana")
+            console.log("quetemueras")
+            console.log(action.payload, "dedeeee")
+            return {
+                ...state,
+                info: {
+                    ...state.info,
+                    ...action.payload
+                }
+            }
+        case "UPDATE_IMAGE":
+            return {
+                ...state,
+                info: {
+                    ...state.info,
+                    imageUrl: URL.createObjectURL(action.payload)
+                }
+            }
         default:
             return state
     }

@@ -85,9 +85,9 @@ const App = () => {
   useEngine()
 
   const { loading } = useIAuthh()
-  //useAuth()
-  //const { authState, authService } = useOktaAuth();
-  const { userState } = useUserLayer()
+
+  const { userState, userDispatch } = useUserLayer()
+  const { state, dispatch } = useDataLayer()
   console.log(userState.info, "infoo userstate")
   useEffect(() => {
     if (userState.isAuthenticated) {
@@ -110,6 +110,9 @@ const App = () => {
                 cash: res.userCash
               }
             })
+
+            userDispatch({ type: "ADD_USER_INFO", payload: res.userData })
+
             console.log("hellow")
             res.interests && dispatch({ type: "STORE_USER_INTEREST", payload: res.interests });
             console.log("hellowa")
@@ -136,6 +139,25 @@ const App = () => {
   }, [userState.isAuthenticated])
 
   useEffect(() => {
+
+    if (!userState.isAuthenticated) {
+      return
+    }
+    const { email } = userState.info
+    fetch("http://localhost:8001/api/v1/users/image", {
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email }),
+      method: "POST"
+    })
+      .then(res => res.blob())
+      .then(image => { userDispatch({ type: "UPDATE_IMAGE", payload: image }) })
+      .catch(err => { throw new Error(err.message) })
+
+  }, [userState.isAuthenticated])
+
+  useEffect(() => {
     const worker = new Worker("worker.js")
     worker.postMessage("comeme el culo")
     worker.onmessage = e => {
@@ -155,7 +177,7 @@ const App = () => {
 
   const [width, setWidth] = useState(0);
 
-  const { state, dispatch } = useDataLayer()
+
 
   // const inicializadorStadoPrueba = () => {
   //   dispatch({ type: "ADD_DIRECT_HISTORY", payload: userActivity })
@@ -285,10 +307,10 @@ const App = () => {
               )}
             </UserContextt.Consumer>
           </Route>
-          <Route path="/pruebaLogin" exact>
+          <Route path="/login" exact>
             <Login />
           </Route>
-          <Route path="/pruebaRegister" exact>
+          <Route path="/register" exact>
             <Register />
           </Route>
           <Route path="/protectedRuta" exact>

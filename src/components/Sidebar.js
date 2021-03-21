@@ -34,6 +34,7 @@ import { useDataLayer } from "../Context";
 import { useViewport } from "../utils/useViewport";
 import { ProfileSidebar } from "../Auth/ProfileSidebar";
 import { useLocation } from "react-use";
+import { useUserLayer } from "../UserContext";
 
 
 
@@ -97,6 +98,7 @@ export const Sidebar = ({ handleDrawerClose, handleDrawerOpen, expanded, handleS
   const { viewport } = useViewport()
   const { sidebarOpen, setSidebarOpen, drawerWidth, setDrawerWidth } = useUILayer()
   const { state } = useDataLayer()
+  const { userState: { isAuthenticated } } = useUserLayer()
   const classes = useStyles({ viewport, drawerWidth });
   const [dashboardMode, setDashboardMode] = useState(false)
 
@@ -107,16 +109,17 @@ export const Sidebar = ({ handleDrawerClose, handleDrawerOpen, expanded, handleS
   };
 
   useEffect(() => {
-    if (!location.pathname) return;
+    // if (!location.pathname) return;
 
-    const isInDashboard = location.pathname.split("/").find(route => route === "portfoliof")
-    if (isInDashboard) {
+    // const isInDashboard = location.pathname.split("/").find(route => route === "portfoliof")
+    if (isAuthenticated) {
       setSidebarOpen(true)
-      setDrawerWidth(300)
-    } else {
-      setDrawerWidth(240)
+      //setDrawerWidth(300)
     }
-  }, [location.pathname])
+    // else {
+    //   setDrawerWidth(240)
+    // }
+  }, [isAuthenticated])
 
   console.log(location, "localizacioone")
 
@@ -139,15 +142,15 @@ export const Sidebar = ({ handleDrawerClose, handleDrawerOpen, expanded, handleS
       open={sidebarOpen}
     >
       <div className={classes.toolbar}>
-        <IconButton onClick={handleDrawerClose}>
+        {!isAuthenticated && <IconButton onClick={handleDrawerClose}>
           {theme.direction === "rtl" ? (
             <ChevronRightIcon />
           ) : (
             <ChevronLeftIcon />
           )}
-        </IconButton>
+        </IconButton>}
       </div>
-      <ProfileSidebar />
+      {isAuthenticated && <ProfileSidebar />}
       <Divider />
       <TreeView
         style={{ margin: "1rem 0" }}
@@ -157,8 +160,8 @@ export const Sidebar = ({ handleDrawerClose, handleDrawerOpen, expanded, handleS
         defaultEndIcon={<div style={{ width: 24 }} />}
         expanded={expanded}
         selected={selected}
-        onMouseEnter={handleDrawerOpen}
-        onMouseLeave={handleDrawerClose}
+        onMouseEnter={!isAuthenticated && handleDrawerOpen}
+        onMouseLeave={!isAuthenticated && handleDrawerClose}
         onNodeToggle={handleSidebarToggle}
         onNodeSelect={handleSelect}
       >

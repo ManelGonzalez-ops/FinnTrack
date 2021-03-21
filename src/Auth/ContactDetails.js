@@ -14,22 +14,22 @@ const cleanDate = (date) => {
 }
 
 ///props come directly from ajax call
-export const ContactDetails = ({ userInfo }) => {
-    const { userState } = useUserLayer()
-    const [country, setCountry] = useState(userInfo.country ? userInfo.country : "")
-    const [gender, setGender] = useState(userInfo.gender ? userInfo.gender : "")
-    const [dateBirth, setDateBirth] = useState(userInfo.nacimiento ? cleanDate(userInfo.nacimiento) : "")
+export const ContactDetails = () => {
+    const { userState: { info } } = useUserLayer()
+    const [country, setCountry] = useState(info.country ? info.country : "")
+    const [gender, setGender] = useState(info.gender ? info.gender : "")
+    const [dateBirth, setDateBirth] = useState(info.nacimiento ? cleanDate(info.nacimiento) : "")
     const [{ firstName, lastName }, setNames] =
         useState({
-            firstName: userInfo.firstName ? userInfo.firstName : "",
-            lastName: userInfo.lastName ? userInfo.lastName : ""
+            firstName: info.firstName ? info.firstName : "",
+            lastName: info.lastName ? info.lastName : ""
         })
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const body = {
             country, gender, dateBirth, firstName, lastName,
-            email: userState.info.email
+            email: info.email
         }
         fetch("http://localhost:8001/api/v1/users/complete", {
             headers: { "Content-Type": "application/json" },

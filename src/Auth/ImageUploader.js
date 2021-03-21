@@ -5,6 +5,8 @@ import countries from "../utils/countries.json"
 import { CgGenderFemale, CgGenderMale } from "react-icons/cg"
 import styled from "styled-components"
 import { CircularProgress } from '@material-ui/core'
+import { Skeleton } from '@material-ui/lab'
+import "./imageUploader.scss"
 
 const Container = styled.div({
     width: "600px",
@@ -12,29 +14,26 @@ const Container = styled.div({
 })
 
 
-export const ImageUploader = ({ image }) => {
-    const [imageUpload, setImageUpload] = useState(image ? image : "")
+export const ImageUploader = () => {
+    const [imageUpload, setImageUpload] = useState("")
     const [response, setResponse] = useState("")
     const [loading, setLoading] = useState(false)
-    const [generatedUrl, setGeneratedUrl] = useState("")
-    const { userState } = useUserLayer()
-
-    useEffect(() => {
-        if (image) {
-            setGeneratedUrl(URL.createObjectURL(image))
-        }
-    }, [image])
+    const { userState: { info }, userDispatch } = useUserLayer()
+    const [loaded, setLoaded] = useState(false)
+    const [provisionalImg, setProvisionalImg] = useState(info.imageUrl ? info.imageUrl : "")
 
     const handleImageUpload = (e) => {
         setImageUpload(e.target.files[0])
-        setGeneratedUrl(URL.createObjectURL(e.target.files[0]))
+        setProvisionalImg(URL.createObjectURL(e.target.files[0]))
     }
+
+    const image = provisionalImg || info.imageUrl
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const imageData = new FormData()
         imageData.append("image", imageUpload)
-        imageData.append("email", userState.info.email)
+        imageData.append("email", info.email)
         setLoading(true)
         fetch("http://localhost:8001/api/v1/users/upload", {
             body: imageData,
@@ -42,24 +41,34 @@ export const ImageUploader = ({ image }) => {
         })
             .then(res => res.blob())
             .then(image => {
-                setGeneratedUrl(URL.createObjectURL(image))
+                userDispatch({ type: "UPDATE_IMAGE", payload: image })
                 setLoading(false)
             })
             .catch(err => { setResponse(JSON.stringify(err)) })
     }
     return (
         <div className="contact-details">
-            {/* {generatedUrl && <img src={generatedUrl} />} */}
             <form onSubmit={handleSubmit}>
-                <label style={{ height: "100px", width: "100px", background: "red", display: "block" }} htmlFor="upload">
-                    {generatedUrl && <img src={generatedUrl} style={{ height: "100%" }} />}
-                    <input
-                        type="file"
-                        onChange={handleImageUpload}
-                        style={{ display: "none" }}
-                        id="upload"
-                    />
-                </label>
+                {image ?
+                    <label style={{ height: "100px", width: "100px", display: "block" }} htmlFor="upload">
+                        <img
+                            src={image}
+                            style={loaded ? { display: "inline" } : { display: "none" }}
+                            onLoad={() => { setLoaded(true) }}
+                        />
+
+                        {!loaded && <Skeleton variant="rect" width={210} height={118} />}
+
+                        <input
+                            type="file"
+                            onChange={handleImageUpload}
+                            style={{ display: "none" }}
+                            id="upload"
+                        />
+                    </label>
+                    :
+                    <div style={{ width: "100%", height: "100%", backgroundColor: "black" }}></div>
+                }
                 <LoadingButton
                     {...{ loading, handleSubmit }}
                 >

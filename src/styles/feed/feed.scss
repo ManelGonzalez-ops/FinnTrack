@@ -69,6 +69,7 @@
     display: grid;
     grid-template-columns: 80px 1fr;
     opacity: 0;
+    width: 800px;
     &.is-selected {
         background-color: white;
         opacity: 1;

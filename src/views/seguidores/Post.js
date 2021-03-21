@@ -4,6 +4,7 @@ import { time_ago } from "../../utils/datesUtils"
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import { GiphyFetch } from '@giphy/js-fetch-api'
+import "../../styles/feed/feed.scss"
 
 
 
