@@ -5,7 +5,7 @@ import { Paper } from "@material-ui/core";
 import { KeyMetrics } from "./KeyMetrics";
 import { CompanyChart } from "./CompanyChart";
 import { useDataLayer } from "../../Context";
-import { StockShop } from "../../portfolio/StockShop";
+import { StockShop } from "../../portfolio/StockShop2";
 import { CurrentPriceRP } from "../../portfolio/CurrentPriceRP";
 
 
@@ -45,8 +45,6 @@ export const CompanySection = React.forwardRef((props, ref) => {
       {tickar &&
         <>
 
-
-
           <div className="grida" style={{ width: "100%" }}>
             <Paper
               className="chart"
@@ -66,7 +64,7 @@ export const CompanySection = React.forwardRef((props, ref) => {
             </Paper>
             <Paper
               className={clasi ? "general overflown" : "general"}
-              style={clasi ? { height: `${listHeight + 30}px` } : { height: "100%" }}
+              style={clasi ? { maxHeight: "400px" } : { maxHeight: "5000px" }}
               ref={keyMetricsRef}
             >
               <button onClick={() => { setClasi(prev => !prev) }}>change view</button>

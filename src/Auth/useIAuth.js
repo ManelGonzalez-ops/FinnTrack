@@ -32,6 +32,7 @@ export const useIAuthh = () => {
     useEffect(() => {
         //if there's no token user will have to login
         if (!userState.token) {
+            console.log("setting user null")
             setLoading(false)
             userDispatch({ type: "SET_USER_NULL" })
             return
@@ -65,6 +66,8 @@ export const useIAuthh = () => {
                 })
         }
     }, [])
+
+    return {loading}
 }
 
 // export const useAuthLogin = (setHasTried, hasTried) => {

@@ -1,5 +1,5 @@
 import { Divider } from '@material-ui/core'
-import React from 'react'
+import React, { useState } from 'react'
 
 
 export const NewsItem = ({ item }) => {
@@ -13,7 +13,7 @@ export const NewsItem = ({ item }) => {
                     <img
                         src={item.image}
                         alt={item.headline}
-                    ></img>
+                    />
                 </div>
                 <div className="content">
                     <p className="news-subtitle">{item.category}</p>
@@ -31,7 +31,7 @@ export const NewsItem = ({ item }) => {
 
 
 export const NewsItemOver = ({ item }) => {
-
+    const [loaded, setLoaded] = useState(false)
     return (
         <>
             <Divider />
@@ -42,7 +42,7 @@ export const NewsItemOver = ({ item }) => {
                     <img
                         src={item.image}
                         alt={item.headline}
-                    ></img>
+                    />
                 </div>
                 <div className="content">
                     <p className="news-subtitle">{item.category}</p>
@@ -63,9 +63,9 @@ export const GridComposition = ({ chunk }) => {
         <div
             className="news-grid-parent"
         >
-           
-                        <NewsItemOver item={chunk[0]} />
-                        <NewsItemSmall items={chunk.slice(1, 3)} />
+
+            <NewsItemOver item={chunk[0]} />
+            <NewsItemSmall items={chunk.slice(1, 3)} />
         </div>
     )
 }

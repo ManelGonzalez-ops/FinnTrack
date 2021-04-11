@@ -4,13 +4,17 @@ import { PeopleItem } from './interfaces'
 import styled from "styled-components"
 import { makeStyles, Paper } from '@material-ui/core'
 import { Link } from 'react-router-dom'
+import { PortfolioChartPeople } from './PortfolioChartPeople'
 
 interface IProps {
     person: PeopleItem
 }
 const useStyles = makeStyles({
     root: {
-        width: "350px"
+        width: "max(30%, 280px)",
+        margin: "0 1rem",
+        marginBottom: "2rem",
+         //margin: "5%"
     }
 })
 export const UserItem: React.FC<IProps> = ({ person }) => {
@@ -22,16 +26,20 @@ export const UserItem: React.FC<IProps> = ({ person }) => {
     const classes = useStyles()
     return (
         <Paper
-            classes={{ root: classes.root }}
+           // classes={{ root: classes.root }}
+           className="portfolio-chart--people"
         >
-            <UserInfo>
-                <Link to={`/people/${user.userId}`}>
+            {
+                user.username &&
+                <UserInfo>
+                    <Link to={`/people/${user.userId}`}>
+                        <h6>{user.username}</h6>
+                    </Link>
                     <h3>{user.firstName}</h3>
-                </Link>
-                <h6>{user.lastName}</h6>
-            </UserInfo>
+
+                </UserInfo>}
             <Portfolio>
-                <PortfolioPriceChart datos={portfolio} title={`${user.firstName} Portfolio`} />
+                <PortfolioChartPeople datos={portfolio} title={`${user.firstName} Portfolio`} />
             </Portfolio>
         </Paper>
     )

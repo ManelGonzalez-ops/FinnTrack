@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { userActivity } from '../portfolio/logicPruebasConAdd'
 import { PortfolioPriceChart } from '../portfolio/PortfolioPriceChart'
-import { StockShop } from '../portfolio/StockShop'
+import { StockShop } from '../portfolio/StockShop2'
+import { ChartsSection } from './ChartsSection'
 import { PeopleData } from './interfaces'
+import { PortfolioChartPeople } from './PortfolioChartPeople'
 interface ParamType {
     id: string
 }
@@ -70,7 +72,9 @@ export const PeopleDetails = () => {
                             {...shopProps}
 
                         />
-                        <PortfolioPriceChart datos={data?.portfolio} title={`${data?.user.username} Portfolio`} />
+                        {data &&
+
+                            <ChartsSection {...{ data }} />}
                     </>}
 
         </div>

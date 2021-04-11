@@ -11,7 +11,7 @@ import {
   useTheme,
 } from "@material-ui/core";
 import clsx from "clsx";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ListItem from "@material-ui/core/ListItem";
@@ -32,18 +32,21 @@ import SearchIcon from '@material-ui/icons/Search';
 import { useUILayer } from "../ContextUI";
 import { useDataLayer } from "../Context";
 import { useViewport } from "../utils/useViewport";
-
-const drawerWidth = 240;
+import { ProfileSidebar } from "../Auth/ProfileSidebar";
+import { useLocation } from "react-use";
+import { useUserLayer } from "../UserContext";
+import HistoryIcon from '@material-ui/icons/History';
+import AssessmentIcon from '@material-ui/icons/Assessment';
 
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
-    width: drawerWidth,
+    // width: ({ drawerWidth }) => drawerWidth,
     flexShrink: 0,
     whiteSpace: "nowrap",
   },
   drawerOpen: {
-    width: drawerWidth,
+    width: ({ drawerWidth }) => drawerWidth,
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -56,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
     }),
     overflowX: "hidden",
     width: theme.spacing(7) + 1,
-    [theme.breakpoints.down("sm")]:{
+    [theme.breakpoints.down("sm")]: {
       width: 0
     },
     [theme.breakpoints.up("sm")]: {
@@ -82,18 +85,24 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     textOverflow: "ellipsis",
     overflow: "hidden"
-  }
+  },
+  // drawerDashboard: {
+  //   width: 300
+  // },
 }));
 
 //ad open if not works
-export const Sidebar = ({ handleDrawerClose, handleDrawerOpen, expanded, handleSidebarToggle }) => {
+export const Sidebar = () => {
   const history = useHistory()
-  
+  const location = useLocation()
   const theme = useTheme();
-  const {viewport} = useViewport()
-  const { sidebarOpen } = useUILayer()
+  const { viewport } = useViewport()
+  const { sidebarOpen, setSidebarOpen, drawerWidth } = useUILayer()
   const { state } = useDataLayer()
-  const classes = useStyles({viewport});
+  const { userState: { isAuthenticated, info } } = useUserLayer()
+  const classes = useStyles({ viewport, drawerWidth });
+  const [dashboardMode, setDashboardMode] = useState(false)
+  const [expanded, setExpanded] = React.useState([]);
 
   const [selected, setSelected] = React.useState("");
 
@@ -101,10 +110,37 @@ export const Sidebar = ({ handleDrawerClose, handleDrawerOpen, expanded, handleS
     setSelected(nodeIds);
   };
 
+  const closeSidebar = () => {
+    setExpanded([])
+    setSidebarOpen(false)
+  }
+  const openSidebar = () => {
+    setSidebarOpen(true)
+  }
+
+  const handleSidebarToggle = (e, nodeId) => {
+    setExpanded(nodeId)
+  }
+
+  useEffect(() => {
+    // if (!location.pathname) return;
+
+    // const isInDashboard = location.pathname.split("/").find(route => route === "portfoliof")
+    if (isAuthenticated) {
+      setSidebarOpen(true)
+      //setDrawerWidth(300)
+    }
+    // else {
+    //   setDrawerWidth(240)
+    // }
+  }, [isAuthenticated])
+
+  console.log(location, "localizacioone")
+
 
   return (
     <Drawer
-    variant={viewport > 600 ? "permanent":"temporary"}
+      variant={viewport > 600 ? "permanent" : "temporary"}
       className={clsx(classes.drawer, {
         [classes.drawerOpen]: sidebarOpen,
         [classes.drawerClose]: !sidebarOpen,
@@ -113,20 +149,23 @@ export const Sidebar = ({ handleDrawerClose, handleDrawerOpen, expanded, handleS
         paper: clsx({
           [classes.drawerOpen]: sidebarOpen,
           [classes.drawerClose]: !sidebarOpen,
+          // [classes.drawerDashboard]: dashboardMode
         }),
       }}
       //this is for the movile version
       open={sidebarOpen}
+      onClose={closeSidebar}
     >
       <div className={classes.toolbar}>
-        <IconButton onClick={handleDrawerClose}>
+        {!isAuthenticated && <IconButton onClick={closeSidebar}>
           {theme.direction === "rtl" ? (
             <ChevronRightIcon />
           ) : (
-              <ChevronLeftIcon />
-            )}
-        </IconButton>
+            <ChevronLeftIcon />
+          )}
+        </IconButton>}
       </div>
+      {isAuthenticated && info.username && <ProfileSidebar />}
       <Divider />
       <TreeView
         style={{ margin: "1rem 0" }}
@@ -136,21 +175,40 @@ export const Sidebar = ({ handleDrawerClose, handleDrawerOpen, expanded, handleS
         defaultEndIcon={<div style={{ width: 24 }} />}
         expanded={expanded}
         selected={selected}
-        onMouseEnter={handleDrawerOpen}
-        onMouseLeave={handleDrawerClose}
+        onMouseEnter={!isAuthenticated && openSidebar}
+        onMouseLeave={!isAuthenticated && closeSidebar}
         onNodeToggle={handleSidebarToggle}
         onNodeSelect={handleSelect}
       >
-        <StyledTreeItem nodeId="13" labelText="Search" labelIcon={SearchIcon} isTitle
+        {isAuthenticated &&
+          <>
+            <StyledTreeItem nodeId="20" labelText="portfolio" labelIcon={AssessmentIcon} isTitle
+              ariaLabel="portfolio"
+              onLabelClick={() => { history.push("/portfolio") }}
+            />
+            <StyledTreeItem nodeId="21" labelText="Operation History" labelIcon={HistoryIcon} isTitle
+              ariaLabel="Operation History"
+              onLabelClick={() => { history.push("/operations") }}
+            />
+            <Divider />
+          </>
+        }
+        <StyledTreeItem nodeId="22" labelText="Search" labelIcon={SearchIcon} isTitle
           ariaLabel="search"
           onLabelClick={() => { history.push("/") }}
         />
-        <StyledTreeItem nodeId="14" labelText="People" labelIcon={SearchIcon} isTitle
+        <StyledTreeItem nodeId="23" labelText="Feed" labelIcon={SearchIcon} isTitle
+          ariaLabel="Feed"
+          onLabelClick={() => { history.push("/feed") }}
+        />
+
+        <StyledTreeItem nodeId="15" labelText="People" labelIcon={SearchIcon} isTitle
           ariaLabel="People"
           onLabelClick={() => { history.push("/people") }}
         />
-        <StyledTreeItem nodeId="1" labelText="Indexes" labelIcon={MailIcon} isTitle
 
+
+        <StyledTreeItem nodeId="1" labelText="Indexes" labelIcon={MailIcon} isTitle
         >
           <StyledTreeItem
             nodeId="2"

@@ -1,5 +1,5 @@
-import { Button, TextField } from '@material-ui/core'
-import React, { useEffect, useState } from 'react'
+import { Button, ButtonGroup, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@material-ui/core'
+import React, { useEffect, useRef, useState } from 'react'
 import { CustomCircularProgress } from '../components/components/CustomCircularProgress'
 import { useDataLayer } from '../Context'
 import useAuth from '../useAuth'
@@ -27,16 +27,33 @@ export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) =
     const [orderTotal, setOrderTotal] = useState("")
     const [modalOpen, setModalOpen] = React.useState(false);
     const [operationType, setOperationType] = React.useState("")
-
+    const restartPortfolio = useRef(false)
     useEffect(() => {
         if (currentPrice) {
             setOrderTotal(currentPrice * qty)
         }
     }, [qty, currentPrice])
 
+    const enableRealtime = () => {
+        restartPortfolio.current = true
+        //because first day we make real time updates, in normal conditions this is false and portfolioSeries don't get recalculated 
+        dispatch({ type: "SET_ARE_HISTORIC_PRICES_READY", payload: true })
+        dispatch({ type: "SET_FIRST_SERIE", payload: true })
+    }
     const submitOrder = () => {
         if (userState.info.email) {
             let isFirstOperation = state.userActivity.length > 0 ? false : true
+            if (isFirstOperation) {
+                enableRealtime()
+                localStorage.setItem("firstDate", JSON.stringify(Date.now()))
+            } else {
+                //check if it's still in the first day
+                const firstOp = state.userActivity.find(item => item.isFirstOperation)
+                if (firstOp.date === date) {
+                    enableRealtime()
+                }
+            }
+
             fetch("http://localhost:8001/api/v1/operations/addoperation", {
                 headers: {
                     Accept: 'application/json',
@@ -86,6 +103,9 @@ export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) =
                         }
                     })
                     dispatch({ type: "RESTART_GENERATED_SERIES" })
+                    if (restartPortfolio.current) {
+                        dispatch({ type: "RESTART_PORTFOLIO_SERIES" })
+                    }
 
                 })
                 .catch(err => { console.log(err, "pputa falló") })
@@ -126,6 +146,48 @@ export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) =
             { !setPruebaReady ? <div>Loading initial data...</div>
                 : currentPrice &&
                 <div>
+                    <Dialogo1 />
+                    <ButtonGroup variant="contained" aria-label="buy or sell">
+                        {["buy", "sell"].map((type, index) => (
+                            <Button
+                                onClick={() => {
+                                    setOperationType(type)
+                                    setModalOpen(true)
+                                }}
+                                variant="contained"
+                                color={index / 1 === 1 ? "secondary" : "primary"}
+                            >
+                                {type}
+                            </Button>
+                        ))}
+                    </ButtonGroup>
+
+
+
+
+                    <PurchaseDialog
+                        {...{ modalOpen, setModalOpen, qty, orderTotal, ticker, submitOrder, operationType }}
+                    />
+                </div>
+            }
+        </div>
+    )
+}
+
+const Dialogo1 = () => {
+    return (
+        <Dialog
+            open={open}
+            TransitionComponent={Transition}
+            keepMounted
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-slide-title"
+            aria-describedby="alert-dialog-slide-description"
+        >
+            <DialogTitle id="alert-dialog-slide-title">{"Use Google's location service?"}</DialogTitle>
+            <DialogContent>
+                <DialogContentText
+                    id="alert-dialog-slide-description">
                     <p>{formatter.format((currentPrice))}</p>
                     <TextField
                         type="number"
@@ -136,25 +198,16 @@ export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) =
                         className="total-price">
                         {formatter.format(orderTotal)}
                     </div>
-                    {["buy", "sell"].map(type => (
-                        <Button
-                            onClick={() => {
-                                setOperationType(type)
-                                setModalOpen(true)
-                            }}
-                            variant="contained"
-                            color="primary"
-                        >
-                            {type}
-                        </Button>
-                    ))}
-
-
-                    <PurchaseDialog
-                        {...{ modalOpen, setModalOpen, qty, orderTotal, ticker, submitOrder, operationType }}
-                    />
-                </div>
-            }
-        </div>
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleClose} color="primary">
+                    Disagree
+          </Button>
+                <Button onClick={handleClose} color="primary">
+                    Agree
+          </Button>
+            </DialogActions>
+        </Dialog>
     )
 }

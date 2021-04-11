@@ -65,13 +65,6 @@ export const PerformanceStructure = ({ available, loading }) => {
             alignTicks: false,
         },
 
-        // rangeSelector: {
-        //     selected: 1
-        // },
-
-        title: {
-            text: 'AAPL Stock Volume'
-        },
         plotOptions: {
             // column: {
             //     centerInCategory: true,

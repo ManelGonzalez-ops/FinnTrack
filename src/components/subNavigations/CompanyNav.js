@@ -9,6 +9,8 @@ import { useUILayer } from '../../ContextUI';
 import { useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 import { useUserLayer } from '../../UserContext';
+import { CurrentPriceRP } from '../../portfolio/CurrentPriceRP';
+import { StockShop } from '../../portfolio/StockShop2';
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
@@ -32,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const CompanyNav = forwardRef(({ menuCompaniesOpen, topNavigation }) => {
+export const CompanyNav = ({ menuCompaniesOpen, topNavigation }) => {
 
   const { state: { currentCompany, following }, dispatch } = useDataLayer()
   const { sidebarOpen, setMountApproval } = useUILayer()
@@ -129,7 +131,7 @@ export const CompanyNav = forwardRef(({ menuCompaniesOpen, topNavigation }) => {
       )}
     </Transition>
   )
-})
+}
 
 const FollowingControl = ({ handleFollow, isFollowing }) => {
   return isFollowing ?

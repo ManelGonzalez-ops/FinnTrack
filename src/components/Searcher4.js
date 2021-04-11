@@ -56,7 +56,7 @@ export const Searcher4 = ({ setSelection }) => {
     const [value, setValue] = useState("");
     const [opened, setOpened] = useState(false)
     const [dimensions, setDimensions] = useState(1);
-    const isSelecting = useRef(false)
+    const [isSelecting, setIsSelecting] = useState(false)
     const [upper, setUpper] = useState(0);
     const [hasExited, setHasExited] = useState(true)
 
@@ -65,6 +65,7 @@ export const Searcher4 = ({ setSelection }) => {
         setRequest(prev => ({ ...prev, data: [] }))
     };
     useEffect(() => {
+
         if (data.length > 0) {
             setWrapperHeight(listItems.current.offsetHeight)
             setOpened(true)
@@ -73,6 +74,9 @@ export const Searcher4 = ({ setSelection }) => {
             setUpper(-40);
             setShowOverlay(true)
         } else {
+            if (isSelecting) {
+                return
+            }
             if (opened) {
                 setUpper(0);
                 setDimensions(1);
@@ -109,6 +113,7 @@ export const Searcher4 = ({ setSelection }) => {
         setShowOverlay(false)
         setWrapperHeight(0)
         setTickerMove(true)
+        setRequest(prev => ({ ...prev, data: [] }))
     }
     // const handleClose = () => {
     //     if (!data.length) {
@@ -116,26 +121,29 @@ export const Searcher4 = ({ setSelection }) => {
     //     }
     // }
 
-    const getStyles =()=> {
+    const getStyles = () => {
         //in initial animation spinner waits for search to be expanded  
-        if(loading && data.length === 0) {
+        if (loading && data.length === 0) {
             //setSpinnerReady(false)
             return "150px"
-    }
-       return wrapperHeigh > 0 ?  wrapperHeigh + 40 + "px"  :  "50px" 
+        }
+        return wrapperHeigh > 0 ? wrapperHeigh + 40 + "px" : "50px"
     }
 
+    useEffect(() => {
+        console.log(isSelecting, "selec")
+    })
 
     return (
 
         //we n
         <div
-            style={{height: getStyles()}}
+            style={{ height: getStyles() }}
             // style={{ height: wrapperHeigh + 40 + "px" }}
             className={clsx("searcher4", {
                 "open": opened
             })}
-            onTransitionEnd={()=>{setSpinnerReady(true)}}
+            onTransitionEnd={() => { setSpinnerReady(true) }}
         // style={listItems.current? {height: listItems.current.offsetHeight} : {height: "40px"}}
         >
             {/* {loading && <p>cargando...</p>}
@@ -152,8 +160,7 @@ export const Searcher4 = ({ setSelection }) => {
                 onBlur={(e) => {
                     console.log("bblurrring")
                     setSpinnerReady(false)
-                    setRequest(prev=>({...prev, data: []}))
-                    !isSelecting.current && cleanUp()
+                    !isSelecting && cleanUp()
                 }}
             // style={{ transform: `translateY(${upper}px)` }}
 
@@ -181,7 +188,7 @@ export const Searcher4 = ({ setSelection }) => {
 
                         {data.length > 0 && data.map((item, index) =>
                             <>
-                               { index > 0 && <Divider />}
+                                { index > 0 && <Divider />}
                                 <ListItemText
                                     key={item.ticker}
                                     style={{ cursor: "pointer" }}
@@ -190,8 +197,8 @@ export const Searcher4 = ({ setSelection }) => {
                                         setShowOverlay(false)
                                         setSelection(item)
                                     }}
-                                    onMouseOver={() => { isSelecting.current = true }}
-                                    onMouseOut={() => { isSelecting.current = false }}
+                                    onMouseOver={() => { setIsSelecting(true) }}
+                                    onMouseOut={() => { setIsSelecting(false) }}
                                 >
                                     {item.name}
                                 </ListItemText>
@@ -204,13 +211,13 @@ export const Searcher4 = ({ setSelection }) => {
                 adaptable={true} />} */}
             <Transition
                 in={loading && hasExited && spinnerReady}
-            // timeout={{
-            //     appear: 1000,
-            //     enter: 1000,
-            //     exit: 300,
-            // }}
-            mountOnEnter
-            unmountOnExit
+                // timeout={{
+                //     appear: 1000,
+                //     enter: 1000,
+                //     exit: 300,
+                // }}
+                mountOnEnter
+                unmountOnExit
             >
                 {state => (
                     <CustomCircularProgress

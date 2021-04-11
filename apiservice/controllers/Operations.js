@@ -1,25 +1,31 @@
-const { getOperations, findUser, addPortfolioDB, updatePortfolioDB, portfolioExists, addOperation } = require("../../db/services")
+
+const { getOperations, findUser, addPortfolioDB, updatePortfolioDB, portfolioExists, addOperation, getUsername } = require("../../db/services")
 const { getUserInterests } = require("../../db/services/interestsService")
-const { setPortfolio } = require("../../db/services/UserService")
+const { setPortfolio, getPortfolioInitialDay, getUserDetailsDBEmail } = require("../../db/services/UserService")
 const { prepareStoredOperations, setInitialPossesions } = require("../dataPreparation")
 const { convertUnixToHuman } = require("../dataUtils")
+
 
 const getReadyOperations = async (req, res) => {
     const { email } = req.body
     console.log(email, "emaillll")
     try {
+        const initialDate = await getPortfolioInitialDay(email)
         const operations = await getOperations(email)
         const interests = await userInterests(email)
+        const userData = await getUserDetailsDBEmail(email)
+        //we should add username to userDeatils table
+        const username = await getUsername(email)
         if (operations) {
             console.log(operations, "operatiuns")
             const readyOperations = prepareStoredOperations(operations)
             const { uniqueStocks, currentStocks, userCash } = setInitialPossesions(operations)
-            res.status(200).send({ readyOperations, uniqueStocks, currentStocks, userCash, interests })
+            res.status(200).send({ readyOperations, uniqueStocks, currentStocks, userCash, interests, initialDate, userData: { ...userData[0], username } })
         } else {
             res.status(400).send("error esto viene vacio", operations)
         }
     } catch (err) {
-        res.status(400).send(err, "errur")
+        res.status(400).send(err)
     }
 }
 
@@ -30,6 +36,7 @@ const userInterests = async (email) => {
         :
         null
 }
+
 
 //creo ue no necesitamos esto
 const updatePortfolio = async (req, res) => {
@@ -83,5 +90,11 @@ const addOperationDB = async (req, res, next) => {
         .catch(err => res.status(400).send(err.message))
 }
 
+const getPortfolioInitialDate = async (req, res) => {
+    console.log(req.body, "budi")
+    const { email } = req.body
+    const date = await getPortfolioInitialDay(email)
+    res.status(200).send(date)
+}
 
-module.exports = { getReadyOperations, updatePortfolio, addOperationDB }
+module.exports = { getReadyOperations, updatePortfolio, addOperationDB, getPortfolioInitialDate }

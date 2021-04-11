@@ -10,7 +10,7 @@ class PossesionsSeries {
     }
 
     async init() {
-       return await this.generateSerieFromBegining(this.userActivity)
+        return await this.generateSerieFromBegining(this.userActivity)
     }
 
     findFirstDate = (userActivity) => {
@@ -26,9 +26,9 @@ class PossesionsSeries {
 
     getTotalDaysElapsed = (initialTime) => {
         //const initialTime = findFirstDate()
-        const date = convertUnixToHuman(Date.now())
-        //console.log(date, "duuuu")
-        const todayUnix00 = convertHumanToUnixInit(date)
+        const today = convertUnixToHuman(Date.now())
+        //console.log(today, "duuuu")
+        const todayUnix00 = convertHumanToUnixInit(today)
 
         //console.log(todayUnix00, "duuu2", initialTime)
         const totalMilisecons = todayUnix00 - initialTime
@@ -44,12 +44,9 @@ class PossesionsSeries {
         const firstDate = convertUnixToHuman(initialTime)
         let timelapse = [firstDate]
         let lastDate = initialTime
-        //let initialTime = findFirstDate(state.userActivity)
         const range = this.getTotalDaysElapsed(initialTime)
-        //let unixDate = initialTimeUnix.current
-        //console.log(range, "raaango")
-        //console.log(initialTime, "ostiatime")
-        Array.from(Array(range).keys()).forEach(_ => {
+        console.log(range, "rangou")
+        Array.from(Array(Math.round(range)).keys()).forEach(_ => {
             lastDate += milisencondsInADay
             timelapse = [...timelapse, convertUnixToHuman(lastDate)]
         })
@@ -65,8 +62,7 @@ class PossesionsSeries {
         return new Promise(resolve => {
 
             const initialTime = this.findFirstDate(userActivity)
-            console.log(initialTime, "tiempooo")
-            console.log(convertUnixToHuman(initialTime), "crazyy")
+
             const timelapse = this.createTimelaspse(initialTime)
 
             let masterHistory;
@@ -74,7 +70,7 @@ class PossesionsSeries {
             masterHistory = {
                 income: 0
             }
-            console.log(timelapse, "timelapse")
+            //console.log(timelapse, "timelapse")
             if (!timelapse.length) {
                 masterHistory = {
                     ...masterHistory,
@@ -93,7 +89,7 @@ class PossesionsSeries {
             })
 
             //here we initialize an empty array for each date
-            console.log(timelapse, "timelapse")
+            // console.log(timelapse, "timelapse")
             timelapse.forEach((date, index) => {
                 let hasMadeOperationThatDate = false
                 userActivity.forEach(operation => {
@@ -147,7 +143,7 @@ class PossesionsSeries {
                                         if (posesions.ticker === ticker) {
                                             const { income } = this.handleSell(posesions.unitaryCost, amount, priceSold)
                                             if (index === 0) {
-                                                console.log(JSON.parse(JSON.stringify(income)), "incomeee")
+                                                //console.log(JSON.parse(JSON.stringify(income)), "incomeee")
                                             }
                                             operationIncome = income
 

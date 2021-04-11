@@ -26,13 +26,7 @@
 
 .grida .general {
   grid-area: general;
-  overflow: scroll;
-  height: auto;
   transition: all 1s linear !important;
-}
-
-.grida .general.overflown {
-  overflow: auto;
 }
 
 .grida .general ul {

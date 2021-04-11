@@ -39,6 +39,12 @@ import { FollowingDispatcher } from "./views/seguidores/FollowingDispatcher";
 import { PopulateOnScroll } from "./views/seguidores/PopulateOnScroll";
 import { useIAuthh } from "./Auth/useIAuth";
 import { ContactDetails } from "./Auth/ContactDetails";
+import { convertUnixToHuman } from "./utils/datesUtils";
+import { AuthMiddleware, UpdateInfoView } from "./Auth/UpdateInfoView";
+import { useRemoveCredits } from "./utils/useRemoveCredits";
+import { ProfileSidebar } from "./Auth/ProfileSidebar";
+import { useHandleProfileImage } from "./utils/useHandleProfileImage";
+import { OperationList } from "./Personas/OperationList";
 
 
 
@@ -51,9 +57,11 @@ const useStyles = makeStyles((theme) => ({
   },
   content: {
     flexGrow: 1,
-    padding: "24px 60px",
     overflow: "hidden",
     position: "relative",
+    [theme.breakpoints.up("sm")]: {
+      padding: "24px 60px",
+    }
   },
   toolbar: {
     //display: "flex",
@@ -73,17 +81,19 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-
+const date = convertUnixToHuman(Date.now())
 
 //we need to check when we buy or sell a new stock, the dashboard charts includes it
 const App = () => {
 
   useEngine()
-  useIAuthh()
-  //useAuth()
-  //const { authState, authService } = useOktaAuth();
-  const { userState } = useUserLayer()
+
+  const { loading } = useIAuthh()
+
+  const { userState, userDispatch } = useUserLayer()
+  const { state, dispatch } = useDataLayer()
   console.log(userState.info, "infoo userstate")
+  useHandleProfileImage()
   useEffect(() => {
     if (userState.isAuthenticated) {
       console.log(userState, "userState")
@@ -98,15 +108,34 @@ const App = () => {
         })
           .then(res => res.json())
           .then(res => {
-            dispatch({ type: "ADD_DIRECT_HISTORY", payload: res.readyOperations })
-            dispatch({
+            res.readyOperations && dispatch({ type: "ADD_DIRECT_HISTORY", payload: res.readyOperations })
+
+            res.currentStocks && dispatch({
               type: "SET_INITIAL_POSSESIONS", payload: {
                 stocks: res.currentStocks,
                 cash: res.userCash
               }
             })
+
+            res.userData &&
+              userDispatch({ type: "ADD_USER_INFO", payload: res.userData })
+
+            console.log("hellow")
             res.interests && dispatch({ type: "STORE_USER_INTEREST", payload: res.interests });
-            dispatch({ type: "SET_INITIAL_UNIQUE_STOCKS", payload: res.uniqueStocks })
+            console.log("hellowa")
+            res.uniqueStocks &&
+              dispatch({ type: "SET_INITIAL_UNIQUE_STOCKS", payload: res.uniqueStocks })
+            console.log("hellowaa")
+            if (!res.initialDate) {
+              //means portfolio has been created today
+              dispatch({ type: "SET_FIRST_SERIE", payload: true })
+            } else {
+              if (res.initialDate.split("T")[0] === date) {
+                //this is set as well in the stock shop everytime wew buy firstDay, but this will handle user refresh situation.
+                dispatch({ type: "SET_FIRST_SERIE", payload: true })
+              }
+            }
+            console.log("hellowaai")
             dispatch({ type: "ENABLE" })
           })
           .catch(err => { console.log(err) })
@@ -115,6 +144,26 @@ const App = () => {
         throw new Error("the user is authenticated but we don't have its credentials, wtf")
       }
     }
+  }, [userState.isAuthenticated])
+
+  useEffect(() => {
+
+    if (!userState.isAuthenticated) {
+      return
+    }
+    const { email } = userState.info
+    fetch("http://localhost:8001/api/v1/users/image", {
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email }),
+      method: "POST"
+    })
+      .then(res => { if (!res.ok) throw new Error("no image, is not really an error") })
+      .then(res => res.blob())
+      .then(image => { userDispatch({ type: "UPDATE_IMAGE", payload: image }) })
+      .catch(err => { alert(err.message) })
+
   }, [userState.isAuthenticated])
 
   useEffect(() => {
@@ -128,16 +177,14 @@ const App = () => {
   const history = useHistory()
   const location = useLocation()
   console.log(history, location, "a ver diferencias")
-  const [open, setOpen] = React.useState(false);
+
   const [selection, setSelection] = useState("");
   const { setSidebarOpen, showOverlay } = useUILayer()
   const classes = useStyles({ location, showOverlay });
 
-  const [expanded, setExpanded] = React.useState([]);
-
   const [width, setWidth] = useState(0);
 
-  const { state, dispatch } = useDataLayer()
+
 
   // const inicializadorStadoPrueba = () => {
   //   dispatch({ type: "ADD_DIRECT_HISTORY", payload: userActivity })
@@ -151,6 +198,7 @@ const App = () => {
   console.log(state.areHistoricPricesReady, "ostiau")
 
   useEffect(() => {
+    console.log(selection, "seleccciooon")
     if (selection) {
       console.log(selection, "que webox")
       const { name, ticker } = selection
@@ -171,19 +219,7 @@ const App = () => {
     }
   }, [state.currentCompany])
 
-  const handleDrawerClose = () => {
-    setExpanded([])
-    setSidebarOpen(false)
-    setOpen(false);
-  };
-
-  const handleDrawerOpen = () => {
-    setSidebarOpen(true)
-    setOpen(true);
-  };
-  const handleSidebarToggle = (e, nodeId) => {
-    setExpanded(nodeId)
-  }
+  
   // console.log(authState, "tu muelo")
   // if (authState.isPending) {
   //   return <div>puto maricon ...</div>
@@ -191,13 +227,17 @@ const App = () => {
 
   // console.log(selection, "seleeeection")
   // console.log(userState.info, "que colluns")
+
+  if (loading) {
+    return <h4>Checking credentials</h4>
+  }
   return (
 
     <div className={classes.root}>
       <Overlay />
       <CssBaseline />
-      <Navbar handleDrawerOpen={handleDrawerOpen} />
-      <Sidebar {...{ handleDrawerClose, handleDrawerOpen, handleSidebarToggle, expanded }} />
+      <Navbar />
+      <Sidebar />
       <main className={classes.content}>
         <div className={classes.toolbar} />
         <Button onClick={() => { history.push("/pruebaPorfolio") }}></Button>
@@ -205,12 +245,6 @@ const App = () => {
           <Route path="/" exact >
             <Principal setSelection={setSelection} />
           </Route>
-          {/* <Route path="/" exact >
-            <Searcher setSelection={setSelection} selection={selection} />
-          </Route> */}
-          {/* <Route path="/companies/overview/:company" exact>
-            <CompanySection ref={chart} />
-          </Route> */}
           <Route path="/companies">
             <ControllerCompany />
           </Route>
@@ -228,11 +262,14 @@ const App = () => {
           <Route path="/search" exact>
             <Searcher {...{ setSelection }} />
           </Route>
-          {/* <Route path="/portfolio" exact>
-            <Engine />
-          </Route> */}
-          <Route path="/portfoliof" exact>
+
+          <Route path="/portfolio" exact>
             <Middleware component={UserMain} />
+          </Route>
+          <Route path="/operations">
+            <AuthMiddleware>
+              <OperationList operations={state.userActivity} />
+            </AuthMiddleware>
           </Route>
           <Route path="/people" >
             <PeopleRouter />
@@ -246,10 +283,10 @@ const App = () => {
           >
             <Formm />
           </Route>
-          <Route path="/feed" exact>
+          {/* <Route path="/feed" exact>
             <FeedViews />
-          </Route>
-          <Route path="/interests" exact>
+          </Route> */}
+          <Route path="/feed" exact>
             <UserContextt.Consumer>
               {values => (
                 <PopulateOnScroll>
@@ -262,17 +299,19 @@ const App = () => {
               )}
             </UserContextt.Consumer>
           </Route>
-          <Route path="/pruebaLogin" exact>
+          <Route path="/login" exact>
             <Login />
           </Route>
-          <Route path="/pruebaRegister" exact>
+          <Route path="/register" exact>
             <Register />
           </Route>
           <Route path="/protectedRuta" exact>
             <ProtectedRoute />
           </Route>
           <Route path="/uploads">
-            <ContactDetails />
+            <AuthMiddleware>
+              <UpdateInfoView />
+            </AuthMiddleware>
           </Route>
         </Switch>
 

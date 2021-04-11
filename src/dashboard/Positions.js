@@ -178,7 +178,7 @@ export const Positions = () => {
                 <>
                     <header>
                         <h3>My Assets</h3>
-                        <div>
+                        <div className="header-actions">
                             {openSearcher &&
                                 <SearcherPositions {...{ query, setQuery }} />
                             }

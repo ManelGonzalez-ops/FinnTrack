@@ -1,15 +1,23 @@
 .positions {
   min-height: 32%;
   margin-bottom: 1rem;
+  flex: 1;
 }
 
 .positions > header {
   display: flex;
+  align-items: center;
   padding: 0.5rem;
+  padding-left: 1rem;
 }
 
 .positions > header h3 {
   flex: 1;
+}
+
+.positions .header-actions {
+  display: flex;
+  align-items: center;
 }
 
 .positions .positions-body ul {

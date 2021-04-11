@@ -1,13 +1,13 @@
 import { FormControlLabel, makeStyles, Radio, RadioGroup, Slider } from '@material-ui/core'
 import React, { useEffect, useRef, useState } from 'react'
-
+import { dragElement } from "./Draggable"
 const useStyles = makeStyles({
     root: {
         display: "flex",
         height: "100%"
     },
     slider: {
-        margin: "0 1.5rem",
+        margin: "0 1.5rem"
     },
     valueLabel: {
         transform: "scale(1)",
@@ -24,15 +24,18 @@ export const Sliders = ({ setDate, setMode }) => {
     const lastChosenYear = useRef(2020)
     const sliderDay = useRef(null)
     const [value, setValue] = useState("relative")
-    // const monthName = useRef("Jan")
+    
 
     const handleDaySlider = (e, newVal) => {
+        e.preventDefault()
         setDays(newVal)
     }
     const handleMonthSlider = (e, newVal) => {
+        e.stopPropagation()
         setMonth(newVal)
     }
     const handleYearSlider = (e, newVal) => {
+        e.stopPropagation()
         setYear(newVal)
     }
     const childnum = useRef(0)
@@ -82,11 +85,12 @@ export const Sliders = ({ setDate, setMode }) => {
         return `${year}-${monthc}-${dayc}`
     }
 
-  
+    
+
     useEffect(() => {
-        if(year === lastChosenYear.current){
+        if (year === lastChosenYear.current) {
             setDate(dateBuider(month, day, year))
-        }else{
+        } else {
             setDays(1)
             setMonth(1)
         }
@@ -95,50 +99,53 @@ export const Sliders = ({ setDate, setMode }) => {
     const classes = useStyles()
 
     return (
-        <>
-        <div className="dates">
-            <Slider
-                ref={sliderDay}
-                orientation="vertical"
-                //getAriaValueText={valuetext}
-                value={day}
-                min={1}
-                max={marks[month - 1].days}
-                onChange={handleDaySlider}
-                valueLabelDisplay="on"
-                defaultValue={30}
-                aria-labelledby="vertical-slider"
-                marks
-                classes={{ root: classes.slider, valueLabel: classes.valueLabel }}
-            />
-            <Slider
+        < 
+        >
+            <div className="dates"
+            
+            >
+                <Slider
+                    ref={sliderDay}
+                    orientation="vertical"
+                    //getAriaValueText={valuetext}
+                    value={day}
+                    min={1}
+                    max={marks[month - 1].days}
+                    onChange={handleDaySlider}
+                    valueLabelDisplay="on"
+                    defaultValue={30}
+                    aria-labelledby="vertical-slider"
+                    marks
+                    classes={{ root: classes.slider, valueLabel: classes.valueLabel }}
+                />
+                <Slider
 
-                orientation="vertical"
-                min={1}
-                max={12}
-                value={month}
-                marks={marks}
-                onChange={handleMonthSlider}
-                valueLabelDisplay="off"
-                defaultValue={30}
-                aria-labelledby="vertical-slider"
-                classes={{ root: classes.slider }}
-            />
-            <Slider
-            style={{height: "50%"}}
-                orientation="vertical"
-                min={2020}
-                max={2021}
-                value={year}
-                marks={marksYear}
-                onChange={handleYearSlider}
-                valueLabelDisplay="off"
-                defaultValue={30}
-                aria-labelledby="vertical-slider"
-                classes={{ root: classes.slider }}
-            />
+                    orientation="vertical"
+                    min={1}
+                    max={12}
+                    value={month}
+                    marks={marks}
+                    onChange={handleMonthSlider}
+                    valueLabelDisplay="off"
+                    defaultValue={30}
+                    aria-labelledby="vertical-slider"
+                    classes={{ root: classes.slider }}
+                />
+                <Slider
+                    style={{ height: "50%" }}
+                    orientation="vertical"
+                    min={2020}
+                    max={2021}
+                    value={year}
+                    marks={marksYear}
+                    onChange={handleYearSlider}
+                    valueLabelDisplay="off"
+                    defaultValue={30}
+                    aria-labelledby="vertical-slider"
+                    classes={{ root: classes.slider }}
+                />
             </div>
-            <RadioGroup aria-label="gender" name="gender1" value={value} onChange={(e) => { setValue(e.target.value) }} style={{flexDirection: "row"}}>
+            <RadioGroup aria-label="gender" name="gender1" value={value} onChange={(e) => { setValue(e.target.value) }} style={{ flexDirection: "row" }}>
                 <FormControlLabel value="absolute" control={<Radio />} label="absolute" />
                 <FormControlLabel value="relative" control={<Radio />} label="relative" />
             </RadioGroup>

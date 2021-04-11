@@ -1,0 +1,25 @@
+.profile-sidebar {
+  height: 90px;
+  display: flex;
+  padding: 0.5rem 5px;
+}
+
+.profile-sidebar .section-image {
+  flex: 0.7;
+  text-align: center;
+}
+
+.profile-sidebar .section-image img {
+  height: 100%;
+  max-width: 100%;
+  object-fit: cover;
+}
+
+.profile-sidebar .section-text {
+  flex: 1;
+  padding-left: 1rem;
+}
+
+.profile-sidebar .section-text h3 {
+  font-size: 20px;
+}

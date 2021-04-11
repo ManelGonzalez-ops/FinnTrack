@@ -71,6 +71,9 @@ const initialState = {
     following: [],
     portfolioSeriesReady: false,
 
+    simulation: {
+        quotes: null
+    }
 }
 
 const companyReducer = (state, action) => {
@@ -310,6 +313,12 @@ const companyReducer = (state, action) => {
                 portfolioSeries: null,
                 portfolioSeriesReady: true
             }
+        case "RESTART_PORTFOLIO_SERIES":
+            return {
+                ...state,
+                portfolioSeries: null,
+                portfolioSeriesReady: false
+            }
         case "SET_ARE_HISTORIC_PRICES_READY":
             return {
                 ...state,
@@ -355,6 +364,19 @@ const companyReducer = (state, action) => {
             return {
                 ...state,
                 following: action.payload
+            }
+        case "SET_FIRST_SERIE":
+            return {
+                ...state,
+                addFirstSerie: action.payload
+            }
+        case "SET_SIMULATION_QUOTES":
+            return {
+                ...state,
+                simulation: {
+                    ...state.simulation,
+                    quotes: action.payload
+                }
             }
         default:
             return state

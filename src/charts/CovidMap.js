@@ -3,6 +3,7 @@ import Highcharts from "highcharts/highmaps";
 import HighchartsReact from "highcharts-react-official";
 import worldMap from "@highcharts/map-collection/custom/world.geo.json"
 import { useUILayer } from "../ContextUI"
+import { Skeleton } from '@material-ui/lab';
 export const CovidMap = ({ data, mode }) => {
 
     console.log(worldMap, "puta higcharts")
@@ -10,19 +11,19 @@ export const CovidMap = ({ data, mode }) => {
     const covidMap = useRef(null)
     useEffect(() => {
         console.log("ahoora")
-        if(covidMap.current && Object.keys(covidMap.current).length > 0){
-            setTimeout(()=>{
+        if (covidMap.current && Object.keys(covidMap.current).length > 0) {
+            setTimeout(() => {
                 covidMap.current.reflow()
-            },600)
+            }, 600)
         }
     }, [sidebarOpen])
     const mapOptions = {
         chart: {
             // width: 1000,
-            
-           
+
+
             events: {
-                load: function(){
+                load: function () {
                     covidMap.current = this
                 }
             }
@@ -51,7 +52,7 @@ export const CovidMap = ({ data, mode }) => {
             {
                 mapData: worldMap,
                 data: data,
-                name: mode === "absolute"? "Total cases": "Cases/100k habs",
+                name: mode === "absolute" ? "Total cases" : "Cases/100k habs",
                 dataLabels: {
                     enabled: true,
                     format: '{point.properties.postal-code}'
@@ -75,14 +76,20 @@ export const CovidMap = ({ data, mode }) => {
     };
 
     return (
-        <div style={{display: "grid" , height: window.innerHeight,}}>
+        <div style={{ display: "grid", height: window.innerHeight, }}>
             {
-                data.length > 0 &&
-                <HighchartsReact
-                    highcharts={Highcharts}
-                    options={mapOptions}
-                    constructorType={"mapChart"}
-                />}
+                data.length > 0 ?
+                    <HighchartsReact
+                        highcharts={Highcharts}
+                        options={mapOptions}
+                        constructorType={"mapChart"}
+                    />
+                    :
+                    <Skeleton variant="rect"
+                    animation="wave"
+                        height="100%" width="100%"
+                    />
+            }
         </div>
     )
 }

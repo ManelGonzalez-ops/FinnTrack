@@ -11,6 +11,7 @@ export interface User {
     username: string
 }
 
+
 export interface PortfolioPoint {
     portfolioCost: number;
     portfolioValue: number;

@@ -1,4 +1,6 @@
+import { Button } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
+import { Redirect, useHistory } from 'react-router'
 import { useUserLayer } from '../UserContext'
 import { useDebounce } from '../utils/useDebounce'
 
@@ -20,6 +22,9 @@ export const Register = () => {
 
     )
 
+    const history = useHistory()
+    const redirect = history.location.search ? history.location.search.split("=")[1] : ""
+
     useEffect(() => {
         if (!email) return;
 
@@ -28,14 +33,13 @@ export const Register = () => {
             body: JSON.stringify({ email }),
             method: "POST"
         })
-            .then(res => res.json())
-            .then(res => {
-                if (!res.ok) throw new Error(res.msg)
+            .then(res => res.json().then(data => {
+                if (!res.ok) throw new Error(data.msg);
                 setValidatedFields(prev => ({
                     ...prev,
                     email: { error: null, valid: true }
                 }))
-            })
+            }))
             .catch(err => {
                 console.log(err, "error")
                 setValidatedFields(prev => ({
@@ -53,14 +57,13 @@ export const Register = () => {
             body: JSON.stringify({ username }),
             method: "POST"
         })
-            .then(res => res.json())
-            .then(res => {
-                if (!res.ok) throw new Error(res.msg)
+            .then(res => res.json().then(data => {
+                if (!res.ok) throw new Error(data.msg);
                 setValidatedFields(prev => ({
                     ...prev,
                     username: { error: null, valid: true }
                 }))
-            })
+            }))
             .catch(err => {
                 console.log(err, "error")
                 setValidatedFields(prev => ({
@@ -99,7 +102,7 @@ export const Register = () => {
     }
 
     if (success) {
-        return <p>successs</p>
+        return <Redirect to={{ pathname: `/${redirect}` }} />
     }
     if (serverError) {
         return <p>{serverError}</p>
@@ -147,7 +150,9 @@ export const Register = () => {
                         onChange={(e) => { setRpassword(e.target.value) }}
                         required />
                 </label>
-                <button type="submit">submit</button>
+                <Button
+                    disabled={!validatedFields.username.valid || !validatedFields.email.valid}
+                    type="submit">submit</Button>
             </form>
         </div>
     )

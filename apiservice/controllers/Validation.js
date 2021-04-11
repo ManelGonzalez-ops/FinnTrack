@@ -1,6 +1,8 @@
 const { checkEmailExists, checkUserExists } = require("../../db/services/validationServices")
+const { ErrorHandler } = require("../handleError")
 
-const emailValidator = async (req, res) => {
+
+const emailValidator = async (req, res, next) => {
     console.log(req.body, "boody email")
     const { email } = req.body
     try {

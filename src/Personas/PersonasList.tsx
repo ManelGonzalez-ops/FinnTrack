@@ -1,3 +1,4 @@
+import { LinearProgress } from '@material-ui/core'
 import React, { useEffect, useReducer } from 'react'
 import { UserMain } from '../dashboard/UserMain'
 import { PeopleItem } from './interfaces'
@@ -38,7 +39,7 @@ const reducer = (state: userMain, action: State) => {
 
 export const PersonasList = () => {
 
-    const [state, dispatch] = useReducer(reducer, { data: null, loading: false, error: "" })
+    const [state, dispatch] = useReducer(reducer, { data: null, loading: true, error: "" })
 
     const { data, loading, error } = state
     const getPeople = () => {
@@ -47,7 +48,10 @@ export const PersonasList = () => {
             .then(res => {
                 return res.map((item: any) => {
                     const { portfolio } = item
-                    const parsedPortfolio = JSON.parse(portfolio)
+                    let parsedPortfolio = portfolio
+                    if (typeof portfolio === "string") {
+                        parsedPortfolio = JSON.parse(portfolio)
+                    }
                     return { ...item, portfolio: parsedPortfolio }
                 })
             })
@@ -59,8 +63,9 @@ export const PersonasList = () => {
     }, [data])
     const divStilos: React.CSSProperties = {
         display: "flex",
-        justifyContent: "space-around",
-        flexWrap: "wrap"
+        flexWrap: "wrap",
+        justifyContent: "space-evenly",
+
     }
 
     useEffect(() => {
@@ -68,7 +73,7 @@ export const PersonasList = () => {
     }, [])
     return (
         <div style={divStilos}>
-            {loading ? <p>Loading ...</p>
+            {loading ? <LinearProgress />
                 : error ? <p>{error}</p>
                     : data && data.map((person) => {
                         return <UserItem {...{ person }} />

@@ -1,6 +1,7 @@
-const { getAllOperations } = require("../../db/services")
+const { getAllOperations, getOperationsByUserId } = require("../../db/services")
 const Logic = require("../logic/state.js")
 const fs = require("fs")
+const { prepareStoredOperations, setInitialPossesions } = require("../dataPreparation")
 
 const listPeople = (req, res) => {
     console.log("ejecutao 4")
@@ -16,16 +17,18 @@ const listPeople = (req, res) => {
         )
 }
 
-const makePortfolio = async (req, res) => {
+
+const makePortfolio = async (req, res, next) => {
     console.log("ejecutao 1")
     try {
         const logicInstance = new Logic()
         const peopleCollection = await logicInstance.initAll()
-        console.log(peopleCollection, "q cohone")
+        //console.log(peopleCollection, "q cohone")
         res.status(200).send(peopleCollection)
     }
     catch (err) {
-        res.status(400).send(err.message)
+        next(err)
+        //res.status(400).send(err.message)
     }
 }
 
@@ -35,15 +38,33 @@ const showUsers = (req, res) => {
     const data = JSON.parse(rawData)
     return res.status(200).send(data)
 }
-const showUser = (req, res) => {
+const showUser = async (req, res, next) => {
     console.log("ejecutao 3")
-    const { id } = req.params
-    const logicInstance = new Logic()
-    logicInstance.initOne(id)
-        .then(data => {
-            return res.status(200).send(data)
-        })
-        .catch(err => res.status(400).send(err))
+    try {
+        const { id } = req.params
+        const additionalStats = await getCurrentPosessions(id)
+        const logicInstance = new Logic()
+        logicInstance.initOne(id)
+            .then(data => {
+                return res.status(200).send({ ...data, ...additionalStats })
+            })
+            .catch(err => next(err))
+    }
+    catch (err) {
+        next(err)
+    }
+}
+
+const getCurrentPosessions = async (id) => {
+    try {
+        const operations = await getOperationsByUserId(id)
+        const readyOperations = prepareStoredOperations(operations)
+        const { uniqueStocks, currentStocks, userCash } = setInitialPossesions(operations)
+        return { readyOperations, uniqueStocks, currentStocks, userCash }
+    } catch (err) {
+        throw new Error(err)
+    }
+
 }
 
 module.exports = { listPeople, makePortfolio, showUsers, showUser }

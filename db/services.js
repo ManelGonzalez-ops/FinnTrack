@@ -3,7 +3,7 @@ const db = require("./db")
 
 module.exports = {
     createUserTable: (cb) => {
-        db.query("create table if not exists users (userId int auto_increment,  firstName char(30), lastName char(30), password char(100), email char(50) not null unique, username char(50) unique, portfolioInitial date, primary key(userId))", err => {
+        db.query("create table if not exists users (userId int auto_increment, password char(100), email char(50) not null unique, username char(50) unique, portfolioInitial date, primary key(userId))", err => {
             if (err) cb(err)
 
             cb(false)
@@ -11,6 +11,7 @@ module.exports = {
         })
     },
 
+    //este creo que ya no lo usamos
     addNewUser: (user, username) =>
         new Promise((resolve, reject) => {
             const { firstName, lastName, email } = user.profile
@@ -37,10 +38,11 @@ module.exports = {
                 [email], (err, data) => {
                     if (err) {
                         console.log(err, "errur 1")
-                        reject(err)
+                        return reject(err)
                     }
+                    console.log(data, "puta data")
                     if (!data.length) {
-                        reject("db returned empty object")
+                        return reject(new Error("db returned empty object"))
                         console.log(err, "errur 3")
                     }
                     console.log(data[0], "que coll", data[0].userId)
@@ -95,7 +97,10 @@ module.exports = {
                     reject(err)
                     console.log(err, "errur 3")
                 }
-                resolve(data)
+                if (data) {
+                    return resolve(data)
+                }
+                reject(new Error("no operation found for userId ", id))
             })
         })
     },
@@ -171,7 +176,7 @@ module.exports = {
     },
     getAllUsers: () => {
         return new Promise((resolve, reject) => {
-            db.query("select * from users", (err, data) => {
+            db.query("select * from userDetails right join users on users.userId = userDetails.userId", (err, data) => {
                 if (err) {
                     reject(err)
                 }

@@ -5,8 +5,9 @@ import { CovidMap } from '../../charts/CovidMap'
 import { CustomCircularProgress } from '../../components/components/CustomCircularProgress'
 import countryCode from "../../utils/countryCodes.json"
 import { useFetchWithCors } from '../../utils/useFetchWithCors'
+import { dragElement } from './Draggable'
 import { Sliders } from './Sliders'
-
+import ReactDOM from "react-dom"
 
 
 export const CovidSection2 = () => {
@@ -16,8 +17,8 @@ export const CovidSection2 = () => {
     const [date, setDate] = useState("2020-10-15")
     const [mode, setMode] = useState("relative")
     const populationNF = useRef([])
-
     const controller = useRef(null)
+    const slider = useRef("")
     const absolutePopulationData = useRef(null)
 
     const population = useFetchWithCors("http://localhost:8001/countriesPopulation", "populationByCountry")
@@ -105,6 +106,13 @@ export const CovidSection2 = () => {
     console.log(datosHuge, "data")
     console.log(population, "population")
 
+    useEffect(() => {
+        if (slider.current) {
+            console.log(slider.current, "curranti")
+            dragElement(slider.current)
+        }
+    }, [])
+
     return (
         <div
             style={{ position: "relative" }}
@@ -115,10 +123,12 @@ export const CovidSection2 = () => {
             <ErrorOverlay error={errorHuge} />
             <CovidMap
                 data={datosHuge}
-                {...{mode}}
-                />
+                {...{ mode }}
+            />
 
-            <div className="sliders-container">
+            <div className="sliders-container"
+                ref={slider}
+            >
                 <Sliders
                     setDate={setDate}
                     setMode={setMode}
@@ -162,7 +172,7 @@ const ErrorOverlay = ({ error }) => {
                     style={{ ...defaultStyles, ...transitionStyles[state] }}
                 >
                     <div style={{ opacity: 0.6, width: "100%", height: "100%", background: "grey" }}></div>
-                     <div style={{position: "absolute"}}>{error}</div>
+                    <div style={{ position: "absolute" }}>{error}</div>
                 </div>
             )}
 

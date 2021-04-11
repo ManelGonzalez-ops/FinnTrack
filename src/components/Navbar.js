@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   },
   appBarShift: {
     marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
+    width: ({ drawerWidth }) => `calc(100% - ${drawerWidth}px)`,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -51,11 +51,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const Navbar = ({ handleDrawerOpen }) => {
+export const Navbar = () => {
   //const { authState, authService } = useOktaAuth();
   const history = useHistory()
   const { state } = useDataLayer()
-  const { sidebarOpen } = useUILayer()
+  const { sidebarOpen, drawerWidth, setSidebarOpen } = useUILayer()
   const location = useLocation()
   const topNavigation = useRef(null)
   const [menuCompaniesOpen, setMenuCompaniesOpen] = useState(false)
@@ -76,13 +76,9 @@ export const Navbar = ({ handleDrawerOpen }) => {
   console.log(location, "locationnnnnn")
 
 
-  const classes = useStyles();
+  const classes = useStyles({ drawerWidth });
 
 
-
-  // const button = authState.isAuthenticated ?
-  //   <button onClick={() => { authService.logout() }}>Logout</button> :
-  //   <button onClick={() => { history.push('/login') }}>Login</button>;
 
   const { userDispatch } = useUserLayer()
   const logout = (cb) => {
@@ -92,6 +88,7 @@ export const Navbar = ({ handleDrawerOpen }) => {
   return (
     <div>
       <AppBar
+        data-testid="navbar"
         position="fixed"
         className={clsx(classes.appBar, {
           [classes.appBarShift]: sidebarOpen,
@@ -103,7 +100,7 @@ export const Navbar = ({ handleDrawerOpen }) => {
 
             color="inherit"
             aria-label="open drawer"
-            onClick={handleDrawerOpen}
+            onClick={() => { setSidebarOpen(true) }}
             edge="start"
             className={clsx(classes.menuButton, {
               [classes.hide]: sidebarOpen,
@@ -123,17 +120,16 @@ export const Navbar = ({ handleDrawerOpen }) => {
             <Button variant="contained" color="primary"
               onClick={() => { logout(() => history.push("/login")) }}
             >Logout</Button>
-            <Button
-              onClick={() => { history.push("/portfoliof") }}
+            {/* <Button
+              onClick={() => { history.push("/portfolio") }}
               variant="contained"
             >
               Investment Dashboard
-            </Button>
+            </Button> */}
             <Typography>
               {formatter.format(state.currentPossesions.userCash)} $
             </Typography>
           </div>
-          <button onClick={() => { history.push("/interests") }}>interests</button>
         </Toolbar>
       </AppBar>
       <CompanyNav {...{ menuCompaniesOpen, topNavigation }} />

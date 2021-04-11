@@ -1,6 +1,6 @@
 const { getUsername } = require("../../db/services")
 const { getUserInterests, updateUserInterest, addUserInterest } = require("../../db/services/interestsService")
-const { debugLine } = require("../ErrorHandler")
+
 
 
 const addInterest = async (req, res) => {
@@ -49,7 +49,7 @@ const populate = async (req, res, next) => {
             return await populateWithTrendingMessages((trendingMessages) => {
                 console.log(trendingMessages, "trendng")
                 return res.status(200).send({ data: trendingMessages, type: "trending" })
-            }).catch(err => { next(debugLine(err.message)); return res.status(400).send(err) })
+            }).catch(err =>next(err))
         }
         console.log(data, "datonaa")
         const { username } = data[0]
@@ -68,12 +68,12 @@ const populate = async (req, res, next) => {
             return await populateWithTrendingMessages((trendingMessages) => {
                 console.log(trendingMessages, "trendng")
                 return res.status(200).send({ data: trendingMessages, type: "trending" })
-            }).catch(err => { next(debugLine(err.message)); return res.status(400).send(err) })
+            }).catch(err => next(err))
         }
 
     }
     catch (err) {
-        //console.log(err)
+        console.log(err)
         throw new Error(err)
         next(err)
     }
@@ -89,7 +89,15 @@ const populateWithTrendingMessages = async (cb) => {
     }
     const trendingMessages = await fetchStockTwitsTrendingUsers()
         .then(res => res.json())
+        .then(res => {
+            console.log(res, "respuaesat trending");
+            if (res.response.status === 429) {
+                throw new Error(res.errors[0].message)
+            }
+            return res
+        })
         .then(res => res.messages)
+        .catch(err => { throw new Error(err) })
 
     cb(trendingMessages)
 }
