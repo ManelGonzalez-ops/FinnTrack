@@ -1,6 +1,6 @@
-import { Button, IconButton, makeStyles, Paper, Tooltip } from '@material-ui/core'
+import { Button, Dialog, DialogActions, DialogContentText, DialogTitle, Grow, IconButton, makeStyles, Paper, Tooltip } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
-import { Redirect } from 'react-router-dom'
+import { Redirect, useHistory } from 'react-router-dom'
 import { useDataLayer } from '../Context'
 // import { useEngine } from '../portfolio/Engine'
 import { PortfolioPriceChart } from '../portfolio/PortfolioPriceChart'
@@ -30,13 +30,21 @@ export const Middleware = (props) => {
     const { portfolioSeriesReady, stockLibrary } = state
     const { userState } = useUserLayer()
 
+
     //we need to check that potfolio history is not empty before render userMain
     //and we need to check we have all posesion's historical prices
 
     const { available, loading } = useCompaniesChange()
-
+    console.log(state.stockLibrary, "stokklibrai")
     if (!userState.isAuthenticated) {
-        return <Redirect to={{ pathname: "/pruebaLogin" }} />
+        return <Redirect to={{
+            pathname: "/login",
+            search: "?redirect=portfolio"
+        }} />
+    }
+    if (!state.stockLibrary.length) {
+
+        return <NoUnitsDialog />
     }
     return (
         //tenemos que crear un useEngine para generar el portfolioHistory
@@ -70,7 +78,7 @@ export const Middleware = (props) => {
             </div>
             <div className="secondary">
                 <StyledContainer>
-                    
+
                     <Positions />
                 </StyledContainer>
                 <div>
@@ -81,6 +89,36 @@ export const Middleware = (props) => {
         </main>
 
     )
+}
+
+const TansitionGrow = React.forwardRef((props, ref) => (
+    <Grow ref={ref}  {...props} />
+))
+
+const NoUnitsDialog = () => {
+    const history = useHistory()
+    const [open, setOpen] = useState(true)
+    const handleClose = () => {
+        setOpen(false)
+        history.push("/")
+    }
+    return <Dialog
+        TransitionComponent={TansitionGrow}
+        open={open}
+        onClose={handleClose}
+    >
+        <DialogTitle>Don't have any stock yet</DialogTitle>
+        <DialogContentText>
+            Start adding stocks to be able to see performance metrics
+            </DialogContentText>
+        <DialogActions>
+            <Button
+                onClick={handleClose}
+            >
+                Ok
+                </Button>
+        </DialogActions>
+    </Dialog >
 }
 
 const StyledContainer = styled.div({

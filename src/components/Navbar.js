@@ -51,11 +51,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const Navbar = ({ handleDrawerOpen }) => {
+export const Navbar = () => {
   //const { authState, authService } = useOktaAuth();
   const history = useHistory()
   const { state } = useDataLayer()
-  const { sidebarOpen, drawerWidth } = useUILayer()
+  const { sidebarOpen, drawerWidth, setSidebarOpen } = useUILayer()
   const location = useLocation()
   const topNavigation = useRef(null)
   const [menuCompaniesOpen, setMenuCompaniesOpen] = useState(false)
@@ -100,7 +100,7 @@ export const Navbar = ({ handleDrawerOpen }) => {
 
             color="inherit"
             aria-label="open drawer"
-            onClick={handleDrawerOpen}
+            onClick={() => { setSidebarOpen(true) }}
             edge="start"
             className={clsx(classes.menuButton, {
               [classes.hide]: sidebarOpen,
@@ -120,17 +120,16 @@ export const Navbar = ({ handleDrawerOpen }) => {
             <Button variant="contained" color="primary"
               onClick={() => { logout(() => history.push("/login")) }}
             >Logout</Button>
-            <Button
-              onClick={() => { history.push("/portfoliof") }}
+            {/* <Button
+              onClick={() => { history.push("/portfolio") }}
               variant="contained"
             >
               Investment Dashboard
-            </Button>
+            </Button> */}
             <Typography>
               {formatter.format(state.currentPossesions.userCash)} $
             </Typography>
           </div>
-          <button onClick={() => { history.push("/interests") }}>interests</button>
         </Toolbar>
       </AppBar>
       <CompanyNav {...{ menuCompaniesOpen, topNavigation }} />

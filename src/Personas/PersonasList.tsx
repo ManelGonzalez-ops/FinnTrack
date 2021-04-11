@@ -1,3 +1,4 @@
+import { LinearProgress } from '@material-ui/core'
 import React, { useEffect, useReducer } from 'react'
 import { UserMain } from '../dashboard/UserMain'
 import { PeopleItem } from './interfaces'
@@ -38,7 +39,7 @@ const reducer = (state: userMain, action: State) => {
 
 export const PersonasList = () => {
 
-    const [state, dispatch] = useReducer(reducer, { data: null, loading: false, error: "" })
+    const [state, dispatch] = useReducer(reducer, { data: null, loading: true, error: "" })
 
     const { data, loading, error } = state
     const getPeople = () => {
@@ -64,7 +65,7 @@ export const PersonasList = () => {
         display: "flex",
         flexWrap: "wrap",
         justifyContent: "space-evenly",
-        
+
     }
 
     useEffect(() => {
@@ -72,7 +73,7 @@ export const PersonasList = () => {
     }, [])
     return (
         <div style={divStilos}>
-            {loading ? <p>Loading ...</p>
+            {loading ? <LinearProgress />
                 : error ? <p>{error}</p>
                     : data && data.map((person) => {
                         return <UserItem {...{ person }} />

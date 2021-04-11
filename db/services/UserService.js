@@ -95,9 +95,9 @@ module.exports = {
                 if (err) {
                     return reject(err)
                 }
-                if (!row || !row.length) {
-                    return reject(new Error("no data returned"))
-                }
+                // if (!row || !row.length) {
+                //     return reject(new Error("no data returned"))
+                // }
                 resolve(row)
             })
         })

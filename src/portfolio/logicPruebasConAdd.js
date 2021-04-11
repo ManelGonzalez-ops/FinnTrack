@@ -17,7 +17,7 @@ const findFirstDate = (userActivity) => {
     let valu
     userActivity.forEach(operation => {
         if (operation.isFirstOperation) {
-           // console.log(operation.date)
+            // console.log(operation.date)
             valu = convertHumanToUnixInit(operation.date)
         }
     })
@@ -51,13 +51,13 @@ export const useLogicPruebas = () => {
     const createTimelaspse = (initialTime) => {
         const firstDate = convertUnixToHuman(initialTime)
         let timelapse = [firstDate]
-        let lastDate= initialTime
+        let lastDate = initialTime
         //let initialTime = findFirstDate(state.userActivity)
         const range = getTotalDaysElapsed(initialTime)
         //let unixDate = initialTimeUnix.current
         //console.log(range, "raaango")
         //console.log(initialTime, "ostiatime")
-        Array.from(Array(range).keys()).forEach(_ => {
+        Array.from(Array(Math.random(range)).keys()).forEach(_ => {
             lastDate += milisencondsInADay
             timelapse = [...timelapse, convertUnixToHuman(lastDate)]
         })
@@ -183,23 +183,23 @@ export const useLogicPruebas = () => {
     //     cb(updatedSeries)
     // }
 
-    const generateSerieFromBegining = (userActivity, cb) =>{
+    const generateSerieFromBegining = (userActivity, cb) => {
         const worker = new Worker("/worker2.js")
         worker.postMessage(userActivity)
-        worker.onmessage=(e)=>{
+        worker.onmessage = (e) => {
             console.log(e.data, "posesions generated")
             const possesionGenerated = e.data
             cb(possesionGenerated)
         }
     }
     const generateSerieFromBeginin = (userActivity, cb) => {
- 
-       // console.log(userActivity, "actividad usuario")
+
+        // console.log(userActivity, "actividad usuario")
         const initialTime = findFirstDate(userActivity)
-       // console.log(initialTime, "tiempooo")
+        // console.log(initialTime, "tiempooo")
         //console.log(convertUnixToHuman(initialTime), "crazyy")
         const timelapse = createTimelaspse(initialTime)
-       
+
         let masterHistory;
         let koko = 0
         masterHistory = {
@@ -286,8 +286,8 @@ export const useLogicPruebas = () => {
                                 masterHistory.dates[date].positions.forEach(posesions => {
                                     if (posesions.ticker === ticker) {
                                         if (index === 0) {
-                                           // console.log(posesions.unitaryCost,
-                                             //   amount, priceSold, "incomeee")
+                                            // console.log(posesions.unitaryCost,
+                                            //   amount, priceSold, "incomeee")
                                         }
                                         const { income } = handleSell(posesions.unitaryCost, amount, priceSold)
                                         if (index === 0) {
@@ -346,7 +346,7 @@ export const useLogicPruebas = () => {
                     //if is the first iteration we now this is the initial operation so there're weren stocks before.
                     else {
                         const alreadyInPortfolio = index === 0 ? false : masterHistory.dates[timelapse[index - 1]].positions.find(item => item.ticker === ticker)
-                       // console.log(alreadyInPortfolio, "que concho")
+                        // console.log(alreadyInPortfolio, "que concho")
                         if (alreadyInPortfolio) {
                             lastAmount = alreadyInPortfolio.amount
                             const newAmount =
@@ -354,7 +354,7 @@ export const useLogicPruebas = () => {
                                     lastAmount + amount : lastAmount - amount
                             if (operation.operationType === "buy") {
                                 const updatedInfo = masterHistory.dates[timelapse[index - 1]].positions.map(({ ...posesions }) => {
-                         //           console.log(posesions, "cojones")
+                                    //           console.log(posesions, "cojones")
                                     if (posesions.ticker === ticker) {
                                         posesions.amount = newAmount
                                         const unitaryCostMean =
@@ -458,8 +458,8 @@ export const useLogicPruebas = () => {
                             }
                         }
                     }
-                }else{
-                   // console.log("noooooooooo")
+                } else {
+                    // console.log("noooooooooo")
                 }
             })
             if (!hasMadeOperationThatDate) {
@@ -490,10 +490,10 @@ export const useLogicPruebas = () => {
         if (state.userActivity.length > 0 && state.setPruebaReady && !state.generatedSeries.ready) {
             console.log("exxecutao")
             //if no userActivity we wont run any code
-                generateSerieFromBegining(state.userActivity, (generatedSerie) => {
-                    console.log("exxecutao2")
-                    dispatch({ type: "STORE_GENERATED_SERIES", payload: generatedSerie })
-                })
+            generateSerieFromBegining(state.userActivity, (generatedSerie) => {
+                console.log("exxecutao2")
+                dispatch({ type: "STORE_GENERATED_SERIES", payload: generatedSerie })
+            })
             //  else {
             //     const newOperation = state.userActivity[state.userActivity.length - 1]
             //     dispatch({ type: "SET_ARE_GENERATED_SERIES_READY", payload: false })
@@ -503,10 +503,10 @@ export const useLogicPruebas = () => {
             //         //userRefreshed.current will be alredy false
             //     })
             // }
-            
+
         }
-        
-       
+
+
         // if (state.userActivity.length > 0 && Object.keys(state.portfolioHistory).length > 0) {
         //     generateSerieFromBegining(state.userActivity, (generatedSerie) => { dispatch({ type: "STORE_GENERATED_SERIES", payload: generatedSerie }) })
         // }

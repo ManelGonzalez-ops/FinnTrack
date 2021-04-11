@@ -1,5 +1,5 @@
 import { InputLabel, MenuItem, Select, FormControl, Button, TextField } from '@material-ui/core'
-import React, { useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { useUserLayer } from '../UserContext'
 import countries from "../utils/countries.json"
 import { CgGenderFemale, CgGenderMale } from "react-icons/cg"
@@ -7,6 +7,7 @@ import styled from "styled-components"
 import { CircularProgress } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
 import "./imageUploader.scss"
+import PublishIcon from '@material-ui/icons/Publish';
 
 const Container = styled.div({
     width: "600px",
@@ -20,6 +21,7 @@ export const ImageUploader = () => {
     const [loading, setLoading] = useState(false)
     const { userState: { info }, userDispatch } = useUserLayer()
     const [loaded, setLoaded] = useState(false)
+   
     const [provisionalImg, setProvisionalImg] = useState(info.imageUrl ? info.imageUrl : "")
 
     const handleImageUpload = (e) => {
@@ -31,6 +33,10 @@ export const ImageUploader = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        if (!imageUpload) {
+            return
+        }
         const imageData = new FormData()
         imageData.append("image", imageUpload)
         imageData.append("email", info.email)
@@ -49,26 +55,36 @@ export const ImageUploader = () => {
     return (
         <div className="contact-details">
             <form onSubmit={handleSubmit}>
-                {image ?
-                    <label style={{ height: "100px", width: "100px", display: "block" }} htmlFor="upload">
-                        <img
-                            src={image}
-                            style={loaded ? { display: "inline" } : { display: "none" }}
-                            onLoad={() => { setLoaded(true) }}
-                        />
 
-                        {!loaded && <Skeleton variant="rect" width={210} height={118} />}
+                <label style={{ height: "100px", width: "100px", display: "block" }} htmlFor="upload">
+                    {image ?
+                        <Fragment>
+                            <img
+                                src={image}
+                                style={loaded ? { display: "inline" } : { display: "none" }}
+                                onLoad={() => { setLoaded(true) }}
+                            />
+                            {!loaded && <Skeleton variant="rect" width={210} height={118} />}
 
-                        <input
-                            type="file"
-                            onChange={handleImageUpload}
-                            style={{ display: "none" }}
-                            id="upload"
+                        </Fragment>
+                        :
+                        <img src="https://gamemakers.com/wp-content/uploads/2020/06/no-image.jpg"
+
+                            style={{ objectFit: "contain", height: "100%", display: "block", marginBottom: "1rem" }}
                         />
-                    </label>
-                    :
-                    <div style={{ width: "100%", height: "100%", backgroundColor: "black" }}></div>
-                }
+                    }
+
+
+
+                    <input
+                        type="file"
+                        onChange={handleImageUpload}
+                        style={{ display: "none" }}
+                        id="upload"
+                    />
+
+                </label>
+
                 <LoadingButton
                     {...{ loading, handleSubmit }}
                 >
@@ -83,6 +99,7 @@ const LoadingButton = ({ loading, handleSubmit }) => {
     return (<Button
         onClick={handleSubmit}
         endIcon={loading ? <CircularProgress /> : null}
+        startIcon={<PublishIcon />}
         variant="contained"
         color="primary"
     >

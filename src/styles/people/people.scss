@@ -4,8 +4,6 @@
     margin-bottom: 2rem;
 }
 
-
-
 @media (min-width: 300px) {
     .portfolio-chart--people {
         width: calc(max(30%, 280px));
@@ -14,5 +12,20 @@
 @media (min-width: 800px) {
     .portfolio-chart--people {
         width: calc(max(22%, 350px));
+    }
+}
+
+.operations-header {
+    //width: calc(100% - 50px);
+
+    .MuiDataGrid-root{
+        padding-left: 1rem;
+        //border-right: none;
+    }
+
+    .MuiDataGrid-columnSeparator{
+        &:last-of-type{
+            display: none;
+        }
     }
 }

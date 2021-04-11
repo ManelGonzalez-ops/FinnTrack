@@ -66,7 +66,7 @@ class UserInfo {
         const userId = await this.getUserId(email)
         try {
             await addContactInfo(userId, fieldsToUpdate)
-            return this.res.status(200).send({ msg: "succes bibor" })
+            return this.res.status(200).send({ fieldsToUpdate })
         }
         catch (err) {
             return this.res.status(400).send(err.message)
@@ -96,7 +96,7 @@ class UserInfo {
             return this.res.status(200).sendFile(path.join(__dirname, "../", imagePath))
         }
         catch (err) {
-            return this.res.status(400).send(err.message)
+            return this.res.status(400).json(err.message)
         }
     }
 

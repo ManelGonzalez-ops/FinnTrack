@@ -28,7 +28,7 @@ export const Principal = ({ setSelection }) => {
             <>
                     <TickerBar2 />
                 <div style={{marginBottom: "200px"}}>
-                {/* <GainersCarousel /> */}
+                <GainersCarousel />
                 </div>
                 <Searcher4 setSelection={setSelection} />
                 <div className="p-grid">

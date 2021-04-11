@@ -115,6 +115,7 @@ app.use("/api/v1/posts", postsRoutes)
 app.use("/api/v1/auth", authRoutes)
 app.use("/api/v1/users", usersRoutes)
 
+
 app.use((err, req, res, next) => {
     console.log(err.message)
     handleError(err, res)

@@ -43,6 +43,8 @@ import { convertUnixToHuman } from "./utils/datesUtils";
 import { AuthMiddleware, UpdateInfoView } from "./Auth/UpdateInfoView";
 import { useRemoveCredits } from "./utils/useRemoveCredits";
 import { ProfileSidebar } from "./Auth/ProfileSidebar";
+import { useHandleProfileImage } from "./utils/useHandleProfileImage";
+import { OperationList } from "./Personas/OperationList";
 
 
 
@@ -55,9 +57,11 @@ const useStyles = makeStyles((theme) => ({
   },
   content: {
     flexGrow: 1,
-    padding: "24px 60px",
     overflow: "hidden",
     position: "relative",
+    [theme.breakpoints.up("sm")]: {
+      padding: "24px 60px",
+    }
   },
   toolbar: {
     //display: "flex",
@@ -89,6 +93,7 @@ const App = () => {
   const { userState, userDispatch } = useUserLayer()
   const { state, dispatch } = useDataLayer()
   console.log(userState.info, "infoo userstate")
+  useHandleProfileImage()
   useEffect(() => {
     if (userState.isAuthenticated) {
       console.log(userState, "userState")
@@ -103,20 +108,23 @@ const App = () => {
         })
           .then(res => res.json())
           .then(res => {
-            dispatch({ type: "ADD_DIRECT_HISTORY", payload: res.readyOperations })
-            dispatch({
+            res.readyOperations && dispatch({ type: "ADD_DIRECT_HISTORY", payload: res.readyOperations })
+
+            res.currentStocks && dispatch({
               type: "SET_INITIAL_POSSESIONS", payload: {
                 stocks: res.currentStocks,
                 cash: res.userCash
               }
             })
 
-            userDispatch({ type: "ADD_USER_INFO", payload: res.userData })
+            res.userData &&
+              userDispatch({ type: "ADD_USER_INFO", payload: res.userData })
 
             console.log("hellow")
             res.interests && dispatch({ type: "STORE_USER_INTEREST", payload: res.interests });
             console.log("hellowa")
-            dispatch({ type: "SET_INITIAL_UNIQUE_STOCKS", payload: res.uniqueStocks })
+            res.uniqueStocks &&
+              dispatch({ type: "SET_INITIAL_UNIQUE_STOCKS", payload: res.uniqueStocks })
             console.log("hellowaa")
             if (!res.initialDate) {
               //means portfolio has been created today
@@ -151,9 +159,10 @@ const App = () => {
       body: JSON.stringify({ email }),
       method: "POST"
     })
+      .then(res => { if (!res.ok) throw new Error("no image, is not really an error") })
       .then(res => res.blob())
       .then(image => { userDispatch({ type: "UPDATE_IMAGE", payload: image }) })
-      .catch(err => { throw new Error(err.message) })
+      .catch(err => { alert(err.message) })
 
   }, [userState.isAuthenticated])
 
@@ -168,12 +177,10 @@ const App = () => {
   const history = useHistory()
   const location = useLocation()
   console.log(history, location, "a ver diferencias")
-  const [open, setOpen] = React.useState(false);
+
   const [selection, setSelection] = useState("");
   const { setSidebarOpen, showOverlay } = useUILayer()
   const classes = useStyles({ location, showOverlay });
-
-  const [expanded, setExpanded] = React.useState([]);
 
   const [width, setWidth] = useState(0);
 
@@ -212,19 +219,7 @@ const App = () => {
     }
   }, [state.currentCompany])
 
-  const handleDrawerClose = () => {
-    setExpanded([])
-    setSidebarOpen(false)
-    setOpen(false);
-  };
-
-  const handleDrawerOpen = () => {
-    setSidebarOpen(true)
-    setOpen(true);
-  };
-  const handleSidebarToggle = (e, nodeId) => {
-    setExpanded(nodeId)
-  }
+  
   // console.log(authState, "tu muelo")
   // if (authState.isPending) {
   //   return <div>puto maricon ...</div>
@@ -241,8 +236,8 @@ const App = () => {
     <div className={classes.root}>
       <Overlay />
       <CssBaseline />
-      <Navbar handleDrawerOpen={handleDrawerOpen} />
-      <Sidebar {...{ handleDrawerClose, handleDrawerOpen, handleSidebarToggle, expanded }} />
+      <Navbar />
+      <Sidebar />
       <main className={classes.content}>
         <div className={classes.toolbar} />
         <Button onClick={() => { history.push("/pruebaPorfolio") }}></Button>
@@ -250,12 +245,6 @@ const App = () => {
           <Route path="/" exact >
             <Principal setSelection={setSelection} />
           </Route>
-          {/* <Route path="/" exact >
-            <Searcher setSelection={setSelection} selection={selection} />
-          </Route> */}
-          {/* <Route path="/companies/overview/:company" exact>
-            <CompanySection ref={chart} />
-          </Route> */}
           <Route path="/companies">
             <ControllerCompany />
           </Route>
@@ -273,11 +262,14 @@ const App = () => {
           <Route path="/search" exact>
             <Searcher {...{ setSelection }} />
           </Route>
-          {/* <Route path="/portfolio" exact>
-            <Engine />
-          </Route> */}
-          <Route path="/portfoliof" exact>
+
+          <Route path="/portfolio" exact>
             <Middleware component={UserMain} />
+          </Route>
+          <Route path="/operations">
+            <AuthMiddleware>
+              <OperationList operations={state.userActivity} />
+            </AuthMiddleware>
           </Route>
           <Route path="/people" >
             <PeopleRouter />
@@ -291,10 +283,10 @@ const App = () => {
           >
             <Formm />
           </Route>
-          <Route path="/feed" exact>
+          {/* <Route path="/feed" exact>
             <FeedViews />
-          </Route>
-          <Route path="/interests" exact>
+          </Route> */}
+          <Route path="/feed" exact>
             <UserContextt.Consumer>
               {values => (
                 <PopulateOnScroll>

@@ -25,7 +25,7 @@ const getReadyOperations = async (req, res) => {
             res.status(400).send("error esto viene vacio", operations)
         }
     } catch (err) {
-        res.status(400).send(err, "errur")
+        res.status(400).send(err)
     }
 }
 

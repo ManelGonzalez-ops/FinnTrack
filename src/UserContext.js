@@ -39,11 +39,7 @@ const userReducer = (state, action) => {
                 token: action.payload
             }
         case "ADD_USER_INFO":
-            // const { image, ...rest } = action.payload
-            // const imageUrl = URL.createObjectURL(image)
-            // console.log(image, "imagana")
-            console.log("quetemueras")
-            console.log(action.payload, "dedeeee")
+
             return {
                 ...state,
                 info: {
@@ -51,7 +47,18 @@ const userReducer = (state, action) => {
                     ...action.payload
                 }
             }
+        case "SET_USER_AND_TOKEN":
+            const { email, token } = action.payload
+            return {
+                ...state,
+                isAuthenticated: true,
+                info: {email},
+                token: token
+            }
         case "UPDATE_IMAGE":
+            console.log("mmaaariccon")
+            console.log(action.payload, "qe cojoeee")
+            console.log(URL.createObjectURL(action.payload), "qe cojoeee2")
             return {
                 ...state,
                 info: {

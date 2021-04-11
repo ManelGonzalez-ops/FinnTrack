@@ -306,6 +306,7 @@
   padding: 1.5rem;
   padding-left: 1rem;
   padding-bottom: 0.7rem;
+  cursor: move;
 }
 
 .dates {
@@ -827,16 +828,35 @@ img {
   grid-template-columns: 80px 1fr;
   opacity: 0;
   width: 800px;
+  padding: 1rem;
 }
 
 .post.is-selected {
   background-color: white;
   opacity: 1;
+  padding: 2rem;
 }
 
 .post img.avatar {
   width: 50px;
   height: 50px;
+}
+
+.post .body-img {
+  max-width: 100%;
+  max-height: 500px;
+}
+
+.post .body-img.bigger {
+  max-height: 1000px;
+}
+
+.post .message-text {
+  padding-bottom: 7px;
+}
+
+.post .post-header {
+  padding-bottom: 7px;
 }
 
 .post .post-footer {
@@ -870,6 +890,14 @@ img {
   .portfolio-chart--people {
     width: calc(max(22%, 350px));
   }
+}
+
+.operations-header .MuiDataGrid-root {
+  padding-left: 1rem;
+}
+
+.operations-header .MuiDataGrid-columnSeparator:last-of-type {
+  display: none;
 }
 
 .wrapper-reference {

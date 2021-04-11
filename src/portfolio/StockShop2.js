@@ -161,7 +161,7 @@ export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) =
         return (
             <LoginMessage>
                 <p style={{ marginBottom: "10px" }}>
-                    <Link to="/pruebaLogin">
+                    <Link to="/login">
                         Login</Link> to invest</p>
                 <LockIcon />
             </LoginMessage>

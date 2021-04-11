@@ -15,3 +15,11 @@
     width: calc(max(22%, 350px));
   }
 }
+
+.operations-header .MuiDataGrid-root {
+  padding-left: 1rem;
+}
+
+.operations-header .MuiDataGrid-columnSeparator:last-of-type {
+  display: none;
+}

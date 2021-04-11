@@ -52,9 +52,9 @@ const convertHumanToUnixInit = (date) => {
 
 const getTotalDaysElapsed = (initialTime) => {
     //const initialTime = findFirstDate()
-    const date = convertUnixToHuman(Date.now())
-    //console.log(date, "duuuu")
-    const todayUnix00 = convertHumanToUnixInit(date)
+    const today = convertUnixToHuman(Date.now())
+    //console.log(today, "duuuu")
+    const todayUnix00 = convertHumanToUnixInit(today)
 
     //console.log(todayUnix00,"duuu2", initialTime)
     const totalMilisecons = todayUnix00 - initialTime
@@ -73,9 +73,9 @@ const createTimelaspse = (initialTime) => {
     //let initialTime = findFirstDate(state.userActivity)
     const range = getTotalDaysElapsed(initialTime)
     //let unixDate = initialTimeUnix.current
-    //console.log(range, "raaango")
+    console.log(range, "raaango")
     //console.log(initialTime, "ostiatime")
-    Array.from(Array(range).keys()).forEach(_ => {
+    Array.from(Array(Math.round(range)).keys()).forEach(_ => {
         lastDate += milisencondsInADay
         
         timelapse = [...timelapse, convertUnixToHuman(lastDate)]

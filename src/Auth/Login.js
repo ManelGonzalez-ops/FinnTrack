@@ -1,3 +1,4 @@
+import { Button } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 import { Redirect, useHistory } from 'react-router-dom'
 import { useUILayer } from '../ContextUI'
@@ -9,11 +10,13 @@ export const Login = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [{ error, loading }, setStatus] = useState({ error: null, loading: false })
-    const { userDispatch } = useUserLayer()
+    const { userDispatch, userState: { token } } = useUserLayer()
 
     const { hasPermission } = useIAuth()
     const history = useHistory()
 
+    const redirect = history.location.search ? history.location.search.split("=")[1] : ""
+ 
     const handleLogin = (e) => {
         console.log("upa")
         e.preventDefault()
@@ -26,9 +29,7 @@ export const Login = () => {
             .then(res => res.json())
             .then(res => {
                 localStorage.setItem("token", JSON.stringify(res.token))
-                userDispatch({ type: "SET_TOKEN", payload: res.token })
-                userDispatch({ type: "SET_USER", payload: { email } })
-                history.push("/protectedRuta")
+                userDispatch({ type: "SET_USER_AND_TOKEN", payload: { email, token: res.token } })
                 setStatus(prev => ({ ...prev, loading: false }))
                 //setPermissionObtained(true)
             })
@@ -37,8 +38,12 @@ export const Login = () => {
                 setStatus(({ error: err.message, loading: false }))
             })
     }
-    if (hasPermission) {
-        return <Redirect to={{ pathname: "/protectedRuta" }} />
+
+    
+    console.log(hasPermission, "tienePermiiiso")
+    console.log(token, "infotoken")
+    if (token) {
+        return <Redirect to={{ pathname: `/${redirect}` }} />
     }
     if (error) {
         return <p>{error}</p>
@@ -47,26 +52,34 @@ export const Login = () => {
         return <p>Loading...</p>
     }
     return (
-        <form onSubmit={handleLogin}>
-            <label>
-                <input type="text" name="email"
-                    value={email}
-                    onChange={(e) => {
-                        setEmail(e.target.value)
-                    }}
-                    required
-                />
-            </label>
-            <label>
-                <input type="password" name="password"
-                    value={password}
-                    onChange={(e) => {
-                        setPassword(e.target.value)
-                    }}
-                    required
-                />
-            </label>
-            <button type="submit">submita</button>
-        </form>
+        <div>
+            <form onSubmit={handleLogin}>
+                <label>
+                    <input type="text" name="email"
+                        value={email}
+                        onChange={(e) => {
+                            setEmail(e.target.value)
+                        }}
+                        required
+                    />
+                </label>
+                <label>
+                    <input type="password" name="password"
+                        value={password}
+                        onChange={(e) => {
+                            setPassword(e.target.value)
+                        }}
+                        required
+                    />
+                </label>
+                <button type="submit">submita</button>
+            </form>
+            <div>
+                <p>Need to sign up?</p>
+                <Button onClick={() => {
+                    history.push(redirect ? `/register?redirect=${redirect}` : "/register")
+                }}>Signup</Button>
+            </div>
+        </div>
     )
 }

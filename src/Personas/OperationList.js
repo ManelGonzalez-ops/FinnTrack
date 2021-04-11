@@ -63,11 +63,11 @@ export const Gridi = ({ op }) => {
 
     const columns = [
         { field: "id", hide: true },
-        { field: "date", headerName: "Column 1", width: 150 },
-        { field: "type", headerName: "Column 2", width: 150 },
-        { field: "ticker", headerName: "Column 2", width: 150 },
-        { field: "amount", headerName: "Column 2", width: 150 },
-        { field: "price", headerName: "Column 2", width: 150 },
+        { field: "date", headerName: "Column 1", flex: 1 },
+        { field: "type", headerName: "Column 2", flex: 1 },
+        { field: "ticker", headerName: "Column 2", flex: 1 },
+        { field: "amount", headerName: "Column 2", flex: 1 },
+        { field: "price", headerName: "Column 2", flex: 1 },
     ];
 
 
@@ -75,8 +75,11 @@ export const Gridi = ({ op }) => {
         headerHeight={0}
         hideFooter={true}
         autoHeight={true}
+        density="standard"
     />;
 };
+
+
 
 const useStyles = makeStyles({
     accordeon: {
@@ -95,18 +98,29 @@ const GridHeader = () => {
     }];
     const columns = [
         { field: "id", hide: true },
-        { field: "date", headerName: "date", width: 150 },
-        { field: "type", headerName: "type", width: 150 },
-        { field: "ticker", headerName: "ticker", width: 150 },
-        { field: "amount", headerName: "amount", width: 150 },
-        { field: "price", headerName: "price", width: 150 },
+        { field: "date", headerName: "date", flex: 1 },
+        { field: "type", headerName: "type", flex: 1 },
+        { field: "ticker", headerName: "ticker", flex: 1 },
+        { field: "amount", headerName: "amount", flex: 1 },
+        { field: "price", headerName: "price", flex: 1 },
+        { field: "extra space", headerName: "", width: 50}
     ]
+
+
     return (
-        <DataGrid rows={rows} columns={columns}
-            hideFooter={true}
-            autoHeight={true}
-            rowHeight={0}
-            classes={{ overlay: styles.accordeon }}
-        />
+        <div
+            className="operations-header"
+        >
+            <DataGrid rows={rows} columns={columns}
+                hideFooter={true}
+                autoHeight={true}
+                rowHeight={0}
+                classes={{
+                    overlay: styles.accordeon,
+                }}
+                density="compacted"
+            //style={{ paddingLeft: "1rem" }}
+            />
+        </div>
     )
 }

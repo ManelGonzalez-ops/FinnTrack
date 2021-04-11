@@ -15,7 +15,7 @@ const cleanDate = (date) => {
 
 ///props come directly from ajax call
 export const ContactDetails = () => {
-    const { userState: { info } } = useUserLayer()
+    const { userState: { info }, userDispatch } = useUserLayer()
     const [country, setCountry] = useState(info.country ? info.country : "")
     const [gender, setGender] = useState(info.gender ? info.gender : "")
     const [dateBirth, setDateBirth] = useState(info.nacimiento ? cleanDate(info.nacimiento) : "")
@@ -38,6 +38,9 @@ export const ContactDetails = () => {
         })
             .then(res => { console.log(res); return res })
             .then(res => res.json())
+            .then(({ fieldsToUpdate }) => {
+                userDispatch({ type: "ADD_USER_INFO", payload: fieldsToUpdate })
+            })
             .catch(err => { throw new Error(err) })
     }
 
