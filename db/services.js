@@ -2,8 +2,9 @@
 const db = require("./db")
 
 module.exports = {
+    //if method is local, socialId will be null
     createUserTable: (cb) => {
-        db.query("create table if not exists users (userId int auto_increment, password char(100), email char(50) not null unique, username char(50) unique, portfolioInitial date, primary key(userId))", err => {
+        db.query("create table if not exists users (userId int auto_increment, password char(100), email char(50) not null unique, username char(50) unique, method char(15), socialId varchar(50) portfolioInitial date, primary key(userId))", err => {
             if (err) cb(err)
 
             cb(false)

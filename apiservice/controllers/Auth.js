@@ -1,7 +1,16 @@
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 const { getUser, storeNewUser } = require("../../db/services/AuthService")
+const config = require("../config")
 
+const signToken =(user)=>{
+    jwt.sign({
+        iss: 'CodeWorkr',
+        sub: user.id,
+        iat: new Date().getTime(), // current time
+        exp: new Date().setDate(new Date().getDate() + 1) // current time + 1 day 
+    })
+}
 const login = async (req, res) => {
     console.log("received")
     const { email, password } = req.body
@@ -97,6 +106,10 @@ const register = async (req, res) => {
 
 }
 
+const handleSocialLogin = async(user)=>{
+
+}
+
 class Register {
 
     constructor() {
@@ -106,4 +119,4 @@ class Register {
 
 }
 
-module.exports = { login, protectedRoute, unpackToken, register, checkCredentials }
+module.exports = { login, protectedRoute, unpackToken, register, checkCredentials, handleSocialLogin }
