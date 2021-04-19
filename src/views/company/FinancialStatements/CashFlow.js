@@ -11,6 +11,7 @@ import {
     withStyles,
 } from "@material-ui/core";
 import React, { useEffect, useRef, useState } from "react";
+import { useCellWidth } from "../../../utils/useCellWidth";
 import { Collapsible, TableSectionAlone, TableSectionChunk, TableSubSubtitleChunk, TableSubtitleChunk } from "../Rows";
 
 const useStyles = makeStyles((theme) => ({
@@ -19,62 +20,44 @@ const useStyles = makeStyles((theme) => ({
         background: "white",
         borderRadius: "10px",
         margin: "0 auto",
-        width: "100%",
-        // [theme.breakpoints.up("sm")]: {
-        //     width: "700px"
-        // },
-        [theme.breakpoints.up("md")]: {
+        width: "750px",
+
+        [theme.breakpoints.up("lg")]: {
             width: "1000px"
         },
-        [theme.breakpoints.up("lg")]: {
+        [theme.breakpoints.up("xl")]: {
             width: "1250px"
         }
-    },
-    // tableConatiner: {
-
-    // },
-
-    // iconButton: {
-    //     padding: 0
-    // },
-
-    // cell: {
-    //     borderBottom: "none"
-    // },
-    // sectionTitleCell: {
-    //     [theme.breakpoints.up("md")]: {
-    //         paddingLeft: 0, paddingRight: 0
-    //     },
-    //     [theme.breakpoints.up("lg")]: {
-
-    //         paddingLeft: 0, paddingRight: "35px"
-    //     }
-    // },
-    // subtitles: {
-    //     // [theme.breakpoints.up("md")]: {
-    //     //     maxWidth: "130px"
-    //     // },
-    //     // [theme.breakpoints.up("lg")]: {
-    //     //     maxWidth: "none",
-    //     //     width: "200px"
-    //     // },
-    //     // maxWidth: "none"
-    // }
+    }
 }))
-
+const cellWidthBreakpoints = {
+    small: {
+        cellSize: 110,
+    },
+    medium: {
+        breakpoint: 1280,
+        cellSize: 135,
+    },
+    large: {
+        breakpoint: 1900,
+        cellSize: 170
+    }
+}
 export const CashFlow = ({ anualdata, readyData }) => {
 
-    //lg const nestedHackWidth = 175
-    const nestedHackWidth = 138
+    //lg const cellWidth = 175
+    const { cellWidth, breakpoint } = useCellWidth(cellWidthBreakpoints)
     //we need to loop each field, which is an object with the  values of 5 different years
     const classes = useStyles()
     return (
         <TableContainer
-            classes={{
-                root: classes.root,
-            }}
         >
-            <Table >
+            <Table
+                classes={{
+                    root: classes.root,
+                }}
+                className={breakpoint === "small" && "financials-table--small"}
+            >
                 <TableHead>
                     <TableRow>
                         <TableCell colSpan={3} />
@@ -102,14 +85,14 @@ export const CashFlow = ({ anualdata, readyData }) => {
                         />
                     }>
 
-                    <TableSubtitleChunk hackWidth={nestedHackWidth} title="depreciation" lookupKey="depreciation" data={readyData} />
-                    <TableSubtitleChunk hackWidth={nestedHackWidth} title="Change in Receivables" lookupKey="changeInReceivables" data={readyData} />
-                    <TableSubtitleChunk hackWidth={nestedHackWidth} title="change in Account Receivables" lookupKey="changeInAccountReceivables" data={readyData} />
-                    <TableSubtitleChunk hackWidth={nestedHackWidth} title="change in Inventory" lookupKey="changeInInventory" data={readyData} />
-                    <TableSubtitleChunk hackWidth={nestedHackWidth} title="other Operating Cash Flow" lookupKey="otherOperatingCashflow" data={readyData} />
-                    <TableSubtitleChunk hackWidth={nestedHackWidth} title="Investments" lookupKey="investments" data={readyData} />
-                    <TableSubtitleChunk hackWidth={nestedHackWidth} title="change in Liabilities" lookupKey="changeInLiabilities" data={readyData} />
-                    <TableSubtitleChunk hackWidth={nestedHackWidth} title="Net Borrowings" lookupKey="netBorrowings" data={readyData} />
+                    <TableSubtitleChunk hackWidth={cellWidth} title="depreciation" lookupKey="depreciation" data={readyData} />
+                    <TableSubtitleChunk hackWidth={cellWidth} title="Change in Receivables" lookupKey="changeInReceivables" data={readyData} />
+                    <TableSubtitleChunk hackWidth={cellWidth} title="change in Account Receivables" lookupKey="changeInAccountReceivables" data={readyData} />
+                    <TableSubtitleChunk hackWidth={cellWidth} title="change in Inventory" lookupKey="changeInInventory" data={readyData} />
+                    <TableSubtitleChunk hackWidth={cellWidth} title="other Operating Cash Flow" lookupKey="otherOperatingCashflow" data={readyData} />
+                    <TableSubtitleChunk hackWidth={cellWidth} title="Investments" lookupKey="investments" data={readyData} />
+                    <TableSubtitleChunk hackWidth={cellWidth} title="change in Liabilities" lookupKey="changeInLiabilities" data={readyData} />
+                    <TableSubtitleChunk hackWidth={cellWidth} title="Net Borrowings" lookupKey="netBorrowings" data={readyData} />
 
                 </Collapsible>
                 <Collapsible fieldName="assets"
@@ -123,8 +106,8 @@ export const CashFlow = ({ anualdata, readyData }) => {
                         />
                     }>
 
-                    <TableSubtitleChunk hackWidth={nestedHackWidth} title="Capital Expenditures" lookupKey="capitalExpenditures" data={readyData} />
-                    <TableSubtitleChunk hackWidth={nestedHackWidth} title="other Cash Flow from Investing" lookupKey="otherCashflowFromInvestment" data={readyData} />
+                    <TableSubtitleChunk hackWidth={cellWidth} title="Capital Expenditures" lookupKey="capitalExpenditures" data={readyData} />
+                    <TableSubtitleChunk hackWidth={cellWidth} title="other Cash Flow from Investing" lookupKey="otherCashflowFromInvestment" data={readyData} />
 
                 </Collapsible>
                 <Collapsible fieldName="assets"
@@ -138,10 +121,10 @@ export const CashFlow = ({ anualdata, readyData }) => {
                         />
                     }>
 
-                    <TableSubtitleChunk hackWidth={nestedHackWidth} title="other Cash and Short Term Investments" lookupKey="otherCashflowFromFinancing" data={readyData} />
-                    <TableSubtitleChunk hackWidth={nestedHackWidth} title="change In exchange Rate" lookupKey="changeInExchangeRate" data={readyData} />
-                    <TableSubtitleChunk hackWidth={nestedHackWidth} title="dividend Payout" lookupKey="dividendPayout" data={readyData} />
-                    <TableSubtitleChunk hackWidth={nestedHackWidth} title="Stock Sale and Purchase" lookupKey="stockSaleAndPurchase" data={readyData} />
+                    <TableSubtitleChunk hackWidth={cellWidth} title="other Cash and Short Term Investments" lookupKey="otherCashflowFromFinancing" data={readyData} />
+                    <TableSubtitleChunk hackWidth={cellWidth} title="change In exchange Rate" lookupKey="changeInExchangeRate" data={readyData} />
+                    <TableSubtitleChunk hackWidth={cellWidth} title="dividend Payout" lookupKey="dividendPayout" data={readyData} />
+                    <TableSubtitleChunk hackWidth={cellWidth} title="Stock Sale and Purchase" lookupKey="stockSaleAndPurchase" data={readyData} />
 
                 </Collapsible>
 

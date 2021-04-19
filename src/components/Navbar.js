@@ -18,18 +18,27 @@ import { formatter } from "../utils/numFormatter";
 import { useOktaAuth } from '@okta/okta-react';
 import { CompanyNav } from "./subNavigations/CompanyNav";
 import { useUserLayer } from "../UserContext";
-
+import Cookie from "js-cookie"
+import { NavSearch } from "./navSearch";
+import { useViewport } from "../utils/useViewport";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
   },
+  grow: {
+    flex: "1 1 auto"
+  },
   menuButton: {
     marginRight: 36,
   },
   title: {
-    flexGrow: 1,
+    display: "none",
+    [theme.breakpoints.up("sm")]: {
+      flexGrow: 1,
+      display: "unset"
+    }
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
@@ -40,7 +49,8 @@ const useStyles = makeStyles((theme) => ({
   },
   appBarShift: {
     marginLeft: drawerWidth,
-    width: ({ drawerWidth }) => `calc(100% - ${drawerWidth}px)`,
+    width: ({ drawerWidth, viewport }) => viewport < 600 ? "100%" : `calc(100% - ${drawerWidth}px)`,
+
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -49,17 +59,28 @@ const useStyles = makeStyles((theme) => ({
   hide: {
     display: 'none',
   },
+  desktopActions: {
+    display: "none",
+    [theme.breakpoints.up("md")]: {
+      display: "flex",
+      alignItems: "center",
+      marginLeft: "auto",
+    }
+  }
 }));
 
 export const Navbar = () => {
   //const { authState, authService } = useOktaAuth();
   const history = useHistory()
-  const { state } = useDataLayer()
+  const { state, dispatch } = useDataLayer()
+  const { viewport } = useViewport()
   const { sidebarOpen, drawerWidth, setSidebarOpen } = useUILayer()
   const location = useLocation()
   const topNavigation = useRef(null)
   const [menuCompaniesOpen, setMenuCompaniesOpen] = useState(false)
-
+  console.log(history, "hiiiii")
+  const params = useLocation()
+  console.log(params, "psspsp")
   useEffect(() => {
     const masterRoute = location.pathname.split("/").filter(item => item !== "")
     console.log(masterRoute[0], "first pathname query")
@@ -76,12 +97,15 @@ export const Navbar = () => {
   console.log(location, "locationnnnnn")
 
 
-  const classes = useStyles({ drawerWidth });
+  const classes = useStyles({ drawerWidth, viewport });
 
 
 
   const { userDispatch } = useUserLayer()
   const logout = (cb) => {
+
+    dispatch({type: "REINITILIZE"})
+    Cookie.remove("token")
     userDispatch({ type: "SET_USER_NULL" })
     cb()
   }
@@ -108,11 +132,15 @@ export const Navbar = () => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap>
+          <Typography variant="h6" noWrap
+            className={classes.title}
+          >
             {menuCompaniesOpen ? state.currentCompany.name : "FinnTrack"}
           </Typography>
+          <div className={classes.grow} />
+          <NavSearch />
           <div
-            style={{ marginLeft: "auto", display: "flex", alignItems: "centeryyy" }}
+            className={classes.desktopActions}
           >
             <Button variant="contained" color="primary"
               onClick={() => { history.push("/login") }}
@@ -120,12 +148,6 @@ export const Navbar = () => {
             <Button variant="contained" color="primary"
               onClick={() => { logout(() => history.push("/login")) }}
             >Logout</Button>
-            {/* <Button
-              onClick={() => { history.push("/portfolio") }}
-              variant="contained"
-            >
-              Investment Dashboard
-            </Button> */}
             <Typography>
               {formatter.format(state.currentPossesions.userCash)} $
             </Typography>

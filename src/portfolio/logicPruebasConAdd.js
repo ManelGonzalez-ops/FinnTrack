@@ -489,6 +489,7 @@ export const useLogicPruebas = () => {
         //setPruebaReady creo que es redundante aqui ya que cuando generatedSeries.status es falso significa que hemos realizado una nueva operacion (deberiamos impedir realizar nueva operacion hasta que no generatedSeries.status sea true again)
         if (state.userActivity.length > 0 && state.setPruebaReady && !state.generatedSeries.ready) {
             console.log("exxecutao")
+            console.log(state.userActivity, "useactivity")
             //if no userActivity we wont run any code
             generateSerieFromBegining(state.userActivity, (generatedSerie) => {
                 console.log("exxecutao2")

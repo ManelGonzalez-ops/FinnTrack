@@ -15,7 +15,7 @@ const assignStatement = (field) => {
     }
 }
 
-export const FinancialOptions = ({ setField, field, setRequest, campo, company }) => {
+export const FinancialOptions = ({ setField, field, setRequest, campo, ticker }) => {
     const [open, setOpen] = useState(false)
 
     const handleFieldChange = (e) => {
@@ -31,11 +31,11 @@ export const FinancialOptions = ({ setField, field, setRequest, campo, company }
         const lookUpField = assignStatement(statement)
         console.log(lookUpField, "lookUpField")
         campo.current = lookUpField
-        if (state.financials[lookUpField][company]) {
-            setRequest(prev => ({ ...prev, loading: false, data: state.financials[lookUpField][company] }))
+        if (state.financials[lookUpField][ticker]) {
+            setRequest(prev => ({ ...prev, loading: false, data: state.financials[lookUpField][ticker] }))
         } else {
-            //setRequest(prev => ({ ...prev, loading: true, data: "" }))
-            fetch(`https://www.alphavantage.co/query?function=${statement}&symbol=${company}&apikey=btm6dp748v6ud360stcg`)
+            setRequest(prev => ({ ...prev, loading: true, data: "" }))
+            fetch(`https://www.alphavantage.co/query?function=${statement}&symbol=${ticker}&apikey=btm6dp748v6ud360stcg`)
                 .then(res => res.json())
                 .then(res => {
                     if (Object.keys(res).length > 0) {

@@ -12,6 +12,7 @@ import LockIcon from '@material-ui/icons/Lock';
 import { Link } from 'react-router-dom'
 import { Transition } from 'react-transition-group'
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab'
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 
 const date = convertUnixToHuman(Date.now())
 
@@ -21,10 +22,16 @@ const useStyles = makeStyles({
     }
 })
 
+const getStockPossesion = (ticker, possesions) => {
+    const alreadyOwned = possesions.stocks.find(stock => stock.ticker === ticker)
+    return alreadyOwned ? alreadyOwned.amount : 0
+}
+
 export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) => {
 
     const { state, dispatch } = useDataLayer()
     const { setPruebaReady } = state
+    const theme = useTheme()
 
     //const userInfo = useAuth()
 
@@ -35,9 +42,10 @@ export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) =
     const [qty, setQty] = useState(1)
     const [orderTotal, setOrderTotal] = useState("")
     const [modalOpen, setModalOpen] = React.useState(false);
-    const [operationType, setOperationType] = React.useState("")
+    const [operationType, setOperationType] = React.useState("buy")
     const restartPortfolio = useRef(false)
     const [open, setOpen] = useState(false)
+    const [errorModal, setErrorModal] = useState({ open: false, msg: "" })
     const [tipo, setTipo] = useState("")
     const classes = useStyles()
     useEffect(() => {
@@ -157,6 +165,30 @@ export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) =
         setOperationType(value)
     }
 
+    const showErrorModal = (text) => {
+        console.log("showww wrro modal")
+        setErrorModal({ open: true, text })
+    }
+
+    const checkIsValidOperation = () => {
+        console.log("ejecuuuuuuua")
+        if (operationType === "buy" &&
+            orderTotal > state.currentPossesions.userCash) {
+
+            return showErrorModal("Not enough cash to perform operation");
+        }
+
+        console.log(getStockPossesion(ticker, state.currentPossesions), "que cantidad teniamos")
+        if (operationType === "sell" &&
+            getStockPossesion(ticker, state.currentPossesions) < qty) {
+
+            showErrorModal("You are selling more units than what you actually own")
+            return
+        }
+
+        setModalOpen(true)
+    }
+
     if (!userState.isAuthenticated) {
         return (
             <LoginMessage>
@@ -175,9 +207,10 @@ export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) =
             { !setPruebaReady ? <div>Loading initial data...</div>
                 : currentPrice &&
                 <div>
-                    <Dialogo1 {...{ open, handleClose, currentPrice, orderTotal, setQty, qty, operationType, handleType, setModalOpen }} />
+                    <ErrorDialog {...{ errorModal, setErrorModal }} />
+                    <Dialogo1 {...{ open, handleClose, currentPrice, orderTotal, setQty, qty, operationType, handleType, checkIsValidOperation }} />
 
-                    <ButtonGroup variant="contained" aria-label="buy or sell asset">
+                    {/* <ButtonGroup variant="contained" aria-label="buy or sell asset">
                         {["buy", "sell"].map((type, index) => (
                             <Button
                                 onClick={() => {
@@ -191,27 +224,37 @@ export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) =
                                 {type}
                             </Button>
                         ))}
-                    </ButtonGroup>
-
+                    </ButtonGroup> */}
+                    <Button
+                        onClick={handleOpen}
+                        aria-label="buy or sell asset"
+                        variant="contained"
+                        style={{ background: theme.palette.success.main, color: "white" }}
+                        size="large"
+                        startIcon={<AttachMoneyIcon />}
+                    >
+                        Operate
+                    </Button>
                     <PurchaseDialog
-                        {...{ modalOpen, setModalOpen, qty, orderTotal, ticker, submitOrder, operationType, setOpen }}
+                        {...{ modalOpen, qty, orderTotal, ticker, submitOrder, operationType, setOpen, setModalOpen }}
                     />
+
                 </div>
             }
         </div>
     )
 }
 
+const StyledOp = styled.span(props => ({
+    color: props.operationType === "buy" ? "#3f51b5"
+        :
+        "#f50057"
+}))
 
-const Dialogo1 = ({ open, handleClose, currentPrice, orderTotal, setQty, qty, operationType, handleType, setModalOpen }) => {
+const Dialogo1 = ({ open, handleClose, currentPrice, orderTotal, setQty, qty, operationType, handleType, checkIsValidOperation }) => {
     const theme = useTheme()
-    const StyledOp = styled.span(props => ({
-        color: props.operationType === "buy" ? theme.palette.primary.main
-            :
-            theme.palette.secondary.main
-    }))
     return (
-        
+
         <Dialog
             open={open}
             //TransitionComponent={Transition}
@@ -221,7 +264,7 @@ const Dialogo1 = ({ open, handleClose, currentPrice, orderTotal, setQty, qty, op
             aria-describedby="alert-dialog-slide-description"
             fullWidth={true}
             maxWidth="xs"
-
+            onMouseMove={e => e.preventDefault()}
         >
             <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <DialogTitle id="alert-dialog-slide-title">
@@ -273,6 +316,7 @@ const Dialogo1 = ({ open, handleClose, currentPrice, orderTotal, setQty, qty, op
                                 type="number"
                                 value={qty}
                                 onChange={(e) => { setQty(parseInt(e.target.value)) }}
+                                //InputProps={{ inputProps: { min: 1 } }}
                                 style={{ width: "50px" }}
                             />
                         </ListItemSecondaryAction>
@@ -294,20 +338,45 @@ const Dialogo1 = ({ open, handleClose, currentPrice, orderTotal, setQty, qty, op
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose} color="primary"
-                variant="outlined"
-                color="secondary"
+                    variant="outlined"
+                    color="secondary"
                 >
                     Cancel
           </Button>
-                <Button onClick={() => setModalOpen(true)} color="primary"
+                <Button onClick={checkIsValidOperation} color="primary"
                     disabled={!operationType}
                     variant="outlined"
-                    
+
                 >
                     Submit
           </Button>
                 {!operationType && <span>Please select operation type</span>}
             </DialogActions>
         </Dialog >
+    )
+}
+
+const ErrorDialog = ({ errorModal, setErrorModal }) => {
+    return (
+        <Dialog
+            open={errorModal.open}
+            //TransitionComponent={Transition}
+            //keepMounted
+            onClose={() => { setErrorModal({ open: false }) }}
+            aria-labelledby="alert-dialog-slide-title"
+            aria-describedby="alert-dialog-slide-description"
+            fullWidth={true}
+            maxWidth="xs"
+        >
+            <DialogTitle>Operation is not valid</DialogTitle>
+            <DialogContent>
+                {errorModal.text}
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    onClick={() => { setErrorModal({ open: false }) }}
+                    color="secondary">Close</Button>
+            </DialogActions>
+        </Dialog>
     )
 }

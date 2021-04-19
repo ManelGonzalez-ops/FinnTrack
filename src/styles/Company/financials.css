@@ -1,3 +1,7 @@
+.navigation-right {
+  margin-bottom: 3rem;
+}
+
 .navigation-right ul {
   display: flex;
 }
@@ -22,6 +26,6 @@
   padding: 0px !important;
 }
 
-.statement-table * {
+.financials-table--small * {
   font-size: 12px !important;
 }

@@ -1,4 +1,4 @@
-import { InputLabel, MenuItem, Select, FormControl, Button, TextField } from '@material-ui/core'
+import { InputLabel, MenuItem, Select, FormControl, Button, TextField, makeStyles, IconButton } from '@material-ui/core'
 import React, { Fragment, useEffect, useState } from 'react'
 import { useUserLayer } from '../UserContext'
 import countries from "../utils/countries.json"
@@ -8,10 +8,22 @@ import { CircularProgress } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
 import "./imageUploader.scss"
 import PublishIcon from '@material-ui/icons/Publish';
+import SwapVertIcon from '@material-ui/icons/SwapVert';
 
 const Container = styled.div({
     width: "600px",
     margin: "0 auto"
+})
+
+const useStyles = makeStyles({
+    label: {
+        height: "100px",
+        width: "100px",
+        display: "block",
+        "&:hover": {
+
+        }
+    }
 })
 
 
@@ -21,7 +33,7 @@ export const ImageUploader = () => {
     const [loading, setLoading] = useState(false)
     const { userState: { info }, userDispatch } = useUserLayer()
     const [loaded, setLoaded] = useState(false)
-   
+
     const [provisionalImg, setProvisionalImg] = useState(info.imageUrl ? info.imageUrl : "")
 
     const handleImageUpload = (e) => {
@@ -54,9 +66,12 @@ export const ImageUploader = () => {
     }
     return (
         <div className="contact-details">
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit}
+            >
 
-                <label style={{ height: "100px", width: "100px", display: "block" }} htmlFor="upload">
+                <label htmlFor="upload"
+                    className="label-upload"
+                >
                     {image ?
                         <Fragment>
                             <img
@@ -64,6 +79,8 @@ export const ImageUploader = () => {
                                 style={loaded ? { display: "inline" } : { display: "none" }}
                                 onLoad={() => { setLoaded(true) }}
                             />
+                            <SwapVertIcon className="swap-icon" />
+                            <div className="overlay" />
                             {!loaded && <Skeleton variant="rect" width={210} height={118} />}
 
                         </Fragment>

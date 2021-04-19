@@ -71,7 +71,7 @@ export const PortfolioPriceChart = ({ datos }) => {
         setDataset(readyData)
     }
     useEffect(() => {
-        console.log(chart2.current, "chaart222")
+        //console.log(chart2.current, "chaart222")
         console.log(chart.current, "chaart2221")
         if (datos) {
             if (addFirstSerie) {
@@ -99,7 +99,6 @@ export const PortfolioPriceChart = ({ datos }) => {
                     chart.current = this
                 }
             },
-            //width,
             id: "chart-stock",
             animation: {
                 duration: 225,
@@ -143,7 +142,7 @@ export const PortfolioPriceChart = ({ datos }) => {
             {
                 dataset &&
                 <HighchartsReact
-                    ref={chart2}
+                    //ref={chart2}
                     highcharts={Highcharts}
                     options={options}
                     constructorType={"stockChart"}

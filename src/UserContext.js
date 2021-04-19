@@ -1,19 +1,26 @@
 import React, { useReducer, useContext } from 'react'
-
+import Cookie from "js-cookie"
 const context = React.createContext()
 const getToken = () => {
-    const token = localStorage.getItem("token")
-    if (token === "undefined") return ""
-    return token ?
-        JSON.parse(token)
-        :
-        ""
+    const token = Cookie.getJSON("token")
+    if (!token || token === "undefined") return ""
+    console.log(token, "tokeeun")
+    // return token
+    try {
+        const readyToken = JSON.parse(token)
+        return readyToken
+    }
+    catch (err) {
+        return token
+    }
+
 }
 const initialState = {
     isAuthenticated: false,
     token: getToken(),
     info: { email: null },
-    ready: false
+    ready: false,
+    config: { staticImage: true }
 }
 const userReducer = (state, action) => {
     switch (action.type) {
@@ -26,6 +33,7 @@ const userReducer = (state, action) => {
             }
         case "SET_USER_NULL":
             localStorage.removeItem("token")
+            console.log("user set nullllll")
             return {
                 ...state,
                 isAuthenticated: false,
@@ -34,6 +42,7 @@ const userReducer = (state, action) => {
                 token: null
             }
         case "SET_TOKEN":
+            console.log(action.payload, "setting user nulltokkenset")
             return {
                 ...state,
                 token: action.payload
@@ -52,7 +61,7 @@ const userReducer = (state, action) => {
             return {
                 ...state,
                 isAuthenticated: true,
-                info: {email},
+                info: { email },
                 token: token
             }
         case "UPDATE_IMAGE":

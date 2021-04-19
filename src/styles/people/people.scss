@@ -1,16 +1,17 @@
-.portfolio-chart--people {
+.people-item {
     height: 300px;
     margin: 0 0.7rem;
     margin-bottom: 2rem;
+    position: relative;
 }
 
 @media (min-width: 300px) {
-    .portfolio-chart--people {
+    .people-item {
         width: calc(max(30%, 280px));
     }
 }
 @media (min-width: 800px) {
-    .portfolio-chart--people {
+    .people-item {
         width: calc(max(22%, 350px));
     }
 }
@@ -18,14 +19,50 @@
 .operations-header {
     //width: calc(100% - 50px);
 
-    .MuiDataGrid-root{
+    .MuiDataGrid-root {
         padding-left: 1rem;
         //border-right: none;
     }
 
-    .MuiDataGrid-columnSeparator{
-        &:last-of-type{
+    .MuiDataGrid-columnSeparator {
+        &:last-of-type {
             display: none;
         }
     }
+}
+
+.people-item--chart-wrapper{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    //height: 1;
+}
+
+.people-item--header {
+    display: flex;
+    align-items: center;
+    //justify-content: space-between;
+    //show over the chart
+    position: relative;
+    z-index: 1;
+
+    .image-container {
+        width: 60px;
+        height: 60px;
+        
+        .people-image {
+            display: none;
+            height: 100%;
+            width: 100%;
+            border-radius: 100%;
+            &.loaded {
+                display: unset;
+            }
+        }
+    }
+}
+
+.people-item-performace{
+        position: absolute;
+        bottom: 0;
 }

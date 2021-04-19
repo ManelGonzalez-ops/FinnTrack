@@ -1,36 +1,36 @@
 .grida {
-    display: grid;
-    gap: 2.5rem;
-    row-gap: 2rem;
-    padding: 1.5rem;
-    padding-top: 0;
-    grid-template-columns: repeat(9, 1fr);
-    grid-template-rows: 175px 225px 200px 100px;
-    grid-template-areas:
-        "chart chart chart chart chart shop shop shop shop"
-        "chart chart chart chart chart general general general general"
-        "detaila detaila detaila detaila detaila general general general general"
-        "detaila detaila detaila detaila detaila general general general general";
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+
+    & > * {
+        width: 100%;
+    }
 
     .grida-p {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 1rem;
     }
-    .stock-shop{
+    .stock-shop {
         grid-area: shop;
     }
 
-    .chart { 
+    .chart {
         grid-area: chart;
         align-self: flex-start;
     }
-    .general {
+    .keymetrics {
         grid-area: general;
-       // overflow: scroll;
+    }
+    .general {
+        
         transition: all 1s linear !important;
+        max-height: 100%;
+        overflow-y: scroll;
         &.overflown {
-           // overflow: auto;
+            max-height: 5000px;
+             overflow-y: auto;
         }
         ul {
             padding: 0.5rem;
@@ -41,8 +41,23 @@
         grid-area: detaila;
         align-self: flex-start;
     }
+}
 
-    
+@media (min-width: 1000px) {
+    .grida {
+        display: grid;
+        gap: 2.5rem;
+        row-gap: 2rem;
+        padding: 1.5rem;
+        padding-top: 0;
+        grid-template-columns: repeat(9, calc(calc(100% / 9) - 2rem));
+        grid-template-rows: 175px 225px 200px 100px;
+        grid-template-areas:
+            "chart chart chart chart chart shop shop shop shop"
+            "chart chart chart chart chart general general general general"
+            "detaila detaila detaila detaila detaila general general general general"
+            "detaila detaila detaila detaila detaila general general general general";
+    }
 }
 
 //cambio grid dinamico

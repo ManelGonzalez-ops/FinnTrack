@@ -76,7 +76,7 @@ export const PersonasList = () => {
             {loading ? <LinearProgress />
                 : error ? <p>{error}</p>
                     : data && data.map((person) => {
-                        return <UserItem {...{ person }} />
+                        return <UserItem key={person.user.username} {...{ person }} />
                     })}
         </div>
     )

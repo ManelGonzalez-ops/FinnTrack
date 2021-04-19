@@ -8,7 +8,7 @@ import { useChartReflow } from "../utils/useChartReflow";
 export const IndexesChart = ({ datos }) => {
     const chart = useRef(null)
     const [dataset, setDataset] = useState("")
-    useChartReflow(chart.current)
+    //useChartReflow(chart.current)
     useEffect(() => {
         console.log("manzana", datos.historical)
         if (datos.historical && datos.historical.length > 0) {

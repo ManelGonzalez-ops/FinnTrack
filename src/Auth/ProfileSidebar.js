@@ -197,6 +197,7 @@ const DialogUser = ({ handleClose, open, title }) => {
 }
 const DialogText = ({ handleClose, open, info, title }) => {
 
+
     return (ReactDOM.createPortal(<Dialog
         open={open === "text"}
         onClose={handleClose}
@@ -206,7 +207,9 @@ const DialogText = ({ handleClose, open, info, title }) => {
     >
 
 
-        <DialogTitle>
+        <DialogTitle
+            style={{ background: "#3f51b5", color: "white", marginBottom: "10px" }}
+        >
             {title}
         </DialogTitle>
         <DialogContent>

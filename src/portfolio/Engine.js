@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react"
 import { useDataLayer } from "../Context"
+import { useUserLayer } from "../UserContext"
 import { convertHumanToUnixInit } from "../utils/datesUtils"
 import { useLogicPruebas } from "./logicPruebasConAdd"
 
@@ -15,12 +16,14 @@ export const useEngine = () => {
     useLogicPruebas()
 
     const { state, dispatch } = useDataLayer()
+    const { userState } = useUserLayer()
     const { missingTicker } = state
     const { stocks } = state.currentPossesions
 
     //WHAT if we don't have any ticker yet?
 
     const getPricesHistory = async () => {
+        console.log(userState.info, "fetch price ejecutao")
         try {
             const request = await fetch("http://localhost:8001/api/v1/prices/portfolio_prices", {
                 headers: {
@@ -114,7 +117,7 @@ export const useEngine = () => {
     // }
 
     const prepareData = (arr, cb) => {
-        
+
         console.log(arr, "la arrey")
         const worker = new Worker("/worker.js")
         worker.postMessage(arr)
@@ -137,7 +140,7 @@ export const useEngine = () => {
         if (!stocks.length) return
         const initialData = await getPricesHistory()
         console.log(initialData, "initialprices")
-         //ojo aquí el type que obtemenos de la initialData, 
+        //ojo aquí el type que obtemenos de la initialData, 
         prepareData(initialData, () => {
             dispatch({ type: "SET_ARE_HISTORIC_PRICES_READY", payload: true })
         })

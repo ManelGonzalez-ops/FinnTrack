@@ -1,9 +1,10 @@
-import { InputLabel, MenuItem, Select, FormControl, Button, TextField } from '@material-ui/core'
+import { InputLabel, MenuItem, Select, FormControl, Button, TextField, makeStyles } from '@material-ui/core'
 import React, { useState } from 'react'
 import { useUserLayer } from '../UserContext'
 import countries from "../utils/countries.json"
 import { CgGenderFemale, CgGenderMale } from "react-icons/cg"
 import styled from "styled-components"
+import "./contactDetails.scss"
 
 const Container = styled.div({
     width: "600px",
@@ -13,6 +14,9 @@ const cleanDate = (date) => {
     return date.split("T")[0]
 }
 
+const useStyles = makeStyles({
+
+})
 ///props come directly from ajax call
 export const ContactDetails = () => {
     const { userState: { info }, userDispatch } = useUserLayer()
@@ -48,11 +52,15 @@ export const ContactDetails = () => {
     return (
         <div className="contact-details">
             {/* {generatedUrl && <img src={generatedUrl} />} */}
-            <form onSubmit={handleSubmit}>
-                <CountrySelect {...{ country, setCountry }} />
-                <Gender {...{ gender, setGender }} />
-                <DateOfBirth {...{ dateBirth, setDateBirth }} />
+            <form onSubmit={handleSubmit}
+                className="form"
+            >
                 <Names {...{ firstName, lastName, setNames }} />
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <DateOfBirth {...{ dateBirth, setDateBirth }} />
+                    <Gender {...{ gender, setGender }} />
+                </div>
+                <CountrySelect {...{ country, setCountry }} />
                 <Button
                     type="submit"
                     variant="contained"
@@ -66,8 +74,10 @@ export const ContactDetails = () => {
 const CountrySelect = ({ country, setCountry }) => {
     const [open, setOpen] = useState(false)
     return (
-        <FormControl >
-            <InputLabel id="select-country">Select Country</InputLabel>
+        <FormControl
+            style={{ width: "100%" }}
+        >
+            <InputLabel id="select-country">Country</InputLabel>
             <Select
                 labelId="select-country"
                 open={open}
@@ -164,6 +174,7 @@ const Names = ({ firstName, lastName, setNames }) => {
                     variant="outlined"
                     onFocus={handleFocus}
                     onChange={handleChange}
+                    size="small"
                 />
             </div>
             <div className="form-group"
@@ -179,6 +190,7 @@ const Names = ({ firstName, lastName, setNames }) => {
                     variant="outlined"
                     onFocus={handleFocus}
                     onChange={handleChange}
+                    size="small"
                 />
             </div>
         </>

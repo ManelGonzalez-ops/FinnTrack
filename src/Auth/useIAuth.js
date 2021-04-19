@@ -31,6 +31,7 @@ export const useIAuthh = () => {
     const { userState, userDispatch } = useUserLayer()
     useEffect(() => {
         //if there's no token user will have to login
+        console.log(userState.token, "qe sddkfjdk")
         if (!userState.token) {
             console.log("setting user null")
             setLoading(false)
@@ -40,7 +41,7 @@ export const useIAuthh = () => {
         //if there's token we have to check if it's valid
         else if (userState.token) {
             setLoading(true)
-            fetch("http://localhost:8001/api/v1/auth/post", {
+            fetch("http://localhost:8001/api/v1/auth/secret", {
                 headers: {
                     "Authorization": `bearer ${userState.token}`
                 },
@@ -53,7 +54,7 @@ export const useIAuthh = () => {
                 //if token is valid we extract the userData from the token itself and send it to the client
                 .then(res => {
                     console.log(res, "resposns")
-                    userDispatch({ type: "SET_USER", payload: { email: res.userData.email } })
+                    userDispatch({ type: "SET_USER", payload: { email: res.email } })
                     console.log("success nena", res)
                     setLoading(false)
                 })
@@ -65,9 +66,9 @@ export const useIAuthh = () => {
                     console.log(err.message)
                 })
         }
-    }, [])
+    }, [userState.token])
 
-    return {loading}
+    return { loading }
 }
 
 // export const useAuthLogin = (setHasTried, hasTried) => {

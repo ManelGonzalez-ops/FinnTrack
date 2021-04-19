@@ -3,40 +3,35 @@ const bcrypt = require("bcrypt")
 const { getUser, storeNewUser } = require("../../db/services/AuthService")
 const config = require("../config")
 
-const signToken =(user)=>{
-    jwt.sign({
-        iss: 'CodeWorkr',
-        sub: user.id,
+const signToken = (userid) => {
+    return jwt.sign({
+        iss: 'ManelGonzalez-ops',
+        sub: userid,
         iat: new Date().getTime(), // current time
         exp: new Date().setDate(new Date().getDate() + 1) // current time + 1 day 
-    })
+    }, config.JWT_SECRET)
 }
 const login = async (req, res) => {
-    console.log("received")
-    const { email, password } = req.body
-    try {
 
-        const { username, hashedPwd } = await getUser(email)
-        //here we check if user is registered
-        //email and username match existing account
-        //make sure password is correct
-        await comparePassword(password, hashedPwd)
-        //we generate a token
-        //we don't really need to sign the username
-        const token = jwt.sign({ username, email }, "caranchoa")
-        res.status(200).send({ token })
+    console.log("received")
+    if (req.error) {
+        return res.status(400).send(req.error)
     }
-    catch (err) {
-        res.status(400).send(err)
-    }
+
+    const user = req.user
+    const token = signToken(user.userId)
+
+    return res.status(200).send({ token })
+
 }
 const comparePassword = (password, hashedPassword) => {
     return new Promise((resolve, reject) => {
 
         bcrypt.compare(password, hashedPassword, (err, result) => {
-            if (err) reject(err);
-            if (!result) reject("password is incorrect")
-            if (result) resolve()
+            if (err) reject(false);
+            resolve(result)
+            // if (!result) reject("password is incorrect")
+            // if (result) resolve()
         })
     })
 }
@@ -47,17 +42,17 @@ const protectedRoute = (req, res) => {
             //if we put send instead of json the error won't be handle by .catch in the frontend, which is a fuckery
             return res.status(400).json("error token not valid")
         }
-        return res.status(200).send({ message: "authorized", userData: decoded })
+        return res.status(200).send(decoded)
     })
 }
-const checkCredentials =(req, res)=>{
+const checkCredentials = (req, res) => {
     console.log(req.token, "ell tokeeun")
     jwt.verify(req.token, "caranchoa", (err, decoded) => {
         if (err) {
             //if we put send instead of json the error won't be handle by .catch in the frontend, which is a fuckery
             return res.status(400).json("error token not valid")
         }
-        return res.status(200).send({ message: "authorized", userData: decoded })
+        return res.status(200).send(decoded)
     })
 }
 
@@ -95,8 +90,8 @@ const register = async (req, res) => {
         const { username, email, password } = req.body
         //we have to check that email & username doesn't exists yet
         const hashedPwd = await hashPassword(password)
-        await storeNewUser({ username, email, hashedPwd })
-        const token = jwt.sign({ username, email }, "caranchoa")
+        const userOkPacket = await storeNewUser({ username, email, hashedPwd })
+        const token = signToken(userOkPacket.insertId)
         return res.status(200).send({ token })
     }
     catch (err) {
@@ -106,9 +101,6 @@ const register = async (req, res) => {
 
 }
 
-const handleSocialLogin = async(user)=>{
-
-}
 
 class Register {
 
@@ -119,4 +111,4 @@ class Register {
 
 }
 
-module.exports = { login, protectedRoute, unpackToken, register, checkCredentials, handleSocialLogin }
+module.exports = { login, protectedRoute, unpackToken, register, checkCredentials, signToken, comparePassword }

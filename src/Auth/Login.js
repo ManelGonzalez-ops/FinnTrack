@@ -12,11 +12,10 @@ export const Login = () => {
     const [{ error, loading }, setStatus] = useState({ error: null, loading: false })
     const { userDispatch, userState: { token } } = useUserLayer()
 
-    const { hasPermission } = useIAuth()
     const history = useHistory()
 
     const redirect = history.location.search ? history.location.search.split("=")[1] : ""
- 
+
     const handleLogin = (e) => {
         console.log("upa")
         e.preventDefault()
@@ -26,8 +25,13 @@ export const Login = () => {
             body: JSON.stringify({ email, password }),
             method: "POST"
         })
+            .then(res => {
+                if (!res.ok) throw new Error("error in passport middleware");
+                return res
+            })
             .then(res => res.json())
             .then(res => {
+                console.log(res, "reases")
                 localStorage.setItem("token", JSON.stringify(res.token))
                 userDispatch({ type: "SET_USER_AND_TOKEN", payload: { email, token: res.token } })
                 setStatus(prev => ({ ...prev, loading: false }))
@@ -39,8 +43,7 @@ export const Login = () => {
             })
     }
 
-    
-    console.log(hasPermission, "tienePermiiiso")
+
     console.log(token, "infotoken")
     if (token) {
         return <Redirect to={{ pathname: `/${redirect}` }} />

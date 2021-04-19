@@ -1,3 +1,45 @@
 .contact-details img {
   height: 100%;
 }
+
+.contact-details .label-upload {
+  height: 100px;
+  width: 100px;
+  display: block;
+  position: relative;
+}
+
+.contact-details .label-upload:hover {
+  background: black;
+}
+
+.contact-details .label-upload:hover .swap-icon {
+  display: block;
+}
+
+.contact-details .label-upload:hover .overlay {
+  opacity: 0.5;
+  z-index: 1;
+}
+
+.contact-details .label-upload .swap-icon {
+  display: none;
+  color: white;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.contact-details .label-upload .overlay {
+  z-index: -1;
+  background: black;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  position: absolute;
+  transition: background 0.3s ease;
+  cursor: pointer;
+}

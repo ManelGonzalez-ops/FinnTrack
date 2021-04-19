@@ -84,6 +84,7 @@ const Post = ({ message, selectPost, selectImg, isSelected = false }) => {
                         <Chip
                             size="small"
                             label={message.entities.sentiment.basic}
+                            style={{marginRight: "1rem"}}
                         />
                         : null
                     }
@@ -104,17 +105,23 @@ const Post = ({ message, selectPost, selectImg, isSelected = false }) => {
                 }
                 {giphy && <Giff {...{ gifUrl, gifLoading, gifError }} />}
                 <div className="post-footer">
-                    <Badge badgeContent={randomNum.current} color="secondary">
+                    <Badge badgeContent={randomNum.current} color="secondary"
+                        className="badge"
+                    >
                         <FavoriteBorderIcon />
                     </Badge>
                     {
                         error ?
-                            <Badge badgeContent={0} color="secondary">
+                            <Badge badgeContent={0} color="secondary"
+                                className="badge"
+                            >
                                 <ChatBubbleOutlineIcon />
                             </Badge>
                             :
                             conversationData ?
-                                <Badge badgeContent={conversationData.parent.conversation.replies} color="secondary">
+                                <Badge badgeContent={conversationData.parent.conversation.replies} color="secondary"
+                                    className="badge"
+                                >
                                     <ChatBubbleOutlineIcon />
                                 </Badge>
                                 :
@@ -123,7 +130,7 @@ const Post = ({ message, selectPost, selectImg, isSelected = false }) => {
 
                 </div>
                 <div
-                    className="post-replys"
+                    
                 >
 
                     <Transition
@@ -136,10 +143,11 @@ const Post = ({ message, selectPost, selectImg, isSelected = false }) => {
 
                             return <Collapse
                                 in={conversationData && conversationData.messages}
-
                             >
 
                                 <div
+
+                                className="post-reply-list"
                                 >
                                     {conversationData && conversationData.messages && conversationData.messages.map((msg) => <Reply message={msg} key={msg.user.username} />)}
 
@@ -185,6 +193,7 @@ const Reply = ({ message }) => {
     const { user, created_at } = message
     return (
         <div
+        className="post-reply"
         >
             <div className="post-avatar">
                 <img className="avatar" src={user.avatar_url} alt={user.username} />

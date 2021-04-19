@@ -42,5 +42,16 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <!-- <script>
+      window.addEventListener("load", ()=>{
+        console.log("cargaaado")
+        if(location.hash === '#_=_'){
+        location.href = location.href.split('#')[0];
+        }; 
+      })
+    </script> -->
+    <script>
+      window.history.replaceState("", document.title, window.location.pathname + window.location.search);
+    </script>
   </body>
 </html>

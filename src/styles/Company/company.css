@@ -1,12 +1,11 @@
 .grida {
-  display: grid;
-  gap: 2.5rem;
-  row-gap: 2rem;
-  padding: 1.5rem;
-  padding-top: 0;
-  grid-template-columns: repeat(9, 1fr);
-  grid-template-rows: 175px 225px 200px 100px;
-  grid-template-areas: "chart chart chart chart chart shop shop shop shop" "chart chart chart chart chart general general general general" "detaila detaila detaila detaila detaila general general general general" "detaila detaila detaila detaila detaila general general general general";
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.grida > * {
+  width: 100%;
 }
 
 .grida .grida-p {
@@ -24,9 +23,19 @@
   align-self: flex-start;
 }
 
-.grida .general {
+.grida .keymetrics {
   grid-area: general;
+}
+
+.grida .general {
   transition: all 1s linear !important;
+  max-height: 100%;
+  overflow-y: scroll;
+}
+
+.grida .general.overflown {
+  max-height: 5000px;
+  overflow-y: auto;
 }
 
 .grida .general ul {
@@ -37,6 +46,19 @@
 .grida .detail1 {
   grid-area: detaila;
   align-self: flex-start;
+}
+
+@media (min-width: 1000px) {
+  .grida {
+    display: grid;
+    gap: 2.5rem;
+    row-gap: 2rem;
+    padding: 1.5rem;
+    padding-top: 0;
+    grid-template-columns: repeat(9, calc(calc(100% / 9) - 2rem));
+    grid-template-rows: 175px 225px 200px 100px;
+    grid-template-areas: "chart chart chart chart chart shop shop shop shop" "chart chart chart chart chart general general general general" "detaila detaila detaila detaila detaila general general general general" "detaila detaila detaila detaila detaila general general general general";
+  }
 }
 
 .list-modelo li {

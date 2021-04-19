@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useReducer } from 'react'
+import React, { useState, useEffect, useReducer, useRef } from 'react'
 import Highcharts from "highcharts"
 import HighchartsReact from "highcharts-react-official";
+import { useChartReflow } from '../utils/useChartReflow';
 
 const initialState = {
     data: "",
@@ -53,9 +54,18 @@ export const StackedColumn = ({ ticker }) => {
         fetchData()
     }, [])
 
+    const chart = useRef(null)
+
+    useChartReflow(chart.current)
+
     const options = {
         chart: {
-            type: 'column'
+            type: 'column',
+            events: {
+                load: function () {
+                    chart.current = this
+                }
+            }
         },
         title: {
             text: 'Stacked column chart'
@@ -80,11 +90,6 @@ export const StackedColumn = ({ ticker }) => {
             }
         },
         legend: {
-            align: 'right',
-            x: -30,
-            verticalAlign: 'top',
-            y: 25,
-            floating: true,
             backgroundColor:
                 Highcharts.defaultOptions.legend.backgroundColor || 'white',
             borderColor: '#CCC',
@@ -103,16 +108,6 @@ export const StackedColumn = ({ ticker }) => {
                 }
             }
         },
-        // series: [{
-        //     name: 'John',
-        //     data: [5, 3, 4, 7, 2]
-        // }, {
-        //     name: 'Jane',
-        //     data: [2, 2, 3, 2, 1]
-        // }, {
-        //     name: 'Joe',
-        //     data: [3, 4, 4, 2, 5]
-        // }]
         series:
             data &&
             Object.keys(data[0])

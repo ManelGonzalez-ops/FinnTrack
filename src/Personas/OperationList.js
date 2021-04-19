@@ -2,6 +2,7 @@ import React from 'react'
 import { Accordion, AccordionDetails, AccordionSummary, makeStyles, Typography } from '@material-ui/core';
 import { DataGrid } from "@material-ui/data-grid";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import { useHistory } from 'react-router';
 
 
 export const OperationList = ({ operations }) => {
@@ -48,6 +49,7 @@ export const OperationList = ({ operations }) => {
 
 export const Gridi = ({ op }) => {
 
+    const history = useHistory()
 
     const { details: { ticker, amount, unitaryCost } } = op
     const rows = [
@@ -70,12 +72,18 @@ export const Gridi = ({ op }) => {
         { field: "price", headerName: "Column 2", flex: 1 },
     ];
 
+    const handleClick = (params) => {
+        if (params.field === "ticker") {
+            history.push(`/companies/overview/${params.value}`)
+        }
+    }
 
     return <DataGrid rows={rows} columns={columns}
         headerHeight={0}
         hideFooter={true}
         autoHeight={true}
         density="standard"
+        onCellClick={handleClick}
     />;
 };
 
@@ -103,7 +111,7 @@ const GridHeader = () => {
         { field: "ticker", headerName: "ticker", flex: 1 },
         { field: "amount", headerName: "amount", flex: 1 },
         { field: "price", headerName: "price", flex: 1 },
-        { field: "extra space", headerName: "", width: 50}
+        { field: "extra space", headerName: "", width: 50 }
     ]
 
 

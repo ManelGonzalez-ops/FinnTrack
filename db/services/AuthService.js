@@ -23,29 +23,29 @@ module.exports = {
                     reject(err)
                 }
                 console.log(row, "row Storenewuser")
-                resolve()
+                resolve(row)
             })
         })
     },
 
     findUserBySocialId: (socialId, method) => {
         return new Promise((resolve, reject) => {
-            db.query("select * from users where method = ? and socialId = ?", [socialId, method], (err, user) => {
+            db.query("select * from users where method = ? and socialId = ?", [method, socialId], (err, user) => {
                 if (err) {
                     reject(err)
                 }
-                resolve(user)
+                resolve(user[0])
             })
         })
     },
 
-    storeNewUserSocial: (method, socialId, email) => {
+    storeNewUserSocial: (socialId, method, email, username) => {
         return new Promise((resolve, reject) => {
-            db.query("insert into users (socialId, method, email) values(?,?, ?)", [method, socialId, email], (err, newUser) => {
+            db.query("insert into users (socialId, method, email, username) values(?,?,?,?)", [socialId, method, email, username], (err, okPacket) => {
                 if (err) {
                     reject(err)
                 }
-                console.log(newUser, "mysql id??")
+                resolve(okPacket)
             })
         })
     }

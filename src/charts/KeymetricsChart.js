@@ -4,11 +4,15 @@ import HighchartsReact from "highcharts-react-official";
 import { useParams } from "react-router-dom"
 import { useFetch } from '../utils/useFetch';
 import { Multioption } from '../components/Multioption';
+import { useCompanyGuard } from '../utils/useCurrentCompany';
+import { useDataLayer } from '../Context';
 //those are historical
 export const KeymetricsChart = () => {
-    const { company } = useParams()
-    const url = `https://financialmodelingprep.com/api/v3/key-metrics/${company.toUpperCase()}?apikey=651d720ba0c42b094186aa9906e307b4`
-    
+    useCompanyGuard()
+    const { state } = useDataLayer()
+    const { currentCompany: { ticker } } = state
+    const url = `https://financialmodelingprep.com/api/v3/key-metrics/${ticker.toUpperCase()}?apikey=651d720ba0c42b094186aa9906e307b4`
+
     const [dataset, setDataset] = useState({})
     const hookOptions = {
         explicitUrl: true
@@ -18,13 +22,13 @@ export const KeymetricsChart = () => {
     const [chosenFields, setChosenFields] = useState(
         ["tangibleBookValuePerShare", "shareholdersEquityPerShare", "interestDebtPerShare"])
 
-    const { datos, loading, error } = useFetch(url, company, "metricsHistorical", hookOptions)
-    useEffect(()=>{
+    const { datos, loading, error } = useFetch(url, ticker, "metricsHistorical", hookOptions)
+    useEffect(() => {
         fetch("https://financialmodelingprep.com/api/v3/key-metrics/AMZN?apikey=651d720ba0c42b094186aa9906e307b4")
-        .then(res=>res.json())
-        .then(resa=>{console.log(resa, "resa")})
-        .catch(err=>{console.log(err, "puto error")})
-    },[])
+            .then(res => res.json())
+            .then(resa => { console.log(resa, "resa") })
+            .catch(err => { console.log(err, "puto error") })
+    }, [])
 
     const datasetBuilder = (data) => {
         let masterObject = {}
@@ -83,7 +87,7 @@ export const KeymetricsChart = () => {
         //         }
         //     }
         // }],
-        xAxis:{
+        xAxis: {
             allowDecimals: false
         },
         legend: {

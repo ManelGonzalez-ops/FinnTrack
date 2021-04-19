@@ -322,6 +322,10 @@
   height: 100%;
 }
 
+.navigation-right {
+  margin-bottom: 3rem;
+}
+
 .navigation-right ul {
   display: flex;
 }
@@ -346,7 +350,7 @@
   padding: 0px !important;
 }
 
-.statement-table * {
+.financials-table--small * {
   font-size: 12px !important;
 }
 
@@ -637,21 +641,38 @@ img {
 }
 
 .dasboard-grid--desktop {
-  display: grid;
-  grid-template-columns: [principal] 1.5fr [secondary] 1fr;
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  flex-wrap: wrap;
 }
 
 .principal {
   grid-area: principal;
+  width: 100%;
 }
 
-.principal > header {
+g .principal > header {
   text-align: center;
 }
 
 .secondary {
+  width: 100%;
   grid-area: secondary;
+}
+
+.secondary > *:first-child {
+  position: relative;
+}
+
+.secondary > *:first-child:before {
+  content: "";
+  background: crimson;
+  position: absolute;
+  width: 120%;
+  height: 140%;
+  z-index: -1;
+  top: -40%;
 }
 
 .lateral-section > header {
@@ -669,7 +690,22 @@ img {
   background: gray;
 }
 
-.performance-chart1, .portfolio-chart {
+.principal > *,
+.secondary > * {
+  width: 100%;
+}
+
+@media (min-width: 1000px) {
+  .dasboard-grid--desktop {
+    display: grid;
+    grid-template-columns: [principal] calc(60% - 0.5rem) [secondary] calc(40% - 0.5rem);
+    gap: 1rem;
+    width: 100%;
+  }
+}
+
+.performance-chart1,
+.portfolio-chart {
   margin-bottom: 1rem;
 }
 
@@ -679,14 +715,13 @@ img {
 }
 
 .grida {
-  display: grid;
-  gap: 2.5rem;
-  row-gap: 2rem;
-  padding: 1.5rem;
-  padding-top: 0;
-  grid-template-columns: repeat(9, 1fr);
-  grid-template-rows: 175px 225px 200px 100px;
-  grid-template-areas: "chart chart chart chart chart shop shop shop shop" "chart chart chart chart chart general general general general" "detaila detaila detaila detaila detaila general general general general" "detaila detaila detaila detaila detaila general general general general";
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.grida > * {
+  width: 100%;
 }
 
 .grida .grida-p {
@@ -704,9 +739,19 @@ img {
   align-self: flex-start;
 }
 
-.grida .general {
+.grida .keymetrics {
   grid-area: general;
+}
+
+.grida .general {
   transition: all 1s linear !important;
+  max-height: 100%;
+  overflow-y: scroll;
+}
+
+.grida .general.overflown {
+  max-height: 5000px;
+  overflow-y: auto;
 }
 
 .grida .general ul {
@@ -717,6 +762,19 @@ img {
 .grida .detail1 {
   grid-area: detaila;
   align-self: flex-start;
+}
+
+@media (min-width: 1000px) {
+  .grida {
+    display: grid;
+    gap: 2.5rem;
+    row-gap: 2rem;
+    padding: 1.5rem;
+    padding-top: 0;
+    grid-template-columns: repeat(9, calc(calc(100% / 9) - 2rem));
+    grid-template-rows: 175px 225px 200px 100px;
+    grid-template-areas: "chart chart chart chart chart shop shop shop shop" "chart chart chart chart chart general general general general" "detaila detaila detaila detaila detaila general general general general" "detaila detaila detaila detaila detaila general general general general";
+  }
 }
 
 .list-modelo li {
@@ -826,15 +884,22 @@ img {
 .post {
   display: grid;
   grid-template-columns: 80px 1fr;
+  margin: 0 auto;
   opacity: 0;
   width: 800px;
   padding: 1rem;
+  border: 2px solid #3f51b5;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  margin-bottom: 2rem;
 }
 
 .post.is-selected {
   background-color: white;
   opacity: 1;
   padding: 2rem;
+  margin-bottom: 0;
 }
 
 .post img.avatar {
@@ -861,7 +926,31 @@ img {
 
 .post .post-footer {
   display: flex;
-  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.post .post-footer > *:first-child {
+  margin-right: 2rem;
+}
+
+.post .post-reply-list {
+  margin-top: 1.5rem;
+}
+
+.post .post-reply-list .post-reply {
+  margin-bottom: 1.5rem;
+}
+
+.post .post-reply {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  width: 100%;
+}
+
+.post .badge {
+  top: 1px;
+  right: 3px;
+  padding: 0 3px;
 }
 
 .rotating-icon {
@@ -874,20 +963,21 @@ img {
   }
 }
 
-.portfolio-chart--people {
+.people-item {
   height: 300px;
   margin: 0 0.7rem;
   margin-bottom: 2rem;
+  position: relative;
 }
 
 @media (min-width: 300px) {
-  .portfolio-chart--people {
+  .people-item {
     width: calc(max(30%, 280px));
   }
 }
 
 @media (min-width: 800px) {
-  .portfolio-chart--people {
+  .people-item {
     width: calc(max(22%, 350px));
   }
 }
@@ -898,6 +988,40 @@ img {
 
 .operations-header .MuiDataGrid-columnSeparator:last-of-type {
   display: none;
+}
+
+.people-item--chart-wrapper {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.people-item--header {
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.people-item--header .image-container {
+  width: 60px;
+  height: 60px;
+}
+
+.people-item--header .image-container .people-image {
+  display: none;
+  height: 100%;
+  width: 100%;
+  border-radius: 100%;
+}
+
+.people-item--header .image-container .people-image.loaded {
+  display: unset;
+}
+
+.people-item-performace {
+  position: absolute;
+  bottom: 0;
 }
 
 .wrapper-reference {

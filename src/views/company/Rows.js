@@ -41,24 +41,24 @@ const useStyles = makeStyles((theme) => ({
     },
 
     cell: {
-        borderBottom: "none"
+        borderBottom: "none",
+        [theme.breakpoints.down("sm")]: {
+            paddingLeft: 0
+        },
+
     },
     sectionTitleCell: {
-        [theme.breakpoints.up("md")]: {
-            // paddingLeft: 0, paddingRight: 0
+        [theme.breakpoints.down("sm")]: {
+            paddingLeft: 0
         },
-        [theme.breakpoints.up("lg")]: {
-
-            // paddingLeft: 0, paddingRight: "35px"
-        }
     },
     subtitles: {
         [theme.breakpoints.up("md")]: {
-            // maxWidth: "130px"
+            maxWidth: "130px"
         },
         [theme.breakpoints.up("lg")]: {
-            // maxWidth: "none",
-            // width: "200px"
+            maxWidth: "none",
+            width: "200px"
         },
         // maxWidth: "none"
     }
@@ -86,7 +86,7 @@ export const TableSectionChunk = ({ title, data, lookupKey, open, setOpen }) => 
         <TableRow
         >
             <TableCell
-            style={{padding: "0.5rem", width: "40px", textAlign: "center"}}
+                style={{ padding: "0.5rem", width: "20px", textAlign: "center" }}
             >
                 <IconButton
                     classes={{ root: classes.iconButton }}
@@ -98,28 +98,31 @@ export const TableSectionChunk = ({ title, data, lookupKey, open, setOpen }) => 
             <TableCell
                 classes={{ root: classes.sectionTitleCell }}
                 colSpan={2}
-                >
+            >
                 <p
                 //style={{width: "120px"}}
-                
+
                 >{title}</p></TableCell>
-            {data && Object.keys(data[lookupKey]).map(date =>
+            {data && data[lookupKey] ? Object.keys(data[lookupKey]).map(date =>
                 <TableCell
                     align="right"
                 >
                     {makeShortInt(data[lookupKey][date])}</TableCell>)
+                :
+                Array(5).fill(null).map(_ => <TableCell align="right">-</TableCell>)
             }
         </TableRow>
     )
 }
 export const TableSubtitleChunk = ({ title, data, lookupKey, hackWidth }) => {
     const classes = useStyles()
+    console.log(title, data, lookupKey, hackWidth, "tutututtup")
     return (
         <TableRow
         >
             <TableCell
                 classes={{ root: classes.cell }}
-                style={{padding: "0.5rem", width: "40px", textAlign: "center"}}
+                style={{ padding: "0.5rem", width: "20px", textAlign: "center" }}
             >
                 <IconButton
                     classes={{ root: classes.iconButton }}
@@ -135,24 +138,27 @@ export const TableSubtitleChunk = ({ title, data, lookupKey, hackWidth }) => {
                     className={classes.subtitles}
                 >{title}</p>
             </TableCellSmall>
-            {data && Object.keys(data[lookupKey]).map(date =>
+            {data && data[lookupKey] ? Object.keys(data[lookupKey]).map(date =>
                 <TableCell
                     align="right"
                     style={{ width: hackWidth + "px" }}
                     classes={{ root: classes.cell }}
                 >{makeShortInt(data[lookupKey][date])}</TableCell>)
+                :
+                Array(5).fill(null).map(_ => <TableCell align="right">-</TableCell>)
             }
         </TableRow>
     )
 }
 export const TableSubSubtitleChunk = ({ title, data, lookupKey, hackWidth }) => {
     const classes = useStyles()
+
     return (
         <TableRow
         >
             <TableCell
                 classes={{ root: classes.cell }}
-                
+
             >
                 <IconButton
                     classes={{ root: classes.iconButton }}
@@ -169,7 +175,7 @@ export const TableSubSubtitleChunk = ({ title, data, lookupKey, hackWidth }) => 
                     className={classes.subtitles}
                 >{title}</p>
             </TableCellXSmall>
-            {data && Object.keys(data[lookupKey]).map(date =>
+            {data && data[lookupKey] && Object.keys(data[lookupKey]).map(date =>
                 <TableCell
                     align="right"
                     classes={{ root: classes.cell }}
@@ -209,6 +215,7 @@ export const Collapsible = ({ children, renderTitleSection }) => {
 
 export const TableSectionAlone = ({ title, data, lookupKey }) => {
     const classes = useStyles()
+    console.log(classes, "kaostia")
     return (
         <TableRow
         >
@@ -223,11 +230,11 @@ export const TableSectionAlone = ({ title, data, lookupKey }) => {
             <TableCell
                 classes={{ root: classes.sectionTitleCell }}
                 colSpan={2}
-               >
+            >
                 <p
                 //style={{width: "120px"}}
                 >{title}</p></TableCell>
-            {data && Object.keys(data[lookupKey]).map(date =>
+            {data && data[lookupKey] && Object.keys(data[lookupKey]).map(date =>
                 <TableCell
                     align="right"
                 >

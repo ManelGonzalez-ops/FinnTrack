@@ -144,21 +144,38 @@
 }
 
 .dasboard-grid--desktop {
-  display: grid;
-  grid-template-columns: [principal] 1.5fr [secondary] 1fr;
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  flex-wrap: wrap;
 }
 
 .principal {
   grid-area: principal;
+  width: 100%;
 }
 
-.principal > header {
+g .principal > header {
   text-align: center;
 }
 
 .secondary {
+  width: 100%;
   grid-area: secondary;
+}
+
+.secondary > *:first-child {
+  position: relative;
+}
+
+.secondary > *:first-child:before {
+  content: "";
+  background: crimson;
+  position: absolute;
+  width: 120%;
+  height: 140%;
+  z-index: -1;
+  top: -40%;
 }
 
 .lateral-section > header {
@@ -176,7 +193,22 @@
   background: gray;
 }
 
-.performance-chart1, .portfolio-chart {
+.principal > *,
+.secondary > * {
+  width: 100%;
+}
+
+@media (min-width: 1000px) {
+  .dasboard-grid--desktop {
+    display: grid;
+    grid-template-columns: [principal] calc(60% - 0.5rem) [secondary] calc(40% - 0.5rem);
+    gap: 1rem;
+    width: 100%;
+  }
+}
+
+.performance-chart1,
+.portfolio-chart {
   margin-bottom: 1rem;
 }
 

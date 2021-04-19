@@ -1,0 +1,9 @@
+.contact-details {
+    .form {
+        width: 400px;
+
+        & > *:nth-last-child(2) {
+            margin-bottom: 2rem;
+        }
+    }
+}

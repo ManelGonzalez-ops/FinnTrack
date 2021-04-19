@@ -32,7 +32,8 @@ export const KeyMetrics = ({ ticker, setListHeight }) => {
         }else{
           setData(state.keymetrics[ticker])
         }
-      }, [state]);
+      }, []);
+
       useEffect(() => {
         if(!state.keymetrics[ticker]){
           data && dispatch({type: "STORE_DATA", payload: {ticker: ticker, field: "keymetrics", value: data}})

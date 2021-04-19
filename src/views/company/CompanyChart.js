@@ -4,13 +4,13 @@ import HighchartsReact from "highcharts-react-official";
 import { useFetch } from "../../utils/useFetch";
 import { useParams } from "react-router-dom";
 import { CircularProgress, LinearProgress, Paper, Typography } from "@material-ui/core";
-import { TableUI } from "./TableUI";
 import { KeyMetrics } from "./KeyMetrics";
 import { useDataLayer } from "../../Context";
 import { CustomCircularProgress } from "../../components/components/CustomCircularProgress";
+import { useChartReflow } from "../../utils/useChartReflow";
 
 
-export const CompanyChart = React.forwardRef(({ ticker }, ref) => {
+export const CompanyChart = ({ ticker }) => {
     const url = "http://localhost:8001/prices";
 
     const AdjustedPrices = useRef(null);
@@ -23,8 +23,9 @@ export const CompanyChart = React.forwardRef(({ ticker }, ref) => {
         explicitUrl: false
     }
     const { datos, loading, error } = useFetch(url, ticker, "prices", hookOptions);
-
-
+    //const chart = useRef(null)
+    const [theChart, setChart] = useState(null)
+    useChartReflow(theChart)
     console.log(datos, "rerenderr")
     const num = useRef(0)
     num.current = num.current++
@@ -89,7 +90,7 @@ export const CompanyChart = React.forwardRef(({ ticker }, ref) => {
         //need to add them into localStorage
         notAdjustedPrices.current = ohlNA;
     };
-    console.log(ref.current, "chaaart")
+    //console.log(chart.current, "chaaart")
 
     const options = {
         chart: {
@@ -99,7 +100,8 @@ export const CompanyChart = React.forwardRef(({ ticker }, ref) => {
                     e && console.log(e);
                 },
                 load: function () {
-                    ref.current = this
+                    //chart.current = this
+                    setChart(this)
                 }
                 // load: function(){
                 //   setIsBuilding(false)
@@ -177,4 +179,4 @@ export const CompanyChart = React.forwardRef(({ ticker }, ref) => {
             <button >See income</button>
         </>
     )
-}) 
+}

@@ -6,6 +6,7 @@ import { convertUnixToHuman } from '../utils/datesUtils'
 export const usePortfolioGenerator = () => {
 
     const { state, dispatch } = useDataLayer()
+    const [processing, setProcessing] = useState(true)
     const { portfolioHistory, generatedSeries, areHistoricPricesReady, stockLibrary, portfolioSeriesReady, simulation, addFirstSerie } = state
     const userRefreshed = useRef(true)
     const { userState: { info } } = useUserLayer()
@@ -131,7 +132,7 @@ export const usePortfolioGenerator = () => {
             ]
         }
     }
-    const fetchQuotes = () => {
+    const fetchQuotes = (cb) => {
         return fetch("http://localhost:8001/api/portfolio/quotes", {
             headers: {
                 "Content-Type": "application/json"
@@ -140,11 +141,7 @@ export const usePortfolioGenerator = () => {
             method: "POST"
         })
             .then(res => res.json())
-            .then(res => {
-                console.log("hola")
-                dispatch({ type: "SET_SIMULATION_QUOTES", payload: res[0] })
-                return
-            })
+            .then(res => cb(res))
             .catch(err => { throw new Error(err) })
     }
     const generateSerie = (cb, quotes = null, initialDate = null) => {
@@ -154,6 +151,8 @@ export const usePortfolioGenerator = () => {
         worker.onmessage = e => {
             const { portfolioSeries, companiesPerformanceImpact } = e.data
             console.log(portfolioSeries, companiesPerformanceImpact, "portfolioSeries")
+
+            setProcessing(false)
 
             //we won't store it in case it returns a empty object (means data missing due to is too earlie to get prices)
             if (Object.keys(companiesPerformanceImpact).length) {
@@ -167,9 +166,10 @@ export const usePortfolioGenerator = () => {
                 console.log("cuuuuuuco")
                 cb(portfolioSeries)
             } else {
-                
+
                 //we set the portfolioSeriesReady to true, because it has already been procesed but there's no data yet because firs purchases where made in the weekend. So when user visit dashboard intead of showing loading (as we were procesing) we'll show when data will be available.
                 dispatch({ type: "SET_PORTFOLIO_SERIES_AWAITING" })
+                
             }
         }
     }
@@ -298,7 +298,7 @@ export const usePortfolioGenerator = () => {
         return data.split("T")[0]
     }
 
-    
+
     //triggered after action after fetchquotes is dispatch and state i updated 
     useEffect(() => {
         if (addFirstSerie) {
@@ -315,7 +315,14 @@ export const usePortfolioGenerator = () => {
         initialDate.current = await getInitialDate()
         //that will trigger the useeffect with [siulation] deps of above
         //we do it like this becuase reactContext Consumer is not in sync with Provider inmediately.
-        fetchQuotes()
+        try {
+            fetchQuotes((result) => {
+                dispatch({ type: "SET_SIMULATION_QUOTES", payload: result[0] })
+            })
+        }
+        catch (err) {
+            alert(err.message)
+        }
     }
 
     useEffect(() => {

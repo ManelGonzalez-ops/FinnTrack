@@ -7,7 +7,6 @@ import * as serviceWorker from './serviceWorker';
 import { BrowserRouter, Route } from "react-router-dom";
 import { ContextProvider } from './Context';
 import { UIProvider } from './ContextUI';
-import { AppWithRouterAccess } from './AppWithRouterAccess';
 import { UserContext } from './UserContext';
 
 //hasrouter won't work with okta

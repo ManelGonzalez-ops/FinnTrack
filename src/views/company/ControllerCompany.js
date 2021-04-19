@@ -10,27 +10,16 @@ import { Financials } from './Financials';
 
 
 export const ControllerCompany = () => {
-    const history = useHistory()
+
     const { path } = useRouteMatch()
     useMountApproval()
-    const chart = useRef(null);
-    const { sidebarOpen } = useUILayer()
-    const initial = useRef(true)
-    useEffect(() => {
-        console.log(chart, "puta")
-        console.log(chart.current, "puta2")
-        if (chart.current && Object.keys(chart.current).length > 0 && !initial.current) {
-            setTimeout(() => {
-                chart.current.reflow()
-            }, 200)
-        }
-        initial.current = false
-    }, [sidebarOpen, history])
+    
+    
 
     return (
         <Switch>
             <Route path={`${path}/overview/:company`} exact>
-                <CompanySection ref={chart} />
+                <CompanySection />
             </Route>
             <Route path={`${path}/keymetrics/:company`} exact>
                 <KeymetricsChart />

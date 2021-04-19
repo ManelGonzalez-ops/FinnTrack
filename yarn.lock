@@ -8066,15 +8066,15 @@
   "resolved" "https://registry.npmjs.org/js-base64/-/js-base64-2.6.4.tgz"
   "version" "2.6.4"
 
+"js-cookie@^2.2.0", "js-cookie@2.2.0":
+  "integrity" "sha1-Gywnmm7s44ChIWi5JIUmWzWx7/s="
+  "resolved" "https://registry.npmjs.org/js-cookie/-/js-cookie-2.2.0.tgz"
+  "version" "2.2.0"
+
 "js-cookie@^2.2.1":
   "integrity" "sha512-HvdH2LzI/EAZcUwA8+0nKNtWHqS+ZmijLA30RwZA0bo7ToCckjK5MkGhjED9KoRcXO6BaGI3I9UIzSA1FKFPOQ=="
   "resolved" "https://registry.npmjs.org/js-cookie/-/js-cookie-2.2.1.tgz"
   "version" "2.2.1"
-
-"js-cookie@2.2.0":
-  "integrity" "sha1-Gywnmm7s44ChIWi5JIUmWzWx7/s="
-  "resolved" "https://registry.npmjs.org/js-cookie/-/js-cookie-2.2.0.tgz"
-  "version" "2.2.0"
 
 "js-tokens@^3.0.0 || ^4.0.0", "js-tokens@^4.0.0":
   "integrity" "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ=="
@@ -8225,7 +8225,7 @@
     "graceful-fs" "^4.1.6"
     "universalify" "^2.0.0"
 
-"jsonwebtoken@^8.5.1":
+"jsonwebtoken@^8.2.0", "jsonwebtoken@^8.5.1":
   "integrity" "sha512-XjwVfRS6jTMsqYs0EsuJ4LGxXV14zQybNd4L2r0UvbVnSF9Af8x7p5MzbJ90Ioz/9TI41/hTCvznF/loiSzn8w=="
   "resolved" "https://registry.npmjs.org/jsonwebtoken/-/jsonwebtoken-8.5.1.tgz"
   "version" "8.5.1"
@@ -9962,6 +9962,21 @@
   dependencies:
     "passport-oauth2" "1.x.x"
 
+"passport-jwt@^4.0.0":
+  "integrity" "sha512-BwC0n2GP/1hMVjR4QpnvqA61TxenUMlmfNjYNgK0ZAs0HK4SOQkHcSv4L328blNTLtHq7DbmvyNJiH+bn6C5Mg=="
+  "resolved" "https://registry.npmjs.org/passport-jwt/-/passport-jwt-4.0.0.tgz"
+  "version" "4.0.0"
+  dependencies:
+    "jsonwebtoken" "^8.2.0"
+    "passport-strategy" "^1.0.0"
+
+"passport-local@^1.0.0":
+  "integrity" "sha1-H+YyaMkudWBmJkN+O5BmYsFbpu4="
+  "resolved" "https://registry.npmjs.org/passport-local/-/passport-local-1.0.0.tgz"
+  "version" "1.0.0"
+  dependencies:
+    "passport-strategy" "1.x.x"
+
 "passport-oauth2@1.x.x":
   "integrity" "sha512-kqBt6vR/5VlCK8iCx1/KpY42kQ+NEHZwsSyt4Y6STiNjU+wWICG1i8ucc1FapXDGO15C5O5VZz7+7vRzrDPXXQ=="
   "resolved" "https://registry.npmjs.org/passport-oauth2/-/passport-oauth2-1.5.0.tgz"
@@ -9973,7 +9988,7 @@
     "uid2" "0.0.x"
     "utils-merge" "1.x.x"
 
-"passport-strategy@1.x.x":
+"passport-strategy@^1.0.0", "passport-strategy@1.x.x":
   "integrity" "sha1-tVOaqPwiWj0a0XlHbd8ja0QPUuQ="
   "resolved" "https://registry.npmjs.org/passport-strategy/-/passport-strategy-1.0.0.tgz"
   "version" "1.0.0"

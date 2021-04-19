@@ -6,7 +6,7 @@ import BookmarksIcon from '@material-ui/icons/Bookmarks';
 import LibraryAddCheckIcon from '@material-ui/icons/LibraryAddCheck';
 import { useDataLayer } from '../../Context';
 import { useUILayer } from '../../ContextUI';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import clsx from 'clsx';
 import { useUserLayer } from '../../UserContext';
 import { CurrentPriceRP } from '../../portfolio/CurrentPriceRP';
@@ -28,10 +28,32 @@ const useStyles = makeStyles((theme) => ({
   },
   tab: {
     marginLeft: "60px",
+    [theme.breakpoints.down("sm")]: {
+      marginLeft: "0px"
+    }
   },
   white: {
     borderColor: "white"
   },
+  tabItem: {
+    fontSize: "12px",
+    [theme.breakpoints.up("sm")]: {
+      minWidth: "auto",
+    },
+    [theme.breakpoints.up("md")]: {
+      minWidth: "120px",
+      fontSize: "0.88rem",
+    },
+    [theme.breakpoints.up("lg")]: {
+      minWidth: "160px"
+    },
+  },
+  scrollButtons: {
+    width: "30px",
+    [theme.breakpoints.up("sm")]:{
+      display: "none"
+    }
+  }
 }));
 
 export const CompanyNav = ({ menuCompaniesOpen, topNavigation }) => {
@@ -114,19 +136,23 @@ export const CompanyNav = ({ menuCompaniesOpen, topNavigation }) => {
           style={menu2transitions[animationState]}
         >
           <Tabs value={tabValue} onChange={handleChange} aria-label="simple tabs example"
-            classes={{ root: classes.tab }}
+            classes={{ root: classes.tab, scrollButtons: classes.scrollButtons }}
+            variant="scrollable"
+            scrollButtons="on"
+            //scroll auto not working as expected
+            
           >
-            <Tab label="Overview" {...a11yProps(0)} onClick={() => { navigate("/companies/overview/") }} />
-            <Tab label="Financials" {...a11yProps(1)} onClick={() => { navigate("/companies/financials/") }} />
-            <Tab label="Key metrics" {...a11yProps(2)} onClick={() => { navigate("/companies/keymetrics/") }} />
-            <Tab label="News" {...a11yProps(2)} onClick={() => { history.push(`/news/`) }} />
+            <Tab label="Overview" {...a11yProps(0)} onClick={() => { navigate("/companies/overview") }} classes={{ root: classes.tabItem }} />
+            <Tab label="Financials" {...a11yProps(1)} onClick={() => { navigate("/companies/financials") }} classes={{ root: classes.tabItem }} />
+            <Tab label="Key metrics" {...a11yProps(2)} onClick={() => { navigate("/companies/keymetrics") }} classes={{ root: classes.tabItem }} />
+            <Tab label="News" {...a11yProps(2)} onClick={() => { history.push(`/news`) }} classes={{ root: classes.tabItem }} />
           </Tabs>
-          <FollowingControl {...{ handleFollow, isFollowing }} />
-          <Chip label="not owned" size="small" variant="outlined" style={{ color: "white" }}
+          {/* <FollowingControl {...{ handleFollow, isFollowing }} /> */}
+          {/* <Chip label="not owned" size="small" variant="outlined" style={{ color: "white" }}
             classes={{
               outlined: classes.white
             }}
-          />
+          /> */}
         </AppBar>
       )}
     </Transition>

@@ -378,6 +378,18 @@ const companyReducer = (state, action) => {
                     quotes: action.payload
                 }
             }
+        case "REINITILIZE":
+            return {
+                ...state,
+                setPruebaReady: false,
+                generatedSeries: {
+                    data: "",
+                    ready: false
+                },
+                areHistoricPricesReady: false,
+                portfolioSeriesReady: false,
+                userActivity: []
+            }
         default:
             return state
     }

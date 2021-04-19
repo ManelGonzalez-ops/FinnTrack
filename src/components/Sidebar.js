@@ -44,6 +44,7 @@ const useStyles = makeStyles((theme) => ({
     // width: ({ drawerWidth }) => drawerWidth,
     flexShrink: 0,
     whiteSpace: "nowrap",
+    position: "static",
   },
   drawerOpen: {
     width: ({ drawerWidth }) => drawerWidth,
@@ -51,6 +52,7 @@ const useStyles = makeStyles((theme) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
+    overflowX: "hidden"
   },
   drawerClose: {
     transition: theme.transitions.create("width", {
@@ -63,7 +65,8 @@ const useStyles = makeStyles((theme) => ({
       width: 0
     },
     [theme.breakpoints.up("sm")]: {
-      width: theme.spacing(9) + 1,
+
+      width: ({ info }) => !info.isAuthenticated ? theme.spacing(9) + 1 : "auto ",
     },
   },
   toolbar: {
@@ -71,8 +74,8 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     justifyContent: "flex-end",
     padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
-    height: "112px"
+    height: "100px",
+    flexShrink: 0,
   },
   listItemText: {
     width: "100%",
@@ -100,7 +103,7 @@ export const Sidebar = () => {
   const { sidebarOpen, setSidebarOpen, drawerWidth } = useUILayer()
   const { state } = useDataLayer()
   const { userState: { isAuthenticated, info } } = useUserLayer()
-  const classes = useStyles({ viewport, drawerWidth });
+  const classes = useStyles({ viewport, drawerWidth, info });
   const [dashboardMode, setDashboardMode] = useState(false)
   const [expanded, setExpanded] = React.useState([]);
 

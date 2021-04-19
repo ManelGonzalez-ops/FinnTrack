@@ -18,6 +18,7 @@ export const useCompaniesChange = () => {
                 [ticker]: []
             }
         })
+        console.log(result, "reeeeuuuer")
         let change = 0
         //aqui deberiamos cojer solo las que tienen mayor % peso
         //ojo al generatedSeries que puede que no se haya creao aun
@@ -29,6 +30,7 @@ export const useCompaniesChange = () => {
             if (portfolioHistory[date] !== undefined) {
                 //si es indefinido usamos la quote
                 let unixDate = convertHumanToUnixInit(date)
+                console.log(portfolioHistory[date], "que cojooon")
                 Object.keys(portfolioHistory[date]).forEach(ticker => {
                     const wasInPort = generatedSeries.data.dates[date].positions.find(item => ticker === item.ticker)
                     if (wasInPort) {
@@ -43,6 +45,8 @@ export const useCompaniesChange = () => {
 
                             change = (close - wasInPort.unitaryCost) * 100 / wasInPort.unitaryCost
                         }
+                        //console.log(result.ticker, "que cojooon")
+                        console.log(result, result.ticker, ticker, "ttiiika")
                         result = {
                             ...result,
                             [ticker]:
@@ -51,6 +55,8 @@ export const useCompaniesChange = () => {
                                     [unixDate, rounder(change), close]
                                 ]
                         }
+
+                        console.log(result, "resuuuuulto")
                     }
                 })
             }

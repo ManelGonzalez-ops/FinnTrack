@@ -1,9 +1,14 @@
 import React, { useEffect } from 'react'
+import { useLocation } from 'react-use'
 import { useUILayer } from '../ContextUI'
 import { useViewport } from './useViewport'
 
 export const useChartReflow = (chartInstance) => {
     const { sidebarOpen } = useUILayer()
+    const { pathname } = useLocation()
+    console.log(pathname, "pappdsdp")
+    const { viewport } = useViewport()
+    console.log(viewport, "viewpppp")
     //const {viewport} = useViewport()
     useEffect(() => {
 
@@ -14,5 +19,5 @@ export const useChartReflow = (chartInstance) => {
                 chartInstance.reflow()
             }, 200)
         }
-    }, [sidebarOpen])
+    }, [sidebarOpen, viewport, pathname])
 }

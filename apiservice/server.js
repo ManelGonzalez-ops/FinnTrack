@@ -24,6 +24,8 @@ const usersRoutes = require("./routes/Users")
 const { createUserDetails } = require("../db/services/UserService")
 const multer = require("multer")
 const { handleError } = require("./handleError")
+const { signToken } = require("./controllers/Auth")
+const passport = require("passport")
 
 createUserTable((err) => {
     console.log("que concha")
@@ -105,6 +107,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser())
 app.use(express.json())
 //app.use(express.json())
+
+app.use(passport.initialize());
+
 app.use("/api/v1/people", peopleRoutes)
 app.use("/api/v1/operations", operationRoutes)
 //the url has to change to prices, is better name
@@ -114,6 +119,9 @@ app.use("/api/v1/interests", interestsRoutes)
 app.use("/api/v1/posts", postsRoutes)
 app.use("/api/v1/auth", authRoutes)
 app.use("/api/v1/users", usersRoutes)
+
+
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 
 app.use((err, req, res, next) => {

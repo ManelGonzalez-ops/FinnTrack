@@ -45,6 +45,9 @@ import { useRemoveCredits } from "./utils/useRemoveCredits";
 import { ProfileSidebar } from "./Auth/ProfileSidebar";
 import { useHandleProfileImage } from "./utils/useHandleProfileImage";
 import { OperationList } from "./Personas/OperationList";
+import Cookie from "js-cookie"
+import { RssFeedTwoTone } from "@material-ui/icons";
+import { useSocialAuth } from "./utils/useSocialAuth";
 
 
 
@@ -57,9 +60,9 @@ const useStyles = makeStyles((theme) => ({
   },
   content: {
     flexGrow: 1,
-    overflow: "hidden",
+    overflowX: "hidden",
     position: "relative",
-    [theme.breakpoints.up("sm")]: {
+    [theme.breakpoints.up("lg")]: {
       padding: "24px 60px",
     }
   },
@@ -85,88 +88,87 @@ const date = convertUnixToHuman(Date.now())
 
 //we need to check when we buy or sell a new stock, the dashboard charts includes it
 const App = () => {
-
+  //useSocialAuth()
   useEngine()
 
   const { loading } = useIAuthh()
+  //const loading = false
 
   const { userState, userDispatch } = useUserLayer()
   const { state, dispatch } = useDataLayer()
   console.log(userState.info, "infoo userstate")
   useHandleProfileImage()
   useEffect(() => {
-    if (userState.isAuthenticated) {
-      console.log(userState, "userState")
-      const { email } = userState.info
-      if (email) {
-        fetch("http://localhost:8001/api/v1/operations", {
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ email }),
-          method: "POST"
-        })
-          .then(res => res.json())
-          .then(res => {
-            res.readyOperations && dispatch({ type: "ADD_DIRECT_HISTORY", payload: res.readyOperations })
-
-            res.currentStocks && dispatch({
-              type: "SET_INITIAL_POSSESIONS", payload: {
-                stocks: res.currentStocks,
-                cash: res.userCash
-              }
-            })
-
-            res.userData &&
-              userDispatch({ type: "ADD_USER_INFO", payload: res.userData })
-
-            console.log("hellow")
-            res.interests && dispatch({ type: "STORE_USER_INTEREST", payload: res.interests });
-            console.log("hellowa")
-            res.uniqueStocks &&
-              dispatch({ type: "SET_INITIAL_UNIQUE_STOCKS", payload: res.uniqueStocks })
-            console.log("hellowaa")
-            if (!res.initialDate) {
-              //means portfolio has been created today
-              dispatch({ type: "SET_FIRST_SERIE", payload: true })
-            } else {
-              if (res.initialDate.split("T")[0] === date) {
-                //this is set as well in the stock shop everytime wew buy firstDay, but this will handle user refresh situation.
-                dispatch({ type: "SET_FIRST_SERIE", payload: true })
-              }
-            }
-            console.log("hellowaai")
-            dispatch({ type: "ENABLE" })
-          })
-          .catch(err => { console.log(err) })
-      }
-      else {
-        throw new Error("the user is authenticated but we don't have its credentials, wtf")
-      }
-    }
-  }, [userState.isAuthenticated])
-
-  useEffect(() => {
-
     if (!userState.isAuthenticated) {
       return
     }
     const { email } = userState.info
-    fetch("http://localhost:8001/api/v1/users/image", {
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ email }),
-      method: "POST"
-    })
-      .then(res => { if (!res.ok) throw new Error("no image, is not really an error") })
-      .then(res => res.blob())
-      .then(image => { userDispatch({ type: "UPDATE_IMAGE", payload: image }) })
-      .catch(err => { alert(err.message) })
+    if (email) {
+      fetch("http://localhost:8001/api/v1/operations", {
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email }),
+        method: "POST"
+      })
+        .then(res => res.json())
+        .then(res => {
+          res.readyOperations && dispatch({ type: "ADD_DIRECT_HISTORY", payload: res.readyOperations })
 
-  }, [userState.isAuthenticated])
+          res.currentStocks && dispatch({
+            type: "SET_INITIAL_POSSESIONS", payload: {
+              stocks: res.currentStocks,
+              cash: res.userCash
+            }
+          })
+
+          if (res.userData) {
+            //we extract all keys but the image as it will be handled separately
+            const { image, ...rest } = res.userData
+            res.userData.static_image ?
+              userDispatch({ type: "ADD_USER_INFO", payload: rest })
+              :
+              userDispatch({ type: "ADD_USER_INFO", payload: { ...rest, imageUrl: image } })
+          }
+
+
+
+          console.log("hellow")
+          res.interests && dispatch({ type: "STORE_USER_INTEREST", payload: res.interests });
+          console.log("hellowa")
+          res.uniqueStocks &&
+            dispatch({ type: "SET_INITIAL_UNIQUE_STOCKS", payload: res.uniqueStocks })
+          console.log("hellowaa")
+          if (!res.initialDate) {
+            //means portfolio has been created today
+            dispatch({ type: "SET_FIRST_SERIE", payload: true })
+          } else {
+            if (res.initialDate.split("T")[0] === date) {
+              //this is set as well in the stock shop everytime wew buy firstDay, but this will handle user refresh situation.
+              dispatch({ type: "SET_FIRST_SERIE", payload: true })
+            }
+          }
+          console.log("hellowaai")
+          dispatch({ type: "ENABLE" })
+        })
+        .catch(err => { console.log(err) })
+    }
+    else {
+      throw new Error("the user is authenticated but we don't have its credentials, wtf")
+    }
+
+  }, [userState.isAuthenticated, userState.email])
+
+
+  const saveTokenInLocalstorage = () => {
+    const token = Cookie.getJSON("token")
+    if (token) {
+      localStorage.setItem("token", token)
+    }
+  }
 
   useEffect(() => {
+    saveTokenInLocalstorage()
     const worker = new Worker("worker.js")
     worker.postMessage("comeme el culo")
     worker.onmessage = e => {
@@ -219,7 +221,7 @@ const App = () => {
     }
   }, [state.currentCompany])
 
-  
+
   // console.log(authState, "tu muelo")
   // if (authState.isPending) {
   //   return <div>puto maricon ...</div>
@@ -319,5 +321,7 @@ const App = () => {
     </div>
   );
 }
+
+
 
 export default App;

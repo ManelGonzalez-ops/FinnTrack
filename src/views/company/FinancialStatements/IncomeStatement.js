@@ -12,37 +12,52 @@ import {
     withStyles,
 } from "@material-ui/core";
 import { Collapsible, TableSectionAlone, TableSectionChunk, TableSubSubtitleChunk, TableSubtitleChunk } from '../Rows'
+import { useCellWidth } from '../../../utils/useCellWidth';
 
 const useStyles = makeStyles((theme) => ({
     root: {
         background: "white",
         borderRadius: "10px",
         margin: "0 auto",
-        width: "100%",
-        // [theme.breakpoints.up("sm")]: {
-        //     width: "700px"
-        // },
-        [theme.breakpoints.up("md")]: {
+        width: "750px",
+
+        [theme.breakpoints.up("lg")]: {
             width: "1000px"
         },
-        [theme.breakpoints.up("lg")]: {
+        [theme.breakpoints.up("xl")]: {
             width: "1250px"
         }
     }
 }))
 
+const cellWidthBreakpoints = {
+    small: {
+        cellSize: 110,
+    },
+    medium: {
+        breakpoint: 1280,
+        cellSize: 135,
+    },
+    large: {
+        breakpoint: 1900,
+        cellSize: 168
+    }
+}
+
 export const IncomeStatement = ({ anualdata, readyData }) => {
-    //lgconst nestedHackWidth = 175
-    const nestedHackWidth = 138
+    //lgconst cellWidth = 175
+    const { cellWidth, breakpoint } = useCellWidth(cellWidthBreakpoints)
     const classes = useStyles()
     console.log(readyData, "liisto")
     return (
         <TableContainer
-            classes={{
-                root: classes.root,
-            }}
         >
-            <Table >
+            <Table
+                classes={{
+                    root: classes.root,
+                }}
+                className={breakpoint === "small" && "financials-table--small"}
+            >
                 <TableHead>
                     <TableRow>
                         <TableCell colSpan={3} />
@@ -77,7 +92,7 @@ export const IncomeStatement = ({ anualdata, readyData }) => {
                 <TableSectionAlone title="Total Revenue" lookupKey="totalRevenue" data={readyData} />
                 <TableSectionAlone title="Cost Of Revenue" lookupKey="costOfRevenue" data={readyData} />
                 <TableSectionAlone title="Gross Profit" lookupKey="grossProfit" data={readyData} />
-                <TableSectionAlone title="Total Operating Expense" lookupKey="totalOperatingExpense" data={readyData} />
+                {/* <TableSectionAlone title="Total Operating Expense" lookupKey="totalOperatingExpense" data={readyData} /> */}
                 <Collapsible
                     renderTitleSection={(injectedOpen, setInjectedOpen) => <TableSectionChunk title="Total Operating Expense"
                         open={injectedOpen}
@@ -87,13 +102,13 @@ export const IncomeStatement = ({ anualdata, readyData }) => {
                     />}
                 >
                     <TableSubtitleChunk title="selling / General / Administrative" lookupKey="sellingGeneralAdministrative" data={readyData}
-                    hackWidth={nestedHackWidth}/>
+                        hackWidth={cellWidth} />
                     <TableSubtitleChunk title="research & Development" lookupKey="researchAndDevelopment" data={readyData}
-                    hackWidth={nestedHackWidth}/>
+                        hackWidth={cellWidth} />
                     <TableSubtitleChunk title="interest Expense" lookupKey="interestExpense" data={readyData}
-                    hackWidth={nestedHackWidth}/>
+                        hackWidth={cellWidth} />
                     <TableSubtitleChunk title="Other Operating Expense" lookupKey="otherOperatingExpense" data={readyData}
-                    hackWidth={nestedHackWidth}/>
+                        hackWidth={cellWidth} />
                 </Collapsible>
                 <TableSectionAlone title="Operating Income" lookupKey="operatingIncome" data={readyData} />
                 <TableSectionAlone title="Net Interest Income (Expense)" lookupKey="netInterestIncome" data={readyData} />

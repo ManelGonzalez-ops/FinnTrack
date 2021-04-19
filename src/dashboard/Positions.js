@@ -206,7 +206,7 @@ export const Positions = () => {
                         <ul>
                             {readyState && readyState.map(item =>
                                 <>
-                                    <Divider />
+                                    <Divider style={{backgroundColor: "white"}} />
                                     <li>
                                         <img className="logo" src={item.logo} alt={`${item.ticker}-logo`} />
                                         <div className="additional-wrap">

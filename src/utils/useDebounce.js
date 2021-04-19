@@ -1,15 +1,54 @@
 import React, { useEffect, useState } from 'react'
 
-export const useDebounce = (searchTerm, fieldChanging, debounceTime) => {
-    const [debouncedQuery, setDebouncedQuery] = useState({ username: "", email: "" })
+let firstLoad = true
+
+export const useDebounce = (fieldChanging, debounceTime, cancelTimeout = false) => {
+    const [debouncedQuery, setDebouncedQuery] = useState("")
+
     useEffect(() => {
+        if (firstLoad) {
+            firstLoad = false
+            return
+        }
+
+        if (cancelTimeout) {
+            //hide resultList inmediately on blur
+            setDebouncedQuery(fieldChanging)
+            return
+        }
+
         const timeout = setTimeout(() => {
-            if (fieldChanging && searchTerm[fieldChanging] !== "") {
-                setDebouncedQuery(searchTerm)
-            }
+            setDebouncedQuery(fieldChanging)
         }, debounceTime)
 
         return () => clearTimeout(timeout)
-    }, [searchTerm])
-    return { debouncedQuery }
+    }, [fieldChanging])
+
+    return debouncedQuery
+}
+export const useDebounceCancelable = (fieldChanging, debounceTime) => {
+    const [debouncedQuery, setDebouncedQuery] = useState("")
+
+    useEffect(() => {
+        if (firstLoad) {
+            console.log(firstLoad, "firstlooo")
+            firstLoad = false
+            return
+        }
+
+        if (fieldChanging.cancel) {
+            //hide resultList inmediately on blur
+            setDebouncedQuery("")
+            return
+        }
+
+        const timeout = setTimeout(() => {
+            console.log(fieldChanging.value, "vallllll")
+            setDebouncedQuery(fieldChanging.value)
+        }, debounceTime)
+
+        return () => clearTimeout(timeout)
+    }, [fieldChanging])
+
+    return debouncedQuery
 }
