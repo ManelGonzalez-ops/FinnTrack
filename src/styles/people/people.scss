@@ -1,8 +1,43 @@
 .people-item {
     height: 300px;
+    display: flex;
+    flex-direction: column;
     margin: 0 0.7rem;
     margin-bottom: 2rem;
     position: relative;
+    border-radius: 10px !important;
+    background: #3f51b5 !important;
+    &__username {
+        font-size: 1.5rem;
+    }
+    
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 7px 10px 5px;
+        flex: 1;
+        //show over the chart
+        position: relative;
+        z-index: 1;
+
+    }
+
+    &__image-container {
+        width: 60px;
+        height: 60px;
+    }
+    &__image {
+        display: none;
+        height: 100%;
+        width: 100%;
+        border-radius: 100%;
+
+        &--loaded {
+            @extend .people-item__image;
+            display: unset;
+        }
+    }
 }
 
 @media (min-width: 300px) {
@@ -18,7 +53,6 @@
 
 .operations-header {
     //width: calc(100% - 50px);
-
     .MuiDataGrid-root {
         padding-left: 1rem;
         //border-right: none;
@@ -31,38 +65,27 @@
     }
 }
 
-.people-item--chart-wrapper{
-    position: absolute;
+.people-item__chartWrapper {
+    position: relative;
     bottom: 0;
     width: 100%;
+    border: 5px solid #3f51b5;
+    border-radius: 10px;
+    //height: 70%;
+    flex: 3;
+    z-index: 1;
     //height: 1;
 }
 
-.people-item--header {
-    display: flex;
-    align-items: center;
-    //justify-content: space-between;
-    //show over the chart
-    position: relative;
-    z-index: 1;
-
-    .image-container {
-        width: 60px;
-        height: 60px;
-        
-        .people-image {
-            display: none;
-            height: 100%;
-            width: 100%;
-            border-radius: 100%;
-            &.loaded {
-                display: unset;
-            }
-        }
-    }
+.people__item__performace {
+    position: absolute;
+    bottom: 0;
+    font-size: 25px;
 }
 
-.people-item-performace{
-        position: absolute;
-        bottom: 0;
+.people-overview-stockchart {
+    position: relative;
+    z-index: -1;
+    border-radius: 10px;
+    height: 100%;
 }

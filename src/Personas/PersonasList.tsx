@@ -1,8 +1,7 @@
 import { LinearProgress } from '@material-ui/core'
 import React, { useEffect, useReducer } from 'react'
-import { UserMain } from '../dashboard/UserMain'
 import { PeopleItem } from './interfaces'
-import { UserItem } from './UserItem'
+import { UserItem } from './UserItem.js'
 
 interface userMain {
     data: PeopleItem[] | null

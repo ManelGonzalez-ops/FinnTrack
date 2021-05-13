@@ -2,7 +2,6 @@ const { PriceService } = require("../controllers/Prices");
 
 class PricesServer {
 
-    pricesDirty
     possesions
     constructor(possesions) {
         this.possesions = possesions
@@ -11,18 +10,17 @@ class PricesServer {
 
         try {
             const priceService = new PriceService(this.possesions, "puta3")
-            this.pricesDirty = await priceService.init()
-            return this.structurePrices()
+            const pricesDirty = await priceService.init()
+            return this.structurePrices(pricesDirty)
         }
         catch (err) {
             throw new Error(err)
         }
     }
 
-    structurePrices() {
+    structurePrices(pricesDirty) {
         let portfolioHistoryByDate = {}
-        //console.log(this.pricesDirty, "tumuela")
-        this.pricesDirty.forEach(company => {
+        pricesDirty.forEach(company => {
             //we take the unique key which is the ticker
             const ticker = Object.keys(company)[0]
             if (company[ticker].length > 0) {

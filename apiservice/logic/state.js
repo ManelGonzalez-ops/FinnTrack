@@ -91,13 +91,15 @@ class Logic {
     async dispatchUsers(individual = false) {
 
         if (individual) {
-            const { masterSerie, companiesPerformanceImpact } = await this.getUserData(this.operations)
+            const { masterSerie, companiesPerformanceImpact } = await this.getAllUserPortfolioData(this.operations)
             this.portfolio = masterSerie
             this.companiesImpact = companiesPerformanceImpact
             return
         }
         await this.classifyPortfoliosByStats()
         this.handleUpToDatePortfolios()
+        //runs only in case of outdated portfolios, in wich case will need to fetch all historical prices and generate current posesions,
+        //this ideally just should run when runs the scheduled action.
         await this.handleOutdatedPotfolios()
         return this.masterObj
         //this.storeJson()
@@ -107,6 +109,7 @@ class Logic {
     handleOutdatedPotfolios = async () => {
         for (let row of this.outdatedPortfolios) {
             //console.log(this.operations, "operi")
+            console.log(row.userId, "outdated userId")
             const userOps = this.operations.filter(op => op.userId === row.userId)
             // console.log(userOps, "luser")
             if (userOps.length) {
@@ -114,7 +117,7 @@ class Logic {
                 //if user has operations we generate portfolio
                 //console.log(row, "userrrnmae")
                 //si el usuario no ha realizado operaciones tampoco tendrñia portofolio por lo que la comprobavion userOps.length es redundante
-                const { masterSerie } = await this.getUserData(userOps)
+                const { masterSerie } = await this.getAllUserPortfolioData(userOps)
                 //en principio en caso de que el usuario haya operado, su portfolio ya existe, (a no ser que cuando realizara la operacion el cliente cerrara la app antes de que el nuevo portfolio fuera generado en el cliente o que la base de datos fallara en gurdarlo)
                 await updatePortfolioDB(row.userId, masterSerie, this.today)
                 const user = this.people.find(user => user.userId === row.userId)
@@ -124,7 +127,7 @@ class Logic {
     }
 
 
-    async getUserData(userOps) {
+    async getAllUserPortfolioData(userOps) {
         this.userOperations = userOps
         const { readyOperations,
             uniqueStocks,

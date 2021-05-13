@@ -39,7 +39,7 @@ const initialState = {
     portfolioHistoryByCompany: {},
     userActivity: checkLocalStorage("userActivity") || [],
     currentPossesions: {
-        userCash: checkLocalStorage("userCash") || 200000,
+        //userCash: checkLocalStorage("userCash") || 200000,
         stocks: [
             // {
             //     ticker: "amzn",

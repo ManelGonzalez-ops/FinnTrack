@@ -18,7 +18,7 @@ export const AssetStructure = () => {
             let marketVal;
             if(stockHistory && stockHistory.length > 0){
                 const lastRegister = stockHistory[stockHistory.length - 1]
-                const lastRegisterClosePrice = lastRegister[2]
+                const lastRegisterClosePrice = lastRegister[1]
                 marketVal = lastRegisterClosePrice * poss.amount
                 
             }else{

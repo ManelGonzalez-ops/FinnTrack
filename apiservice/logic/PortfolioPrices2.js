@@ -251,7 +251,7 @@ class Portfolio {
 
             validDates = [...validDates, date]
             console.log("tus muelos")
-            console.log(masterSerie, "masterSeries")
+            //console.log(masterSerie, "masterSeries")
         })
         return { masterSerie: masterSerie, companiesPerformanceImpact: companiesPerformanceImpact }
     }

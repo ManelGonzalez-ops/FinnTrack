@@ -1,11 +1,8 @@
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core'
+import { Skeleton } from '@material-ui/lab'
 import React, { useEffect, useState } from 'react'
 import { GeneralIndexDispatcher } from '../../charts/GeneralIndexDispatcher'
-import { IndexesChart2 } from '../../charts/indexesChart2'
-import { MiniatureChart } from '../../charts/MiniatureChartIndex'
-import { CustomCircularProgress } from '../../components/components/CustomCircularProgress'
-import { useFetch } from '../../utils/useFetch'
-import fakeQuotes from "./fakequotes.json"
+import { rounder, formatter } from "../../utils/numFormatter"
 //each index comes with quote, so we have it all
 export const IndexesGeneral = () => {
     const category = "indexes"
@@ -13,29 +10,53 @@ export const IndexesGeneral = () => {
     const options = { explicitUrl: true }
     const [chartSelected, setChartSelected] = useState("")
     // const { datos, loading, error } = useFetch("https://financialmodelingprep.com/api/v3/quotes/index?apikey=651d720ba0c42b094186aa9906e307b4", subCategory, category, options)
-    
-    const [{allIndexPrices, loading2, error2}, setAllIndexPrices] = useState({allIndexPrices: [], loading: false, error2: ""})
+
+    const [{ allIndexPrices, loading2, error2 }, setAllIndexPrices] = useState({ allIndexPrices: [], loading: false, error2: "" })
     const getAllIndexPrices = () => {
-        setAllIndexPrices(prev=>({...prev, loading: true}))
-        fetch("http://localhost:8001/pricesIndex")
+        setAllIndexPrices(prev => ({ ...prev, loading: true }))
+        fetch("http://localhost:8001/api/v1/recurringTasks/indexes/allprices")
             .then(res => res.json())
-            .then(res => { 
+            .then(res=>{
+                console.log(res, "laassprecious")
+                return res
+            })
+            .then(res => {
                 let datus = []
-                res.forEach(arr=>{
-                    arr.forEach(arri=>{
+                res.data.forEach(arr => {
+                    arr.forEach(arri => {
                         datus = [...datus, arri]
                     })
                 })
-                setAllIndexPrices(prev=>({...prev, loading2: false, allIndexPrices: datus})) })
-            .catch(err=>{setAllIndexPrices(prev=>({...prev, loading2: false, error2: err})) })
+                console.log(datus,"datususus")
+                setAllIndexPrices(prev => ({ ...prev, loading2: false, allIndexPrices: datus }))
+            })
+            .catch(err => { setAllIndexPrices(prev => ({ ...prev, loading2: false, error2: err })) })
     }
- 
-    useEffect(()=>{
-       
-            getAllIndexPrices()
-        
-    },[])
+
+    useEffect(() => {
+
+        getAllIndexPrices()
+
+    }, [])
     console.log(allIndexPrices, "putaprices")
+    const getProvisionalData = () => {
+        if (allIndexPrices && allIndexPrices.length) {
+            const indexPrincesCopy = [...allIndexPrices]
+            console.log(indexPrincesCopy, "papapapa")
+            return indexPrincesCopy
+                .filter(index => index.prices)
+                .map(index => {
+                    console.log(index)
+                    return { name: index.symbol, prices: index.prices[index.prices.length - 1] }
+                })
+        }
+        return null
+    }
+
+    const provisionalData = getProvisionalData()
+    if (!provisionalData) {
+        return <SkeletonTable />
+    }
     return (
         <div>
             {/* {loading && <CustomCircularProgress />}
@@ -45,9 +66,6 @@ export const IndexesGeneral = () => {
                     <TableRow>
                         <TableCell>
                             Name
-                        </TableCell>
-                        <TableCell>
-                            price
                         </TableCell>
                         <TableCell>
                             open
@@ -71,37 +89,33 @@ export const IndexesGeneral = () => {
                 </TableHead>
                 <TableBody>
 
-                    {fakeQuotes.length > 0 && fakeQuotes.map((item, index) => (
+                    {provisionalData && provisionalData.map(({ prices, name }, index) => (
                         <TableRow>
                             <TableCell>
-                                {item.name}
+                                {name}
                             </TableCell>
                             <TableCell>
-                                {item.price}
+                                {formatter.format(prices.open)}
                             </TableCell>
                             <TableCell>
-                                {item.open}
+                                {formatter.format(prices.close)}
                             </TableCell>
                             <TableCell>
-                                {item.close}
+                                {formatter.format(prices.high)}
                             </TableCell>
                             <TableCell>
-                                {item.dayHigh}
+                                {formatter.format(prices.low)}
                             </TableCell>
                             <TableCell>
-                                {item.dayLow}
-                            </TableCell>
-                            <TableCell>
-                                {item.change}
+                                {rounder((prices.change / prices.close) * 100) + "%"}
                             </TableCell>
                             <TableCell
-                            style={{padding: 0, width: "100px"}}
-                            >
-                                {allIndexPrices.length > 0 && <GeneralIndexDispatcher 
-                                datos={allIndexPrices[index]} 
-                                setChartSelected={setChartSelected}
-                                chartSelected={chartSelected}
-                                />}
+                                style={{ padding: 0, width: "100px" }}
+                            ><GeneralIndexDispatcher
+                                    datos={allIndexPrices[index]}
+                                    setChartSelected={setChartSelected}
+                                    chartSelected={chartSelected}
+                                />
                             </TableCell>
                         </TableRow>
                     ))}
@@ -112,3 +126,32 @@ export const IndexesGeneral = () => {
     )
 }
 
+const SkeletonTable = () => {
+    return (
+        <Table>
+
+            {Array(20).fill(null).map(() => {
+                return <TableRow>
+                    <TableCell>
+                        <Skeleton variant="text" />
+                    </TableCell>
+                    <TableCell>
+                        <Skeleton variant="text" />
+                        <Skeleton variant="text" width="50%" />
+                        <Skeleton variant="text" width="35%" />
+                    </TableCell>
+                    <TableCell>
+                        <Skeleton height={20} />
+                    </TableCell>
+                    <TableCell>
+                        <Skeleton variant="text" />
+                        <Skeleton variant="text" width="50%" />
+                    </TableCell>
+                    <TableCell>
+                        <Skeleton height={100} />
+                    </TableCell>
+                </TableRow>
+            })}
+        </Table>
+    )
+}

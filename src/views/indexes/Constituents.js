@@ -14,36 +14,12 @@ export const Constituents = ({ category, categorySan }) => {
     const { datos, loading, error } = useFatch(url, subCategory, category, options)
     const readyTickers = useRef({})
     const [constituents, setConstituents] = useState("")
-    // const functionPromise =(ticker)=>{
-    //     return (fetch(`https://finnhub.io/api/v1/quote?symbol=${ticker}&token=btm6dp748v6ud360stcg`)
-    //     .then(res=>res.json())
-    //     .then(res=>{readyTickers.current[ticker]=res})
-    //     .catch(err=>err.message))
-    // }
-    // useEffect(()=>{
-    //     const fetchAllIndexConstituents =async(arr)=>{
-    //         return await Promise.all(arr.map(ticker=>functionPromise(ticker)))
-    //     }
-    //     if(state.indexes[category] && state.indexes[category][subCategory]){
-    //         const constituentsArr = state.indexes[category][subCategory]
-    //         console.log(constituentsArr, "gogol")
-    //        const dataFinal = fetchAllIndexConstituents(constituentsArr.constituents)
-    //        console.log(dataFinal, "gogo")
-    //     }
-    // },[state.indexes])
-
-    useEffect(() => {
-        fetch("http://localhost:8001/prueba")
-            .then(res => res.json())
-            .then(res => { console.log(res) })
-            .catch(err => err.message)
-    }, [])
-
+  
     useEffect(() => {
         console.log("executed", category)
         if (state.indexes[category] && state.indexes[category][subCategory]) {
             console.log(state.indexes[category][subCategory], "pota")
-            fetch(`http://localhost:8001/indexes/constituents/${category}`, {
+            fetch(`http://localhost:8001/api/v1/recurringTasks/indexes/constituents/${category}`, {
                 body: JSON.stringify({ ticker: state.indexes[category][subCategory].constituents }),
                 method: "POST",
                 headers: {

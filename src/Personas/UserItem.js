@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react'
+import React, { ElementRef, LegacyRef, ReactNode, useEffect, useRef, useState } from 'react'
 import { PortfolioPriceChart } from '../portfolio/PortfolioPriceChart'
 import { PeopleItem, User } from './interfaces'
 import styled from "styled-components"
@@ -6,25 +6,15 @@ import { makeStyles, Paper } from '@material-ui/core'
 import { Link } from 'react-router-dom'
 import { PortfolioChartPeople } from './PortfolioChartPeople'
 import { Skeleton } from '@material-ui/lab'
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 
-interface IProps {
-    person: PeopleItem
-}
-const useStyles = makeStyles({
-    root: {
-        width: "max(30%, 280px)",
-        margin: "0 1rem",
-        marginBottom: "2rem",
-        //margin: "5%"
-    }
-})
-export const UserItem: React.FC<IProps> = ({ person }) => {
+
+export const UserItem = ({ person }) => {
     const { user, portfolio } = person
-    const [currentPerformance, setCurrentPerformance] = useState<number | null>(null)
-    const classes = useStyles()
+    const [currentPerformance, setCurrentPerformance] = useState(null)
+    
     return (
         <Paper
-            // classes={{ root: classes.root }}
             className="people-item"
         >
 
@@ -32,23 +22,26 @@ export const UserItem: React.FC<IProps> = ({ person }) => {
                 user.username &&
                 <UserInfo>
                     <div
-                        className="people-item--header"
+                        className="people-item__header"
                     >
                         <Link to={`/people/${user.userId}`}>
                             <ImagePeople user={user} />
                         </Link>
-                        <h3>
+                        {/* <h3>
                             {user.firstName && user.firstName}
                             {user.lastName && user.lastName}
-                        </h3>
-                        <h6>{user.username}</h6>
+                        </h3> */}
+                        <h6 className="people-item__username">
+                        <Link to={`/people/${user.userId}`}>{user.username}
+                        </Link>
+                        </h6>
                     </div>
                 </UserInfo>}
             <Portfolio>
-
-                <PortfolioChartPeople datos={portfolio} title={`${user.firstName} Portfolio`}
-                    {...{ setCurrentPerformance }}
-                />
+                {(chartWrapper) =>
+                    <PortfolioChartPeople datos={portfolio} title={`${user.firstName} Portfolio`}
+                        {...{ setCurrentPerformance, chartWrapper }}
+                    />}
             </Portfolio>
 
             <PerformanceStatus {...{ currentPerformance }} />
@@ -56,32 +49,35 @@ export const UserItem: React.FC<IProps> = ({ person }) => {
     )
 }
 
-interface ICProps {
-    children: ReactNode
+const UserInfo = ({ children }) => <>{children}</>
+
+
+const Portfolio = ({ children }) => {
+    const chartWrapper = useRef(null)
+
+    return <div
+        ref={chartWrapper}
+        className="people-item__chartWrapper"
+    >{children(chartWrapper)}</div>
 }
-const UserInfo: React.FC<ICProps> = ({ children }) => <>{children}</>
-
-const Portfolio: React.FC<ICProps> = ({ children }) =>
-    <div
-        className="people-item--chart-wrapper"
-    >{children}</div>
 
 
 
-const ImagePeople: React.FC<{ user: User }> = ({ user }) => {
+const ImagePeople = ({ user }) => {
     const [imgLoaded, setImgLoaded] = useState(false)
 
     return (
-        <div className="image-container">
+        <div className="people-item__image-container">
             {
                 user.image ?
                     <img src={`http://localhost:8001/${user.image}`}
-                        className={imgLoaded ? "people-image loaded" : "people-image"}
+                        className={imgLoaded ?
+                            "people-item__image--loaded" : "people-item__image"}
                         onLoad={() => { setImgLoaded(true) }}
                     />
                     :
                     <img src="https://hope.be/wp-content/uploads/2015/05/no-user-image.gif"
-                        className={imgLoaded ? "people-image loaded" : "people-image"}
+                        className={imgLoaded ? "people-item__image--loaded" : "people-item__image"}
                         onLoad={() => { setImgLoaded(true) }}
                     />
             }
@@ -91,15 +87,13 @@ const ImagePeople: React.FC<{ user: User }> = ({ user }) => {
         </div>
     )
 }
-interface props {
-    currentPerformance: number | null
-}
-const PerformanceStatus: React.FC<props> = ({ currentPerformance }) => {
+
+const PerformanceStatus = ({ currentPerformance }) => {
 
     if (!currentPerformance) {
         return null
     }
     return <p
-        className="people-item-performace"
-    >{currentPerformance}%</p>
+        className="people__item__performace"
+    ><ArrowUpwardIcon style={{ transform: "scale(0.7)" }} />{currentPerformance}%</p>
 }

@@ -101,10 +101,10 @@ export const Navbar = () => {
 
 
 
-  const { userDispatch } = useUserLayer()
+  const { userDispatch, userState: { isAuthenticated } } = useUserLayer()
   const logout = (cb) => {
 
-    dispatch({type: "REINITILIZE"})
+    dispatch({ type: "REINITILIZE" })
     Cookie.remove("token")
     userDispatch({ type: "SET_USER_NULL" })
     cb()
@@ -143,14 +143,14 @@ export const Navbar = () => {
             className={classes.desktopActions}
           >
             <Button variant="contained" color="primary"
-              onClick={() => { history.push("/login") }}
+              onClick={() => { history.push("/login", { background: location }) }}
             >login</Button>
-            <Button variant="contained" color="primary"
+            {isAuthenticated && <Button variant="contained" color="primary"
               onClick={() => { logout(() => history.push("/login")) }}
-            >Logout</Button>
-            <Typography>
+            >Logout</Button>}
+            { isAuthenticated && <Typography>
               {formatter.format(state.currentPossesions.userCash)} $
-            </Typography>
+            </Typography>}
           </div>
         </Toolbar>
       </AppBar>

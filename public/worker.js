@@ -43,7 +43,7 @@ this.onmessage = e => {
         portfolioHistoryByCompanies[ticker] = companyHistory
     })
 
-    this.postMessage({portfolioHistoryByDate, portfolioHistoryByCompanies})
+    this.postMessage({ portfolioHistoryByDate, portfolioHistoryByCompanies })
 }
 
 const convertHumanToUnixInit = (date) => {
@@ -55,4 +55,11 @@ const convertHumanToUnixInit = (date) => {
         actualDate[2]
     );
     return formatedDate.getTime();
+}
+
+const isDateClean = (date) => {
+    if (date.includes("T")) {
+        return false
+    }
+    return true
 }

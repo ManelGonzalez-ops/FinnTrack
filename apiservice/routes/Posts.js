@@ -1,16 +1,19 @@
-const express = require("express")
-const { addReply, addPost, getPosts, handleLike } = require("../controllers/Posts")
-const router = express.Router()
+const express = require("express");
+const {
+  addReply, addPost, getPosts, handleLike,
+} = require("../controllers/Posts");
+
+const router = express.Router();
 
 router.route("/")
-    .get(getPosts)
+  .get(getPosts);
 router.route("/")
-    .post(addPost)
+  .post(addPost);
 
 router.route("/reply")
-    .post(addReply)
+  .post(addReply);
 
 router.route("/like")
-    .get(handleLike)
+  .get(handleLike);
 
-module.exports = router
+module.exports = router;

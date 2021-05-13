@@ -184,6 +184,7 @@ export const useLogicPruebas = () => {
     // }
 
     const generateSerieFromBegining = (userActivity, cb) => {
+        console.log("called")
         const worker = new Worker("/worker2.js")
         worker.postMessage(userActivity)
         worker.onmessage = (e) => {

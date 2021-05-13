@@ -8,9 +8,9 @@ export const Overlay = () => {
         width: "100%",
         height: "100%",
         position: "absolute",
-        backgroundColor: "rgba(0,0,0,0.5)",
-        transition: "opacity 0.3s ease",
-        zIndex: 2000
+        backgroundColor: "rgba(0,0,0,0.7)",
+        transition: "opacity 0.2s ease",
+        zIndex: 4
     };
     const transitionStyles = {
         entering: { opacity: 0 },
@@ -19,7 +19,7 @@ export const Overlay = () => {
         exited: { opacity: 0 }
     };
     return (
-        <div>
+ 
             <Transition
                 in={showOverlay}
                 mountOnEnter
@@ -35,6 +35,6 @@ export const Overlay = () => {
                     />
                 )}
             </Transition>
-        </div>
+     
     )
 }

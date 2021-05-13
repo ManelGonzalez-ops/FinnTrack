@@ -251,7 +251,7 @@
 
 .searcher4.open {
   transform: translateY(-50px);
-  z-index: 2001;
+  z-index: 5;
 }
 
 .searcher4 input {

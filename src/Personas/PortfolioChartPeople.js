@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react'
 import Highcharts, { chart } from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useChartReflow } from '../utils/useChartReflow';
@@ -13,12 +13,14 @@ Highcharts.setOptions({
 });
 
 //tenemos que usar otra grafica para la vista details de este grafico para solucionar setCurrentPerformance errror
-export const PortfolioChartPeople = ({ datos, title, setCurrentPerformance }) => {
+
+export const PortfolioChartPeople = ({ datos, title, setCurrentPerformance = () => null }) => {
 
     const chart = useRef(null)
     //useChartReflow(chart.current)
     const { state: { addFirstSerie } } = useDataLayer()
     const [dataset, setDataset] = useState("")
+
 
     //la fecha de la grafica siempre es un dia menos respecto a las generatedseries
 
@@ -65,6 +67,7 @@ export const PortfolioChartPeople = ({ datos, title, setCurrentPerformance }) =>
     }, [datos])
 
     const options = {
+        id: "people-overview-stockchart",
         chart: {
             type: "areaspline",
             //zoomType: "x",
@@ -76,15 +79,16 @@ export const PortfolioChartPeople = ({ datos, title, setCurrentPerformance }) =>
                     chart.current = this
                 }
             },
-            height: "70%",
-            //width: "100%",
-            //id: "chart-stock",
+
             animation: false,
             margin: [0, 0, 0, 0],
             //height: '100%',
             spacing: [0, 0, 0, 0],
             borderWidth: 0,
             crisp: false,
+        },
+        title: {
+            text: ""
         },
         yAxis: {
             min: 0,
@@ -192,7 +196,7 @@ export const PortfolioChartPeople = ({ datos, title, setCurrentPerformance }) =>
                     highcharts={Highcharts}
                     options={options}
                     constructorType={"chart"}
-
+                    containerProps={{ class: "people-overview-stockchart" }}
                 />}
         </>
     )

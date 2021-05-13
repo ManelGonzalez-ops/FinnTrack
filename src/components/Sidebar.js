@@ -196,8 +196,8 @@ export const Sidebar = () => {
             <Divider />
           </>
         }
-        <StyledTreeItem nodeId="22" labelText="Search" labelIcon={SearchIcon} isTitle
-          ariaLabel="search"
+        <StyledTreeItem nodeId="22" labelText="Home" labelIcon={SearchIcon} isTitle
+          ariaLabel="Home"
           onLabelClick={() => { history.push("/") }}
         />
         <StyledTreeItem nodeId="23" labelText="Feed" labelIcon={SearchIcon} isTitle

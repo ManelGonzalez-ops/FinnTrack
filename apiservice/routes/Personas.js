@@ -1,19 +1,25 @@
-const {listPeople, makePortfolio, showUsers, showUser} = require("../controllers/Personas")
+const express = require("express");
+const {
+  listPeople, makePortfolio, showUser,
+  sendPortfolios,
+  getImage,
+} = require("../controllers/Personas");
 
-const express = require("express")
-
-const router = express.Router()
+const router = express.Router();
 
 router.route("/")
-.get(listPeople)
+  .get(listPeople);
 
 router.route("/porfolio")
-.get(makePortfolio)
+  .get(makePortfolio);
 
 router.route("/main")
-.get(makePortfolio)
+  .get(sendPortfolios);
 
 router.route("/:id")
-.get(showUser)
+  .get(showUser);
 
-module.exports = router
+router.route("/image/:fundId")
+  .get(getImage);
+
+module.exports = router;

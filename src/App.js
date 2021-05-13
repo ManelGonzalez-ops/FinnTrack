@@ -9,7 +9,6 @@ import { Button, CssBaseline } from "@material-ui/core";
 import { Navbar } from "./components/Navbar";
 import { Sidebar } from "./components/Sidebar";
 import { Principal } from "./views/principal/principal";
-import { Searcher } from "./components/Searcher";
 import { KeymetricsChart } from "./charts/KeymetricsChart"
 import { CovidSection2 } from "./views/covid/CovidSection2";
 import { News } from "./views/principal/elements/News";
@@ -19,7 +18,6 @@ import { CompanySection } from "./views/company/CompanySection";
 import { IndexesController } from "./views/indexes/IndexesController";
 import { useDataLayer } from "./Context";
 import { useEngine } from "./portfolio/Engine";
-import { UserMain } from "./dashboard/UserMain";
 import { Middleware } from "./dashboard/Middleware2";
 import { useOktaAuth } from '@okta/okta-react';
 import { useTemporaryPossesions } from "./useTemporaryPossesions";
@@ -28,8 +26,6 @@ import { UserContextt, useUserLayer } from "./UserContext";
 import { StackedColumn } from "./charts/StackedColumn";
 import { ControllerCompany } from "./views/company/ControllerCompany";
 import { Overlay } from "./components/Overlay";
-import Formm from "./SignIn2";
-import { PersonasList } from "./Personas/PersonasList";
 import { PeopleRouter } from "./Personas/PeopleRouter";
 import { FeedViews } from "./views/seguidores/FeedViews";
 import { Login } from "./Auth/Login";
@@ -48,12 +44,14 @@ import { OperationList } from "./Personas/OperationList";
 import Cookie from "js-cookie"
 import { RssFeedTwoTone } from "@material-ui/icons";
 import { useSocialAuth } from "./utils/useSocialAuth";
+import { CSSTransition, Transition, TransitionGroup } from "react-transition-group";
 
 
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
+    position: "relative"
   },
   menuButton: {
     marginRight: 36,
@@ -64,16 +62,12 @@ const useStyles = makeStyles((theme) => ({
     position: "relative",
     [theme.breakpoints.up("lg")]: {
       padding: "24px 60px",
+      paddingTop: 0,
     }
   },
   toolbar: {
-    //display: "flex",
-    //alignItems: "center",
-    //justifyContent: "flex-end",
-    //padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
     width: "100%",
-    height: (props) => props.location.pathname.split("/")[1] === "companies" ? "112px" : "40px"
+    height: (props) => props.location.pathname.split("/")[1] === "companies" ? "112px" : "64px"
   },
   overlay: {
     position: "absolute",
@@ -230,6 +224,13 @@ const App = () => {
   // console.log(selection, "seleeeection")
   // console.log(userState.info, "que colluns")
 
+  const authRoutes = [
+    { path: "/login", Component: Login },
+    { path: "/register", Component: Register },
+  ]
+  //used to trick switch and render route as if it was the current url (we'll show login/register overlay)
+  let background = location.state && location.state.background
+
   if (loading) {
     return <h4>Checking credentials</h4>
   }
@@ -243,30 +244,23 @@ const App = () => {
       <main className={classes.content}>
         <div className={classes.toolbar} />
         <Button onClick={() => { history.push("/pruebaPorfolio") }}></Button>
-        <Switch>
-          <Route path="/" exact >
-            <Principal setSelection={setSelection} />
-          </Route>
+        <Switch location={background || location}>
           <Route path="/companies">
             <ControllerCompany />
           </Route>
 
-          <Route path="/news/:category" exact>
+          <Route path="/news/:category" >
             <News principal={true} />
           </Route>
-          <Route path="/covid19" exact>
+          <Route path="/covid19" >
             <CovidSection2 />
           </Route>
 
-          <Route path="/indexes/:field" exact>
+          <Route path="/indexes/:field" >
             <IndexesController />
           </Route>
-          <Route path="/search" exact>
-            <Searcher {...{ setSelection }} />
-          </Route>
-
-          <Route path="/portfolio" exact>
-            <Middleware component={UserMain} />
+          <Route path="/portfolio" >
+            <Middleware />
           </Route>
           <Route path="/operations">
             <AuthMiddleware>
@@ -276,19 +270,13 @@ const App = () => {
           <Route path="/people" >
             <PeopleRouter />
           </Route>
-          <Route path="/proba" exact>
+          <Route path="/proba" >
             <StackedColumn ticker="nflx" />
           </Route>
-          <Route
-            path="/lugin"
-            exact
-          >
-            <Formm />
-          </Route>
-          {/* <Route path="/feed" exact>
+          {/* <Route path="/feed" >
             <FeedViews />
           </Route> */}
-          <Route path="/feed" exact>
+          <Route path="/feed" >
             <UserContextt.Consumer>
               {values => (
                 <PopulateOnScroll>
@@ -301,13 +289,7 @@ const App = () => {
               )}
             </UserContextt.Consumer>
           </Route>
-          <Route path="/login" exact>
-            <Login />
-          </Route>
-          <Route path="/register" exact>
-            <Register />
-          </Route>
-          <Route path="/protectedRuta" exact>
+          <Route path="/protectedRuta" >
             <ProtectedRoute />
           </Route>
           <Route path="/uploads">
@@ -315,7 +297,18 @@ const App = () => {
               <UpdateInfoView />
             </AuthMiddleware>
           </Route>
+          <Route path="/">
+            <Principal setSelection={setSelection} />
+          </Route>
         </Switch>
+
+        {background && <>  <Route path="/login" >
+          <Login />
+        </Route>
+          <Route path="/register" >
+            <Register />
+          </Route>
+        </>}
 
       </main>
     </div>
@@ -323,5 +316,17 @@ const App = () => {
 }
 
 
+
+const defaultStyle = {
+  transition: `opacity 500ms ease-in-out`,
+  opacity: 0,
+}
+
+const transitionStyles = {
+  entering: { opacity: 1 },
+  entered: { opacity: 1 },
+  exiting: { opacity: 0 },
+  exited: { opacity: 0 },
+};
 
 export default App;

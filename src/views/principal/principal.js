@@ -1,14 +1,9 @@
 //last news, market sentiment, principal indexes
 
 import React from 'react'
-import { Searcher } from '../../components/Searcher'
-import { Searcher2 } from '../../components/Searcher2'
 import { GainersCarousel } from './elements/GainersCarousel'
-import { Indices } from './elements/Indices'
-import { News } from './elements/News'
 import { Sectors } from './elements/Sectors'
 import { TickerBar2 } from './elements/TickerBar2'
-//import {TickerBar2} from "./elements/TickerBar2"
 import { Searcher4 } from "../../components/Searcher4"
 import { useUILayer } from '../../ContextUI'
 const titleStyles = {

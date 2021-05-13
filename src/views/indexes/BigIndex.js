@@ -4,7 +4,6 @@ import { ChartIndex } from './ChartIndex'
 import {Constituents} from "./Constituents"
 
 export const BigIndex = ({ index }) => {
-    const url = `https://financialmodelingprep.com/api/v3/${index}_constituent?apikey=651d720ba0c42b094186aa9906e307b4`
 
     const category = index
 

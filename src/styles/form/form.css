@@ -16,3 +16,59 @@
 .contact-details .form-group {
   margin-bottom: 1rem;
 }
+
+.form {
+  height: 100%;
+  width: 100%;
+  max-width: 450px;
+  width: 40vw;
+  min-width: 350px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.form__title {
+  margin-bottom: 15px;
+}
+
+.formLocal > form {
+  display: flex;
+  flex-direction: column;
+}
+
+.formOauth {
+  display: flex;
+  flex-direction: column;
+}
+
+.formOauth a {
+  text-decoration: none;
+}
+
+.form__or {
+  text-align: center;
+  margin: 20px auto;
+}
+
+.form__footer {
+  display: flex;
+  padding-top: 10px;
+}
+
+.form__footer > p {
+  margin-right: 12px;
+  align-self: flex-start;
+}
+
+.form__footer > button {
+  flex: 1;
+}
+
+@media (max-width: 350px) {
+  .form {
+    width: 280px;
+    padding: 10px;
+    max-width: none;
+    min-width: 0;
+  }
+}

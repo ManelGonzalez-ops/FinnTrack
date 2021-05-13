@@ -31,8 +31,8 @@ const logoReducer = (state, action) => {
             return state
     }
 }
-export const PositionsPersonas = ({currentPossesions, companiesChange}) => {
-   
+export const PositionsPersonas = ({ currentPossesions, companiesChange }) => {
+
     const [readyState, setReadyState] = useState("")
     const [loading, setLoading] = useState(false)
     const [{ quotes }, setQuotes] = useState({ quotes: "" })
@@ -126,7 +126,7 @@ export const PositionsPersonas = ({currentPossesions, companiesChange}) => {
     const requestAdditionalInfo = (stocks) => {
         setLoading(true)
         dispatch({ type: "SET_LOADING" })
-        fetch("http://localhost:8001/api/companies_url", {
+        fetch("http://localhost:8001/api/v1/recurringTasks/companiesInfo/companies_url", {
             headers: {
                 "Content-Type": "application/json"
             },
@@ -140,7 +140,7 @@ export const PositionsPersonas = ({currentPossesions, companiesChange}) => {
 
 
     const fetchQuotes = (tickers) => {
-        fetch("http://localhost:8001/api/portfolio/quotes", {
+        fetch("http://localhost:8001/api/v1/recurringTasks/companiesInfo/quotes", {
             headers: {
                 "Content-Type": "application/json"
             },
@@ -203,22 +203,24 @@ export const PositionsPersonas = ({currentPossesions, companiesChange}) => {
                     <div className="positions-body">
                         <ul>
                             {readyState && readyState.map(item =>
-                                <>
+                                <li
+                                    key={item.name}
+                                >
                                     <Divider />
-                                    <li>
-                                        <img className="logo" src={item.logo} alt={`${item.ticker}-logo`} />
-                                        <div className="additional-wrap">
-                                            <p className="field-2">
-                                                <h5>{item.ticker} ({item.name})</h5>
-                                                <p>Qty: {item.amount}</p>
-                                            </p>
-                                            <p className="field-3">
-                                                <p>{formatter.format(item.value)}</p>
-                                                <p>{item.change}%</p>
-                                            </p>
-                                        </div>
-                                    </li>
-                                </>
+
+                                    <img className="logo" src={item.logo} alt={`${item.ticker}-logo`} />
+                                    <div className="additional-wrap">
+                                        <p className="field-2">
+                                            <h5>{item.ticker} ({item.name})</h5>
+                                            <p>Qty: {item.amount}</p>
+                                        </p>
+                                        <p className="field-3">
+                                            <p>{formatter.format(item.value)}</p>
+                                            <p>{item.change}%</p>
+                                        </p>
+                                    </div>
+
+                                </li>
                             )}
                         </ul>
                     </div>

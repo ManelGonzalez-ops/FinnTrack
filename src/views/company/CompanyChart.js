@@ -11,7 +11,7 @@ import { useChartReflow } from "../../utils/useChartReflow";
 
 
 export const CompanyChart = ({ ticker }) => {
-    const url = "http://localhost:8001/prices";
+    const url = "http://localhost:8001/api/v1/prices/ticker";
 
     const AdjustedPrices = useRef(null);
     const notAdjustedPrices = useRef(null);
@@ -66,17 +66,17 @@ export const CompanyChart = ({ ticker }) => {
         data.forEach((record) => {
             let cleanRecord = [
                 record["date"],
-                record["adjClose"],
+                record["adjOpen"],
                 record["adjHigh"],
                 record["adjLow"],
-                record["adjOpen"],
+                record["adjClose"],
             ];
             let cleanRecordNoAdjusted = [
                 record.date,
-                record.close,
+                record.open,
                 record.high,
                 record.low,
-                record.open,
+                record.close,
             ];
 
             ohl = [...ohl, cleanRecord];

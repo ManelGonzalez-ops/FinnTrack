@@ -56,7 +56,7 @@ export const PeopleDetails = () => {
         console.log(data, "portfoliou")
         const portfolio = Object.keys(data.portfolio)
         const lastDate = portfolio[portfolio.length - 1]
-        setCurrentPrice(data.portfolio[lastDate].liquidativeValue / 10)
+        setCurrentPrice(data.portfolio[lastDate].liquidativeValue)
     }
     const shopProps = {
         loading: false,
@@ -70,7 +70,8 @@ export const PeopleDetails = () => {
                     : <>
                         <StockShop ticker={data?.user.username}
                             {...shopProps}
-
+                            assetType="peopleFund"
+                            fundId={id}
                         />
                         {data &&
 

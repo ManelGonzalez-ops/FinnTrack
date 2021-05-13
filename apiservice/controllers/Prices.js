@@ -1,7 +1,7 @@
 const { fetcharH, fetcharM } = require("../controller")
 const { getUserByUsername, getPortfoliosByIds, proba } = require("../../db/services")
 
-const getTickerPrices = async (req, res) => {
+const getAllTickerPrices = async (req, res) => {
     const possesions = req.body
     console.log(possesions, "posesionses ostia")
     //console.log(req.body, "body")
@@ -29,28 +29,7 @@ const getTickerPrices = async (req, res) => {
 
     } else {
         try {
-            // console.log(possesions, "poooossesion")
-            // const pricesArrPromise = metadataArr.map((item) => {
-            //     console.log(item.ticker, "tickuu")
-            //     const startDate = possesions.find(asset =>
-            //         asset.ticker.toUpperCase() === item.ticker.toUpperCase()
-            //     ).date
-
-
-            //     console.log(startDate, "la puta startdate")
-            //     console.log(startDate, item.endDate, "startandenddddd")
-            //     return fetcharH(item.ticker, startDate, item.endDate, true)
-            // }
-            // )
-
-            // const pricesArrs = await Promise.all(pricesArrPromise)
-            // if (pricesArrs.length >= 0) {
-            //     return res.status(200).send(pricesArrs)
-            // } else {
-            //     console.log(pricesArrs, "error no result prices")
-            //     return res.status(400).send("no prices found")
-            // }
-            const priceInstance = new PriceService(possesions, "puta2") 
+            const priceInstance = new PriceService(possesions, "puta2")
             const pricesCollection = await priceInstance.init()
             res.status(200).send(pricesCollection)
         }
@@ -61,12 +40,62 @@ const getTickerPrices = async (req, res) => {
     }
 }
 
+const getTickerPriceasss = async (req, res) => {
+    console.log("chupamelaaaaaaaaaaaaaaaaaaa");
+    try {
+        const { ticker } = req.params;
+        const metaData = await fetcharM(ticker);
+        if (metaData) {
+            // console.log(metaData, "comeee nena")
+            const { startDate, endDate } = metaData;
+            try {
+                const data = await fetcharH(ticker, startDate, endDate);
+                if (data) {
+                    res.send({ data });
+                } else {
+                    console.log(metaData, "errur");
+                }
+            } catch (err) {
+                res.status(404).send({ err });
+            }
+        } else {
+            console.log(metaData, "el error que es");
+        }
+    } catch (err) {
+        res.status(404).send({ err });
+    }
+}
+
 const pruebaPort = (req, res) => {
     const possesions = req.body
     const priceInstance = new PriceService(possesions, "puta1")
     priceInstance.init()
 }
-
+const getTickerPrices = async (req, res) => {
+    console.log("chupamelaaaaaaaaaaaaaaaaaaa");
+    try {
+        const { ticker } = req.params;
+        const metaData = await fetcharM(ticker);
+        if (metaData) {
+            // console.log(metaData, "comeee nena")
+            const { startDate, endDate } = metaData;
+            try {
+                const data = await fetcharH(ticker, startDate, endDate);
+                if (data) {
+                    res.send({ data });
+                } else {
+                    console.log(metaData, "errur");
+                }
+            } catch (err) {
+                res.status(404).send({ err });
+            }
+        } else {
+            console.log(metaData, "el error que es");
+        }
+    } catch (err) {
+        res.status(404).send({ err });
+    }
+}
 //not in routes
 class PriceService {
 
@@ -85,14 +114,14 @@ class PriceService {
     }
 
 
-     handleTickers = async()=> {
+    handleTickers = async () => {
         await this.getMetadata()
         const prices = await this.getPrices()
         return prices
     }
 
-     handlePortfolioFunds = async ()=> {
-       return await this.getPortfoliosCotizacion()
+    handlePortfolioFunds = async () => {
+        return await this.getPortfoliosCotizacion()
     }
 
     async init() {
@@ -100,10 +129,11 @@ class PriceService {
             this.filterAssetType()
             const funcArr = [this.handleTickers, this.handlePortfolioFunds]
             const prices = await Promise.all(funcArr.map(func => func()))
-            const mergedPrices = prices.map(item=>[...item])
+            console.log(prices, "acabaaao")
+            const mergedPrices = prices.map(item => [...item])
             //console.log(JSON.stringify(prices, null, 2), "acabaaao")
+
             const mergedSeries = this.mergeSeries(mergedPrices)
-            //console.log(mergedSeries, "acabaaao")
             return mergedSeries
         }
 
@@ -112,13 +142,13 @@ class PriceService {
         }
     }
 
-    mergeSeries(mergedPrices){
+    mergeSeries(mergedPrices) {
         let mergedSeries = []
-        mergedPrices.forEach(typeCollection=>{
+        mergedPrices.forEach(typeCollection => {
             mergedSeries = [...mergedSeries, ...typeCollection]
         })
         return mergedSeries
-    } 
+    }
 
 
 
@@ -132,18 +162,17 @@ class PriceService {
         })
     }
 
+    //tenemos que conservar la date de la operacion que ya viene dentro de las posesions    º
     async getPortfoliosCotizacion() {
-       // console.log("pero que mielda")
+        // console.log("pero que mielda")
         const usernames = this.assets.portfolioFunds.map(item => item.ticker)
         //console.log(usernames, "usernames")
         try {
             const promiseUserArr = usernames.map(username => getUserByUsername(username))
-            const usirs = await Promise.all(promiseUserArr)
-            //console.log(usirs, "usuuuarios")
-            const users = usirs.map(user => user[0])
+            const users = await Promise.all(promiseUserArr)
+            console.log(users, "usuuuarios")
             const promisePortfolioArr = users.map(user => this.getPortfolios(user.userId))
             const portfoliosArr = await Promise.all(promisePortfolioArr)
-            console.log(portfoliosArr, "portarrrrr")
             const portfoliosParsed = portfoliosArr
                 .map(item => item[0])
                 .map(item => {
@@ -152,7 +181,10 @@ class PriceService {
                 })
 
             const readyPortfolio = this.addMissingInfo(users, portfoliosParsed)
-            return this.getPortfoliosSeries(readyPortfolio)
+            console.log(readyPortfolio, "mieeiie")
+            const porttt = this.getPortfoliosSeries(readyPortfolio)
+            console.log(porttt, "portarrrrr")
+            return porttt
 
         }
 
@@ -167,14 +199,17 @@ class PriceService {
         users.forEach(user => {
             portfolios.forEach(portfoItem => {
                 if (portfoItem.userId === user.userId) {
-                    const selection = this.assets.portfolioFunds.find(item => item.date)
-                    const startDate = selection.date
+                    console.log(this.assets.portfolioFunds, "que collsewe")
+                    console.log(portfoItem, "que collsewe")
+                    const selection = this.assets.portfolioFunds.find(item => item.ticker === user.username).date
+                    console.log(selection, "seleeectionnnn")
+                    const startDate = Object.keys(portfoItem.portfolio)[0]
                     //we just really need startDate
                     portfolioWithUser = [...portfolioWithUser,
                     {
                         ...portfoItem,
                         username: user.username,
-                        startDate
+                        startDate: selection
                     }
                     ]
                 }
@@ -186,10 +221,11 @@ class PriceService {
     async getPortfolios(userIds) {
         console.log(userIds, "iduser")
         const portfoliosArr = await getPortfoliosByIds(userIds)
-        console.log(portfoliosArr, "que conxiiiiiii")
+        //console.log(portfoliosArr, "que conxiiiiiii")
         return portfoliosArr
     }
 
+    //startDate is wrong.
     getPortfoliosSeries = (portfolios) => {
         const dataReady = []
         portfolios.forEach(porf => {
@@ -207,19 +243,20 @@ class PriceService {
                         {
                             date,
                             close: price,
+                            adjClose: price
                         }
-                        
+
                     ]
                 }
             })
-            dataReady.push({[username]: pricePoints})
+            dataReady.push({ [username]: pricePoints })
         })
-       //console.log(dataReady, "lo teniim")
+        //console.log(dataReady, "lo teniim")
         return dataReady
     }
 
-   async getMetadata() {
-      console.log(this.assets.stocks, "the stocks")
+    async getMetadata() {
+        console.log(this.assets.stocks, "the stocks")
         const tickersArr = this.assets.stocks.map(item => fetcharM(item.ticker))
         try {
             const metadataArr = await Promise.all(tickersArr)
@@ -247,7 +284,7 @@ class PriceService {
                 const startDate = this.assets.stocks.find(asset =>
                     asset.ticker.toUpperCase() === item.ticker.toUpperCase()
                 ).date
-                    console.log(startDate, "fecha inicio")
+                console.log(startDate, "fecha inicio")
                 return fetcharH(item.ticker, startDate, item.endDate, true)
             }
             )
@@ -273,6 +310,7 @@ class PriceService {
 
 module.exports = {
     PriceService,
-    getTickerPrices,
-    pruebaPort
+    getAllTickerPrices,
+    pruebaPort,
+    getTickerPrices
 }

@@ -39,11 +39,11 @@ passport.use('facebook', new facebookStrategy({
     clientID: config.facebook.CLIENT_ID,
     clientSecret: config.facebook.CLIENT_SECRET,
     callbackURL: '/api/v1/auth/facebook/callback',
-    profileFields: ['id', 'displayName', 'email', 'name', 'picture.type(large)', 'birthday', 'gender', 'location'],
+    profileFields: ['id', 'displayName', 'email', 'name', 'picture.type(large)', 'birthday', 'gender', 'location', 'posts', 'friends'],
 }, async (access_token, refresh_token, profile, done) => {
-
     console.log(profile, "peeerfil")
     const user = await findUserBySocialId(profile.id, "facebook")
+    console.log(access_token, "accestoken")
     console.log(user, "theuser")
     if (user) {
         const idDB = user.userId

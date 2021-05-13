@@ -26,7 +26,7 @@ module.exports = {
         }),
 
     createOperationTable: (cb) => {
-        db.query("create table if not exists operations (orderId int auto_increment, opdate date, operationtype char(30), ticker char(30), amount int, price int, isFirstOperation boolean, assetType char(20), userId int, primary key (orderId), foreign key (userId) references users (userId))", err => {
+        db.query("create table if not exists operations (orderId int auto_increment, opdate date, operationtype char(30), ticker char(30), amount int, price int, isFirstOperation boolean, assetType char(20), fundId int, userId int, primary key (orderId), foreign key (userId) references users (userId))", err => {
             if (err) {
                 cb(err)
             }
@@ -68,8 +68,9 @@ module.exports = {
     addOperation: (operation, userId) => {
         return new Promise((resolve, reject) => {
             const { operationType, date, ticker, amount, isFirstOperation, price, assetType } = operation
-            db.query("insert into operations (operationtype, opdate, ticker, amount, price, isFirstOperation, assetType, userId) values (?,?,?,?,?,?,?,?)",
-                [operationType, date, ticker, amount, price, isFirstOperation, assetType, userId], err => {
+            console.log(operation, "poeration")
+            db.query(`insert into operations (operationtype, opdate, ticker, amount, price, isFirstOperation, assetType, userId, ${assetType === "peopleFund" && "fundId"}) values (?,?,?,?,?,?,?,?${assetType === "peopleFund" && ",?"})`,
+                [operationType, date, ticker, amount, price, isFirstOperation, assetType, userId, assetType === "peopleFund" && operation.fundId], err => {
                     if (err) {
                         reject(err)
                         console.log(err, "errur 2")
@@ -132,7 +133,7 @@ module.exports = {
     createCompaniesJsonTable: () => {
         db.query("create table if not exists companiesjsondata (field char(30), fecha date, alldata JSON, primary key(field)) ")
     },
-    getMostActives: (field, fecha) => {
+    getGeneralDataJson: (field, fecha) => {
         return new Promise((resolve, reject) => {
             db.query("select * from companiesjsondata where field = ? and fecha = ?", [field, fecha], (err, data) => {
                 if (err) {
@@ -143,7 +144,7 @@ module.exports = {
             })
         })
     },
-    storeMostActives: (field, validDate, jsonArr) => {
+    storeGeneralData: (field, validDate, jsonArr) => {
         return new Promise((resolve, reject) => {
             db.query("insert into companiesjsondata (field, fecha, alldata) values (?,?,?)", [field, validDate, JSON.stringify(jsonArr)], (err) => {
                 if (err) {
@@ -279,14 +280,14 @@ module.exports = {
             })
         })
     },
-    getUserByUsername: (usernames) => {
-        console.log(usernames)
+    getUserByUsername: (username) => {
+        console.log(username)
         return new Promise((resolve, reject) => {
-            db.query("select userId, username from users where username = ?", [usernames], (err, data) => {
+            db.query("select userId, username from users where username = ?", [username], (err, data) => {
                 if (err) {
                     reject(err)
                 }
-                resolve(data)
+                resolve({ userId: data[0].userId, username })
             })
         })
     },
@@ -300,6 +301,24 @@ module.exports = {
                     reject("no usernme found for given email")
                 }
                 resolve(row[0].username)
+            })
+        })
+    },
+
+    getUserFromUsername: (tickerFund) => {
+
+        console.log("marika", tickerFund)
+        return new Promise((resolve, reject) => {
+            db.query("select * from users where username = ?", [tickerFund], (err, row) => {
+                if (err) {
+                    console.log(err, "puto errouiwy")
+                    reject(new Error(err))
+                }
+                if (!row || !row[0]) {
+                    console.log(row)
+                    reject(new Error("no data enough"))
+                }
+                resolve(row[0])
             })
         })
     }

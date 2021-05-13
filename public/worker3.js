@@ -117,7 +117,8 @@ class PortfolioGenerator {
                     }
                     console.log(date, "fechaau")
                     if (this.portfolioHistory[date]) {
-                        stockRegister = this.portfolioHistory[date][asset.ticker.toUpperCase()]
+                        stockRegister = this.portfolioHistory[date][
+                            asset.ticker || asset.ticker.toUpperCase()]
                         stockClosePrice = stockRegister.close
                     } else {
                         stockRegister = undefined

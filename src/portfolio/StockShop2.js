@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, List, ListItem, ListItemSecondaryAction, ListItemText, makeStyles, TextField, useTheme } from '@material-ui/core'
+import { Button, ButtonGroup, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, InputBase, List, ListItem, ListItemSecondaryAction, ListItemText, makeStyles, TextField, useTheme } from '@material-ui/core'
 import React, { useEffect, useRef, useState } from 'react'
 import { CustomCircularProgress } from '../components/components/CustomCircularProgress'
 import { useDataLayer } from '../Context'
@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom'
 import { Transition } from 'react-transition-group'
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab'
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import { useLocation } from 'react-use'
 
 const date = convertUnixToHuman(Date.now())
 
@@ -22,12 +23,20 @@ const useStyles = makeStyles({
     }
 })
 
+const LoginMessage = styled.div({
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center"
+})
+
 const getStockPossesion = (ticker, possesions) => {
     const alreadyOwned = possesions.stocks.find(stock => stock.ticker === ticker)
     return alreadyOwned ? alreadyOwned.amount : 0
 }
 
-export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) => {
+export const StockShop = ({ ticker, currentPrice, loading, error, assetType, fundId = null }) => {
 
     const { state, dispatch } = useDataLayer()
     const { setPruebaReady } = state
@@ -46,6 +55,7 @@ export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) =
     const restartPortfolio = useRef(false)
     const [open, setOpen] = useState(false)
     const [errorModal, setErrorModal] = useState({ open: false, msg: "" })
+    const location = useLocation()
     const [tipo, setTipo] = useState("")
     const classes = useStyles()
     useEffect(() => {
@@ -87,12 +97,13 @@ export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) =
                     user: userState.info.email,
                     order: {
                         operationType,
-                        ticker,
+                        ticker: ticker,
                         amount: qty,
                         price: currentPrice,
                         date,
                         isFirstOperation,
-                        assetType
+                        assetType,
+                        fundId
                     }
                 })
             })
@@ -101,18 +112,19 @@ export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) =
                     dispatch({
                         type: "ADD_PORTFOLIO_CURRENT_POSSESIONS",
                         payload: {
-                            ticker,
+                            ticker: ticker,
                             amount: qty,
                             operationType,
                             cashNetOperation: orderTotal,
                             date,
-                            unitaryPrice: currentPrice
+                            unitaryPrice: currentPrice,
+                            fundId
                         }
                     })
                     dispatch({
                         type: "ADD_UNIQUE_STOCKS",
                         payload: {
-                            ticker,
+                            ticker: ticker,
                         }
                     })
                     dispatch({
@@ -121,7 +133,7 @@ export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) =
                             date,
                             operationType,
                             amount: qty,
-                            ticker,
+                            ticker: ticker,
                             unitPrice: currentPrice
                         }
                     })
@@ -137,12 +149,6 @@ export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) =
         }
     }
 
-    // useEffect(() => {
-    //     //when users buys and its balance change we close firstModal
-    //     console.log("moneychange")
-    //     modalOpen && setModalOpen(false)
-    //     //after that we could add a success modal or animation
-    // }, [state.currentPossesions.userCash])
 
     const handleOpen = () => {
         setOpen(true)
@@ -152,13 +158,7 @@ export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) =
         setOpen(false)
     }
 
-    const LoginMessage = styled.div({
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center"
-    })
+
 
     const handleType = (e, value) => {
         console.log(value, "tiipu")
@@ -193,7 +193,10 @@ export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) =
         return (
             <LoginMessage>
                 <p style={{ marginBottom: "10px" }}>
-                    <Link to="/login">
+                    <Link to={{
+                        pathname: "/login",
+                        state: { background: location }
+                    }}>
                         Login</Link> to invest</p>
                 <LockIcon />
             </LoginMessage>
@@ -210,21 +213,6 @@ export const StockShop = ({ ticker, currentPrice, loading, error, assetType }) =
                     <ErrorDialog {...{ errorModal, setErrorModal }} />
                     <Dialogo1 {...{ open, handleClose, currentPrice, orderTotal, setQty, qty, operationType, handleType, checkIsValidOperation }} />
 
-                    {/* <ButtonGroup variant="contained" aria-label="buy or sell asset">
-                        {["buy", "sell"].map((type, index) => (
-                            <Button
-                                onClick={() => {
-                                    setOperationType(type)
-                                    //setModalOpen(true)
-                                    handleOpen()
-                                }}
-                                variant="contained"
-                                color={index / 1 === 1 ? "secondary" : "primary"}
-                            >
-                                {type}
-                            </Button>
-                        ))}
-                    </ButtonGroup> */}
                     <Button
                         onClick={handleOpen}
                         aria-label="buy or sell asset"
@@ -257,14 +245,18 @@ const Dialogo1 = ({ open, handleClose, currentPrice, orderTotal, setQty, qty, op
 
         <Dialog
             open={open}
-            //TransitionComponent={Transition}
-            //keepMounted
+            TransitionComponent={Transition}
+            keepMounted
             onClose={handleClose}
             aria-labelledby="alert-dialog-slide-title"
             aria-describedby="alert-dialog-slide-description"
             fullWidth={true}
             maxWidth="xs"
-            onMouseMove={e => e.preventDefault()}
+            disableEnforceFocus={true}
+            disableAutoFocus
+        //2hours lost. this was making chrome browser to magically disable the up arrow of the [input="number"] 
+        //onMouseMove={e => e.preventDefault()}
+
         >
             <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <DialogTitle id="alert-dialog-slide-title">
@@ -283,8 +275,9 @@ const Dialogo1 = ({ open, handleClose, currentPrice, orderTotal, setQty, qty, op
                         {
                             [["buy", theme.palette.primary.main, theme.palette.primary.light],
                             ["sell", theme.palette.secondary.main, theme.palette.secondary.light]]
-                                .map((op, index) => (
+                                .map((op) => (
                                     <ToggleButton
+                                        key={op[0]}
                                         value={op[0]}
                                         //classes={{ root: classes.root }}
                                         style={op[0] === operationType ? { background: op[1], color: "white" } : null}
@@ -299,6 +292,7 @@ const Dialogo1 = ({ open, handleClose, currentPrice, orderTotal, setQty, qty, op
             </div>
 
             <DialogContent>
+
                 <List
                     id="alert-dialog-slide-description">
                     <ListItem>
@@ -313,10 +307,9 @@ const Dialogo1 = ({ open, handleClose, currentPrice, orderTotal, setQty, qty, op
                         </ListItemText>
                         <ListItemSecondaryAction>
                             <TextField
-                                type="number"
                                 value={qty}
-                                onChange={(e) => { setQty(parseInt(e.target.value)) }}
-                                //InputProps={{ inputProps: { min: 1 } }}
+                                onChange={(e) => { setQty(e.target.value) }}
+                                inputProps={{ type: 'number', min: 0 }}
                                 style={{ width: "50px" }}
                             />
                         </ListItemSecondaryAction>
