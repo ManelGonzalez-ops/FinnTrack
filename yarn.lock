@@ -10009,6 +10009,28 @@
   dependencies:
     "passport-oauth2" "1.x.x"
 
+"passport-google-oauth@^2.0.0":
+  "integrity" "sha512-JKxZpBx6wBQXX1/a1s7VmdBgwOugohH+IxCy84aPTZNq/iIPX6u7Mqov1zY7MKRz3niFPol0KJz8zPLBoHKtYA=="
+  "resolved" "https://registry.npmjs.org/passport-google-oauth/-/passport-google-oauth-2.0.0.tgz"
+  "version" "2.0.0"
+  dependencies:
+    "passport-google-oauth1" "1.x.x"
+    "passport-google-oauth20" "2.x.x"
+
+"passport-google-oauth1@1.x.x":
+  "integrity" "sha1-r3SoA99R7GRvZqRNgigr5vEI4Mw="
+  "resolved" "https://registry.npmjs.org/passport-google-oauth1/-/passport-google-oauth1-1.0.0.tgz"
+  "version" "1.0.0"
+  dependencies:
+    "passport-oauth1" "1.x.x"
+
+"passport-google-oauth20@2.x.x":
+  "integrity" "sha512-KSk6IJ15RoxuGq7D1UKK/8qKhNfzbLeLrG3gkLZ7p4A6DBCcv7xpyQwuXtWdpyR0+E0mwkpjY1VfPOhxQrKzdQ=="
+  "resolved" "https://registry.npmjs.org/passport-google-oauth20/-/passport-google-oauth20-2.0.0.tgz"
+  "version" "2.0.0"
+  dependencies:
+    "passport-oauth2" "1.x.x"
+
 "passport-jwt@^4.0.0":
   "integrity" "sha512-BwC0n2GP/1hMVjR4QpnvqA61TxenUMlmfNjYNgK0ZAs0HK4SOQkHcSv4L328blNTLtHq7DbmvyNJiH+bn6C5Mg=="
   "resolved" "https://registry.npmjs.org/passport-jwt/-/passport-jwt-4.0.0.tgz"
@@ -10023,6 +10045,15 @@
   "version" "1.0.0"
   dependencies:
     "passport-strategy" "1.x.x"
+
+"passport-oauth1@1.x.x":
+  "integrity" "sha1-p96YiiEfnPRoc3cTDqdN8ycwyRg="
+  "resolved" "https://registry.npmjs.org/passport-oauth1/-/passport-oauth1-1.1.0.tgz"
+  "version" "1.1.0"
+  dependencies:
+    "oauth" "0.9.x"
+    "passport-strategy" "1.x.x"
+    "utils-merge" "1.x.x"
 
 "passport-oauth2@1.x.x":
   "integrity" "sha512-kqBt6vR/5VlCK8iCx1/KpY42kQ+NEHZwsSyt4Y6STiNjU+wWICG1i8ucc1FapXDGO15C5O5VZz7+7vRzrDPXXQ=="

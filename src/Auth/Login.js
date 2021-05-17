@@ -134,6 +134,9 @@ export const Login = () => {
                     <FacebookButton
                         href="http://localhost:8001/api/v1/auth/oauth/facebook"
                     />
+                    <FacebookButton
+                        href="http://localhost:8001/api/v1/auth/oauth/google"
+                    />
 
                 </div>
             </div>

@@ -146,7 +146,7 @@ module.exports = {
     },
     storeGeneralData: (field, validDate, jsonArr) => {
         return new Promise((resolve, reject) => {
-            db.query("insert into companiesjsondata (field, fecha, alldata) values (?,?,?)", [field, validDate, JSON.stringify(jsonArr)], (err) => {
+            db.query("insert into companiesjsondata (field, fecha, alldata) values (?,?,?) on duplicate key update fecha = values(fecha), alldata = values(alldata)", [field, validDate, JSON.stringify(jsonArr)], (err) => {
                 if (err) {
                     reject(err)
                 }

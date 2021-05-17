@@ -181,9 +181,7 @@ class PriceService {
                 })
 
             const readyPortfolio = this.addMissingInfo(users, portfoliosParsed)
-            console.log(readyPortfolio, "mieeiie")
             const porttt = this.getPortfoliosSeries(readyPortfolio)
-            console.log(porttt, "portarrrrr")
             return porttt
 
         }
@@ -199,10 +197,7 @@ class PriceService {
         users.forEach(user => {
             portfolios.forEach(portfoItem => {
                 if (portfoItem.userId === user.userId) {
-                    console.log(this.assets.portfolioFunds, "que collsewe")
-                    console.log(portfoItem, "que collsewe")
                     const selection = this.assets.portfolioFunds.find(item => item.ticker === user.username).date
-                    console.log(selection, "seleeectionnnn")
                     const startDate = Object.keys(portfoItem.portfolio)[0]
                     //we just really need startDate
                     portfolioWithUser = [...portfolioWithUser,
