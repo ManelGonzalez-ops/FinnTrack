@@ -1,5 +1,0 @@
-cuando estemos visitando una empresa debe aparecer el tab (overview, financials, etc..) debajo del navbar
-
-cuando eso ocurra debe intercambiarse los colores del nav.
-
-Una vez buscada la empresa debe aparecer en el sidebar el ticker que el usuario pueda seguir viendo la empresa sin necesidad de buscarla otra vez, ademas que sirve de recordatorio.

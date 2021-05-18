@@ -1,4 +1,4 @@
-const { addtoPostRegister, addNewPost, updatePostStructure, getPostsDB, getStructureByAncestor, getPostRegisterByPostId, updatePostLikes } = require("../../db/services/PostServices")
+const { addtoPostRegister, addNewPost, updatePostStructure, getPostsDB, getStructureByAncestor, getPostRegisterByPostId, updatePostLikes } = require("../db/services/PostServices")
 
 const addReply = async (req, res) => {
     const { parentId, ancestorId, msg, date, avatar, username, tags } = req.body

@@ -2,6 +2,8 @@
 
 # dependencies
 /node_modules
+/frontend/node_modules
+/apiservice/node_modules
 /.pnp
 .pnp.js
 
@@ -24,3 +26,5 @@ yarn-error.log*
 
 # other
 /apiservice/lib
+
+*.txt

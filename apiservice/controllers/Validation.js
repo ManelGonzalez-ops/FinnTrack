@@ -1,4 +1,4 @@
-const { checkEmailExists, checkUserExists } = require("../../db/services/validationServices")
+const { checkEmailExists, checkUserExists } = require("../db/services/validationServices")
 const { ErrorHandler } = require("../handleError")
 
 

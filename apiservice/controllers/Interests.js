@@ -1,6 +1,6 @@
 const fetch = require("node-fetch");
-const { getUsername } = require("../../db/services");
-const { getUserInterests, updateUserInterest, addUserInterest } = require("../../db/services/interestsService");
+const { getUsername } = require("../db/services");
+const { getUserInterests, updateUserInterest, addUserInterest } = require("../db/services/interestsService");
 
 const addInterest = async (req, res) => {
   const { email, interest } = req.query;

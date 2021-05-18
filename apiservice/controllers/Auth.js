@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
-const { getUser, storeNewUser } = require("../../db/services/AuthService")
+const { getUser, storeNewUser } = require("../db/services/AuthService")
 const config = require("../config")
 
 const signToken = (userid) => {

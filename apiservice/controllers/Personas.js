@@ -1,8 +1,8 @@
 const fs = require("fs");
-const { getAllOperations, getOperationsByUserId } = require("../../db/services");
+const { getAllOperations, getOperationsByUserId } = require("../db/services");
 const Logic = require("../logic/state.js");
 const { prepareStoredOperations, setInitialPossesions } = require("../dataPreparation");
-const { getFundImage } = require("../../db/services/PeopleService");
+const { getFundImage } = require("../db/services/PeopleService");
 
 const listPeople = (req, res) => {
   console.log("ejecutao 4");

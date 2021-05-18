@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-undef
 const { fetchCompanyAdditional, fetchAllQuotes } = require("../../controller");
-const { addCompanyInfo, getCompanyInfo } = require("../../../db/services");
+const { addCompanyInfo, getCompanyInfo } = require("../../db/services");
 
 const fetchTillAllSucceed = async (missingStocks) => {
   let currentMissings = missingStocks;

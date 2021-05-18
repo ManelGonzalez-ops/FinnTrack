@@ -1,6 +1,6 @@
 
 var assert = require('assert');
- const { getAllUsers } = require('../../db/services');
+ const { getAllUsers } = require('../db/services');
 // describe('test left join', function () {
 //     it('works', async function () {
 //         console.log(getAllUsers)

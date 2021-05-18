@@ -1,6 +1,6 @@
 const path = require("path")
-const { findUser } = require("../../db/services")
-const { uploadImage, addContactInfo, getUserDetailsDB, getUserImageDB } = require("../../db/services/UserService")
+const { findUser } = require("../db/services")
+const { uploadImage, addContactInfo, getUserDetailsDB, getUserImageDB } = require("../db/services/UserService")
 const uploadImg = async (req, res, next) => {
     const { email } = req.body
     if (!req.file) {

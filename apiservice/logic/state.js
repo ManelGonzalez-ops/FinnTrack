@@ -1,6 +1,6 @@
 const { prepareStoredOperations, setInitialPossesions } = require("../dataPreparation")
 const fs = require("fs")
-const { getAllUsers, getAllOperations, getOperations, findUser, getOperationsByUserId, findUserById, getOutdatedPortfoliosDB, addPortfolio, portfolioExists, updatePortfolioDB, getAllPortfoliosDB } = require("../../db/services")
+const { getAllUsers, getAllOperations, getOperations, findUser, getOperationsByUserId, findUserById, getOutdatedPortfoliosDB, addPortfolio, portfolioExists, updatePortfolioDB, getAllPortfoliosDB } = require("../db/services")
 const PricesServer = require("./prices")
 const PossesionsSeries = require("./posesionsSeries")
 const Portfolio = require("./PortfolioPrices2")

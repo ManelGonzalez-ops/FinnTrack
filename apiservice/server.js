@@ -18,11 +18,11 @@ const pricesRoutes = require("./routes/Prices.js");
 const validationRoutes = require("./routes/Validation");
 const interestsRoutes = require("./routes/Interests");
 const postsRoutes = require("./routes/Posts");
-require("../db/db");
+require("./db/db");
 const authRoutes = require("./routes/Auth");
 const usersRoutes = require("./routes/Users");
 const { handleError } = require("./handleError");
-const { initDb } = require("../db/init");
+const { initDb } = require("./db/init");
 const recurringTaskRoutes = require("./routes/RecurringTask");
 const runScheduledTasks = require("./ScheduledTasks")
 

@@ -1,10 +1,10 @@
 const path = require("path");
 const fs = require("fs");
 const { fetcharS } = require("../../controller");
-const { storeGeneralData } = require("../../../db/services");
+const { storeGeneralData } = require("../../db/services");
 const { fetchDispatcher } = require("../../controller");
-const { deletePreviousDateRecord } = require("../../../db/services");
-const { getGeneralDataJson } = require("../../../db/services");
+const { deletePreviousDateRecord } = require("../../db/services");
+const { getGeneralDataJson } = require("../../db/services");
 const { convertUnixToHuman } = require("../../dataUtils");
 
 const getCountriesPopulation = async (req, res) => {

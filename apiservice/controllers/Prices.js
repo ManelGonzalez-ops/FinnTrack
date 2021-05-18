@@ -1,5 +1,5 @@
 const { fetcharH, fetcharM } = require("../controller")
-const { getUserByUsername, getPortfoliosByIds, proba } = require("../../db/services")
+const { getUserByUsername, getPortfoliosByIds, proba } = require("../db/services")
 
 const getAllTickerPrices = async (req, res) => {
     const possesions = req.body

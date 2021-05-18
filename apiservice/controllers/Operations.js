@@ -1,8 +1,8 @@
 const {
   getOperations, findUser, addPortfolioDB, updatePortfolioDB, portfolioExists, addOperation, getUsername, getUserFromUsername
-} = require("../../db/services");
-const { getUserInterests } = require("../../db/services/interestsService");
-const { setPortfolio, getPortfolioInitialDay, getUserDetailsDBEmail } = require("../../db/services/UserService");
+} = require("../db/services");
+const { getUserInterests } = require("../db/services/interestsService");
+const { setPortfolio, getPortfolioInitialDay, getUserDetailsDBEmail } = require("../db/services/UserService");
 const { prepareStoredOperations, setInitialPossesions } = require("../dataPreparation");
 const { convertUnixToHuman } = require("../dataUtils");
 

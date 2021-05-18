@@ -4,12 +4,12 @@ const { ExtractJwt } = require('passport-jwt');
 const facebookStrategy = require("passport-facebook");
 const LocalStrategy = require("passport-local").Strategy;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-const { findUserById } = require("../db/services");
-const { findUserBySocialId, storeNewUserSocial, getUser } = require("../db/services/AuthService");
+const { findUserById } = require("./db/services");
+const { findUserBySocialId, storeNewUserSocial, getUser } = require("./db/services/AuthService");
 const config = require("./config");
 const { comparePassword } = require("./controllers/Auth");
 const { userDetailsFactory, getBirthday } = require("./factories");
-const { addContactInfo, uploadImage } = require("../db/services/UserService");
+const { addContactInfo, uploadImage } = require("./db/services/UserService");
 // this is for authorization
 
 passport.use(new JwtStrategy({
