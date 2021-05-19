@@ -71,6 +71,10 @@ app.post("/uploads/single", upload.single("image"), (req, res) => {
   res.status(200).send("single image upload success");
 });
 
+app.get("/", ()=>{
+  console.log("welcome to finnTrack backend")
+})
+
 
 // ojo aqui si existe query: "?dates=true" no buscaremos precios historicos,
 // app.post("/portfolio", async (req, res) => {
