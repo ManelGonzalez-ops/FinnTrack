@@ -72,7 +72,7 @@ app.post("/uploads/single", upload.single("image"), (req, res) => {
 });
 
 app.get("/", (req, res)=>{
-  res.send("welcome to finnTrack backend");
+  res.status(400).send("welcome to finnTrack backend");
 })
 
 
