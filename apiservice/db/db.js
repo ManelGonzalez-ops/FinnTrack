@@ -1,9 +1,16 @@
 const mysql = require("mysql");
 
+// const db = mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//   password: "123456",
+//   timezone: "gmt",
+// });
+
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "123456",
+  host: "remotemysql.com",
+  user: "dP6wX7ylr4",
+  password: "KIwXTjyeaU",
   timezone: "gmt",
 });
 
