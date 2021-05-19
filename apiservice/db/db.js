@@ -7,12 +7,12 @@ const mysql = require("mysql");
 //   timezone: "gmt",
 // });
 
-const db = mysql.createConnection({
+const db_config = {
   host: "remotemysql.com",
   user: "dP6wX7ylr4",
   password: "KIwXTjyeaU",
   timezone: "gmt",
-});
+}
 
 
 let connection;
@@ -36,14 +36,16 @@ function handleDisconnect() {
       throw err; // server variable configures this)
     }
   });
+
+  return connection
 }
 
-handleDisconnect();
+const db = handleDisconnect();
 
-db.connect((err) => {
-  if (err) console.log(err);
-  console.log("mysql connected");
-});
+// db.connect((err) => {
+//   if (err) console.log(err);
+//   console.log("mysql connected");
+// });
 
 db.query("create database if not exists dP6wX7ylr4", (err) => {
   if (err) throw err;
