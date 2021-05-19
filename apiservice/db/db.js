@@ -1,18 +1,20 @@
 const mysql = require("mysql");
 
-// const db = mysql.createConnection({
-//   host: "localhost",
-//   user: "root",
-//   password: "123456",
-//   timezone: "gmt",
-// });
-
 const db_config = {
-  host: "remotemysql.com",
-  user: "dP6wX7ylr4",
-  password: "KIwXTjyeaU",
+  host: "localhost",
+  user: "root",
+  password: "123456",
   timezone: "gmt",
-}
+};
+
+// const db = mysql.createPool({
+//   //max_user_connections: 20,
+//   host: "db4free.net",
+//   user: "financeapp",
+//   password: "mameluco787",
+//   timezone: "gmt",
+//   database: "financeappdb"
+// })
 
 
 let connection;
@@ -42,17 +44,17 @@ function handleDisconnect() {
 
 const db = handleDisconnect();
 
-// db.connect((err) => {
-//   if (err) console.log(err);
-//   console.log("mysql connected");
-// });
+db.connect((err) => {
+  if (err) console.log(err);
+  console.log("mysql connected");
+});
 
-db.query("create database if not exists dP6wX7ylr4", (err) => {
+db.query("create database if not exists financeappdb", (err) => {
   if (err) throw err;
   console.log("success");
 });
 
-db.query("use dP6wX7ylr4", (err) => {
+db.query("use financeappdb", (err) => {
   if (err) throw err;
   console.log("using finance app");
 });
