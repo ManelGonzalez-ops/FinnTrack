@@ -19,12 +19,12 @@ db.connect((err) => {
   console.log("mysql connected");
 });
 
-db.query("create database if not exists financeapp", (err) => {
+db.query("create database if not exists dP6wX7ylr4", (err) => {
   if (err) throw err;
   console.log("success");
 });
 
-db.query("use financeapp", (err) => {
+db.query("use dP6wX7ylr4", (err) => {
   if (err) throw err;
   console.log("using finance app");
 });
