@@ -71,8 +71,8 @@ app.post("/uploads/single", upload.single("image"), (req, res) => {
   res.status(200).send("single image upload success");
 });
 
-app.get("/", ()=>{
-  console.log("welcome to finnTrack backend")
+app.get("/", (req, res)=>{
+  res.send("welcome to finnTrack backend");
 })
 
 
