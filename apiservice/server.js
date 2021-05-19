@@ -9,7 +9,7 @@ const cookieParser = require("cookie-parser");
 const multer = require("multer");
 const passport = require("passport");
 const {
- fetcharH, fetcharM
+  fetcharH, fetcharM
 } = require("./controller");
 
 const peopleRoutes = require("./routes/Personas.js");
@@ -117,6 +117,7 @@ app.use((err, res, next) => {
   handleError(err, res);
 });
 
-app.listen(8001, () => {
-  console.log("essto funca");
+const PORT = process.env.PORT || 8001
+app.listen(PORT, () => {
+  console.log("essto funca, running port ", PORT);
 });
