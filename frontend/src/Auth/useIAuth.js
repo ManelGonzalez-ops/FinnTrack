@@ -7,7 +7,7 @@ export const useIAuth = () => {
     const { userState, userDispatch } = useUserLayer()
     useEffect(() => {
         setLoading(true)
-        fetch("http://localhost:8001/api/v1/auth/post", {
+        fetch(`${process.env.REACT_APP_API}/api/v1/auth/post`, {
             headers: {
                 "Authorization": `bearer ${userState.token}`
             },
@@ -41,7 +41,7 @@ export const useIAuthh = () => {
         //if there's token we have to check if it's valid
         else if (userState.token) {
             setLoading(true)
-            fetch("http://localhost:8001/api/v1/auth/secret", {
+            fetch(`${process.env.REACT_APP_API}/api/v1/auth/secret`, {
                 headers: {
                     "Authorization": `bearer ${userState.token}`
                 },

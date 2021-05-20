@@ -42,7 +42,7 @@ export const PersonasList = () => {
 
     const { data, loading, error } = state
     const getPeople = () => {
-        return fetch("http://localhost:8001/api/v1/people/main")
+        return fetch(`${process.env.REACT_APP_API}/api/v1/people/main`)
             .then(res => res.json())
             .then(res => {
                 return res.map((item: any) => {

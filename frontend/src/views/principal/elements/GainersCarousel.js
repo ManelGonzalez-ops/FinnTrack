@@ -17,7 +17,7 @@ export const GainersCarousel = () => {
   const allData = useRef(null)
   useEffect(() => {
     const fechar = () => {
-      fetch("http://localhost:8001/api/v1/recurringTasks/direct_json?field=gainers_losers")
+      fetch(`${process.env.REACT_APP_API}/api/v1/recurringTasks/direct_json?field=gainers_losers`)
         .then(res => res.json())
         .then(res => {
           console.log(res, "respaaa")

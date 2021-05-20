@@ -11,7 +11,7 @@ import { useChartReflow } from "../../utils/useChartReflow";
 
 
 export const CompanyChart = ({ ticker }) => {
-    const url = "http://localhost:8001/api/v1/prices/ticker";
+    const url = `${process.env.REACT_APP_API}/api/v1/prices/ticker`;
 
     const AdjustedPrices = useRef(null);
     const notAdjustedPrices = useRef(null);

@@ -89,7 +89,7 @@ export class FollowingDispatcher extends React.Component {
             rotatingIcon: true,
             data: null,
         })
-        fetch(`http://localhost:8001/api/v1/interests/populate?email=${this.props.valores.userState.info.email}`)
+        fetch(`${process.env.REACT_APP_API}/api/v1/interests/populate?email=${this.props.valores.userState.info.email}`)
             .then(res => res.json())
             .then(res => {
                 this.setState({ responseType: res.type })

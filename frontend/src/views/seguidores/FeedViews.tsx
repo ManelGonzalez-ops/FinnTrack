@@ -136,7 +136,7 @@ export const FeedViews = () => {
             msg: content,
             date: convertUnixToHuman(Date.now()),
         }
-        fetch("http://localhost:8001/api/v1/posts", {
+        fetch(`${process.env.REACT_APP_API}/api/v1/posts`, {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(post),
             method: "POST"
@@ -173,7 +173,7 @@ export const FeedViews = () => {
             tags: ["whateeever"],
         }
 
-        fetch("http://localhost:8001/api/v1/posts/reply", {
+        fetch(`${process.env.REACT_APP_API}/api/v1/posts/reply`, {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newPost),
             method: "POST"
@@ -184,7 +184,7 @@ export const FeedViews = () => {
     }
 
     useEffect(() => {
-        fetch("http://localhost:8001/api/v1/posts")
+        fetch(`${process.env.REACT_APP_API}/api/v1/posts`)
             .then(res => res.json())
             .then(res => {
                 console.log(res, "all posts")
@@ -272,7 +272,7 @@ const FeedPost: React.FC<Props> = ({ post, handleReply, updatePost }) => {
     }
 
     const handleLike = (postId: number) => {
-        fetch(`http://localhost:8001/api/v1/posts/like?username=Manilox&postId=${postId}`)
+        fetch(`${process.env.REACT_APP_API}/api/v1/posts/like?username=Manilox&postId=${postId}`)
             .then(res => res.json())
             .then(res => {
                 console.log(res, "respuesta");

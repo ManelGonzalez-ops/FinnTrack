@@ -80,7 +80,7 @@ export const Register = () => {
             return
         }
 
-        fetch("http://localhost:8001/api/v1/validation/users", {
+        fetch(`${process.env.REACT_APP_API}/api/v1/validation/users`, {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username: debouncedUsername }),
             method: "POST"
@@ -110,7 +110,7 @@ export const Register = () => {
             return;
         }
 
-        fetch("http://localhost:8001/api/v1/validation/email", {
+        fetch(`${process.env.REACT_APP_API}/api/v1/validation/email`, {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: debouncedEmail }),
             method: "POST"
@@ -140,7 +140,7 @@ export const Register = () => {
         handleRegister()
     }
     const handleRegister = () => {
-        fetch("http://localhost:8001/api/v1/auth/register", {
+        fetch(`${process.env.REACT_APP_API}/api/v1/auth/register`, {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, email, password }),
             method: "POST"
@@ -274,7 +274,7 @@ export const Register = () => {
                     className="formOauth"
                 >
                     <FacebookButton
-                        href="http://localhost:8001/api/v1/auth/oauth/facebook"
+                        href={`${process.env.REACT_APP_API}/api/v1/auth/oauth/facebook`}
                     />
                 </div>
             </div>

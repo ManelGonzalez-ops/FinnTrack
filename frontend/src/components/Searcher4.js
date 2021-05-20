@@ -22,7 +22,7 @@ export const Searcher4 = ({ setSelection }) => {
     const fetchar = async (query) => {
         try {
             setRequest((prev) => ({ ...prev, loading: true }));
-            const rawData = await fetch(`http://localhost:8001/api/v1/recurringTasks/search/${query}`);
+            const rawData = await fetch(`${process.env.REACT_APP_API}/api/v1/recurringTasks/search/${query}`);
             const { data } = await rawData.json();
             const dataOnlyStocks = data.filter(item => item.assetType === "Stock")
             setRequest((prev) => ({ ...prev, data: dataOnlyStocks, loading: false }));

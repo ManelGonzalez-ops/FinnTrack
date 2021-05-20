@@ -35,7 +35,7 @@ export const ContactDetails = () => {
             country, gender, dateBirth, firstName, lastName,
             email: info.email
         }
-        fetch("http://localhost:8001/api/v1/users/complete", {
+        fetch(`${process.env.REACT_APP_API}/api/v1/users/complete`, {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body),
             method: "POST"

@@ -98,7 +98,7 @@ export const CompanyNav = ({ menuCompaniesOpen, topNavigation }) => {
   }
 
   const handleFollow = () => {
-    fetch(`http://localhost:8001/api/v1/interests/interests?email=${info.email}&interest=${currentCompany.ticker}`)
+    fetch(`${process.env.REACT_APP_API}/api/v1/interests/interests?email=${info.email}&interest=${currentCompany.ticker}`)
       .then(res => res.json())
       .then(interest => {
         if (typeof interest === "string") {

@@ -3,7 +3,7 @@ import { useFetch } from "../utils/useFetch";
 
 export const StockNews = ({ match }) => {
   const { company } = match.params;
-  const url = "http://localhost:8000/news";
+  const url = `${process.env.REACT_APP_API}/news`;
   const { data, loading, error } = useFetch(url, company, true);
   return (
     <div className="grida-p">

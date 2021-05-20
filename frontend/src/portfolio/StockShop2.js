@@ -86,7 +86,7 @@ export const StockShop = ({ ticker, currentPrice, loading, error, assetType, fun
                 }
             }
 
-            fetch("http://localhost:8001/api/v1/operations/addoperation", {
+            fetch(`${process.env.REACT_APP_API}/api/v1/operations/addoperation`, {
                 headers: {
                     Accept: 'application/json',
                     'Content-Type': 'application/json'

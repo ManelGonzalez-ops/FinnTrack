@@ -30,7 +30,7 @@ export const Login = () => {
         console.log("upa")
         e.preventDefault()
         setStatus(prev => ({ ...prev, loading: true }))
-        fetch("http://localhost:8001/api/v1/auth/login", {
+        fetch(`${process.env.REACT_APP_API}/api/v1/auth/login`, {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
             method: "POST"
@@ -132,10 +132,10 @@ export const Login = () => {
                     className="formOauth"
                 >
                     <FacebookButton
-                        href="http://localhost:8001/api/v1/auth/oauth/facebook"
+                        href={`${process.env.REACT_APP_API}/api/v1/auth/oauth/facebook`}
                     />
                     <FacebookButton
-                        href="http://localhost:8001/api/v1/auth/oauth/google"
+                        href={`${process.env.REACT_APP_API}/api/v1/auth/oauth/google`}
                     />
 
                 </div>

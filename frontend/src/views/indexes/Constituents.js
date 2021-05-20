@@ -19,7 +19,7 @@ export const Constituents = ({ category, categorySan }) => {
         console.log("executed", category)
         if (state.indexes[category] && state.indexes[category][subCategory]) {
             console.log(state.indexes[category][subCategory], "pota")
-            fetch(`http://localhost:8001/api/v1/recurringTasks/indexes/constituents/${category}`, {
+            fetch(`${process.env.REACT_APP_API}/api/v1/recurringTasks/indexes/constituents/${category}`, {
                 body: JSON.stringify({ ticker: state.indexes[category][subCategory].constituents }),
                 method: "POST",
                 headers: {

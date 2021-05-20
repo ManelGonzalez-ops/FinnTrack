@@ -50,7 +50,7 @@ export const useFetchUser = (query) => {
     const { userState } = useUserLayer()
     const [{ data, loading, error }, setRequest] = useState({ data: "", loading: true, error: null })
     useEffect(() => {
-        fetch(`http://localhost:8001/api/v1/users/${query}`, {
+        fetch(`${process.env.REACT_APP_API}/api/v1/users/${query}`, {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: userState.info.email }),
             method: "POST"

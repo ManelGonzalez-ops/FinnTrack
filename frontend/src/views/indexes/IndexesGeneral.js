@@ -14,7 +14,7 @@ export const IndexesGeneral = () => {
     const [{ allIndexPrices, loading2, error2 }, setAllIndexPrices] = useState({ allIndexPrices: [], loading: false, error2: "" })
     const getAllIndexPrices = () => {
         setAllIndexPrices(prev => ({ ...prev, loading: true }))
-        fetch("http://localhost:8001/api/v1/recurringTasks/indexes/allprices")
+        fetch(`${process.env.REACT_APP_API}/api/v1/recurringTasks/indexes/allprices`)
             .then(res => res.json())
             .then(res=>{
                 console.log(res, "laassprecious")

@@ -126,7 +126,7 @@ export const PositionsPersonas = ({ currentPossesions, companiesChange }) => {
     const requestAdditionalInfo = (stocks) => {
         setLoading(true)
         dispatch({ type: "SET_LOADING" })
-        fetch("http://localhost:8001/api/v1/recurringTasks/companiesInfo/companies_url", {
+        fetch(`${process.env.REACT_APP_API}/api/v1/recurringTasks/companiesInfo/companies_url`, {
             headers: {
                 "Content-Type": "application/json"
             },
@@ -140,7 +140,7 @@ export const PositionsPersonas = ({ currentPossesions, companiesChange }) => {
 
 
     const fetchQuotes = (tickers) => {
-        fetch("http://localhost:8001/api/v1/recurringTasks/companiesInfo/quotes", {
+        fetch(`${process.env.REACT_APP_API}/api/v1/recurringTasks/companiesInfo/quotes`, {
             headers: {
                 "Content-Type": "application/json"
             },

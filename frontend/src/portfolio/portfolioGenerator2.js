@@ -133,7 +133,7 @@ export const usePortfolioGenerator = () => {
         }
     }
     const fetchQuotes = (cb) => {
-        return fetch("http://localhost:8001/api/portfolio/quotes", {
+        return fetch(`${process.env.REACT_APP_API}/api/portfolio/quotes`, {
             headers: {
                 "Content-Type": "application/json"
             },
@@ -277,7 +277,7 @@ export const usePortfolioGenerator = () => {
     console.log(generatedSeries, "muuu")
 
     const storePortfolioDB = (portfolio) => {
-        fetch("http://localhost:8001/api/v1/operations/update", {
+        fetch(`${process.env.REACT_APP_API}/api/v1/operations/update`, {
             headers: {
                 "Content-Type": "application/json"
             },
@@ -289,7 +289,7 @@ export const usePortfolioGenerator = () => {
             .catch(err => { throw err.message })
     }
     const getInitialDate = async () => {
-        const res = await fetch("http://localhost:8001/api/v1/operations/initial", {
+        const res = await fetch(`${process.env.REACT_APP_API}/api/v1/operations/initial`, {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: info.email }),
             method: "POST"

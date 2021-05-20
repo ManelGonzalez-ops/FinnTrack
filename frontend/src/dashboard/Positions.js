@@ -142,7 +142,7 @@ export default () => {
   const requestAdditionalInfo = (stocks) => {
     setLoading(true);
     dispatch({ type: 'SET_LOADING' });
-    fetch('http://localhost:8001/api/v1/recurringTasks/companiesInfo/companies_url', {
+    fetch(`${process.env.REACT_APP_API}/api/v1/recurringTasks/companiesInfo/companies_url`, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -155,7 +155,7 @@ export default () => {
   };
 
   const fetchQuotes = (tickers) => {
-    fetch('http://localhost:8001/api/v1/recurringTasks/companiesInfo/quotes', {
+    fetch(`${process.env.REACT_APP_API}/api/v1/recurringTasks/companiesInfo/quotes`, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -257,7 +257,7 @@ const ImageFund = ({ fundId }) => {
   const [imageUrl, setImageUrl] = useState(null)
   useEffect(() => {
     const getImageUrl = async (fundid) => {
-      const reqe = await fetch(`http://localhost:8001/api/v1/people/image/${fundid}`)
+      const reqe = await fetch(`${process.env.REACT_APP_API}/api/v1/people/image/${fundid}`)
       const kaka = await reqe.json()
       console.log("hooola gay")
       console.log(kaka, "funndi")
@@ -279,6 +279,6 @@ const ImageFund = ({ fundId }) => {
 
   return imageUrl && <img
     className="logo"
-    src={"http://localhost:8001/" + imageUrl}
+    src={`${process.env.REACT_APP_API}/` + imageUrl}
   />
 }

@@ -24,7 +24,7 @@ export const PeopleDetails = () => {
     useEffect(() => {
         console.log("randarad")
         setState(prev => ({ ...prev, loading: true }))
-        fetch(`http://localhost:8001/api/v1/people/${id}`)
+        fetch(`${process.env.REACT_APP_API}/api/v1/people/${id}`)
             .then(res => res.json())
             .then(res => {
                 setState(prev => ({

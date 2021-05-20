@@ -53,7 +53,7 @@ export const ImageUploader = () => {
         imageData.append("image", imageUpload)
         imageData.append("email", info.email)
         setLoading(true)
-        fetch("http://localhost:8001/api/v1/users/upload", {
+        fetch(`${process.env.REACT_APP_API}/api/v1/users/upload`, {
             body: imageData,
             method: "POST"
         })

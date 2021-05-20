@@ -70,7 +70,7 @@ const ImagePeople = ({ user }) => {
         <div className="people-item__image-container">
             {
                 user.image ?
-                    <img src={`http://localhost:8001/${user.image}`}
+                    <img src={`${process.env.REACT_APP_API}/${user.image}`}
                         className={imgLoaded ?
                             "people-item__image--loaded" : "people-item__image"}
                         onLoad={() => { setImgLoaded(true) }}

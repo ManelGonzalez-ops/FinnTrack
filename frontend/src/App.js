@@ -96,7 +96,7 @@ const App = () => {
     }
     const { email } = userState.info
     if (email) {
-      fetch("http://localhost:8001/api/v1/operations", {
+      fetch(`${process.env.REACT_APP_API}/api/v1/operations`, {
         headers: {
           "Content-Type": "application/json"
         },

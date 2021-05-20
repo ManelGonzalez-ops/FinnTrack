@@ -21,7 +21,7 @@ export const CovidSection2 = () => {
     const slider = useRef("")
     const absolutePopulationData = useRef(null)
 
-    const population = useFetchWithCors("http://localhost:8001/api/v1/recurringTasks/other/countriesPopulation", "population_by_country");
+    const population = useFetchWithCors(`${process.env.REACT_APP_API}/api/v1/recurringTasks/other/countriesPopulation`, "population_by_country");
 
     const findPopulation = (country) => {
         let target

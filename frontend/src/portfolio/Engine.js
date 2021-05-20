@@ -25,7 +25,7 @@ export const useEngine = () => {
     const getPricesHistory = async () => {
         console.log(userState.info, "fetch price ejecutao")
         try {
-            const request = await fetch("http://localhost:8001/api/v1/prices/portfolio_prices", {
+            const request = await fetch(`${process.env.REACT_APP_API}/api/v1/prices/portfolio_prices`, {
                 headers: {
                     "Content-Type": "application/json"
                 },

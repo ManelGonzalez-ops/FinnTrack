@@ -16,7 +16,7 @@ export const useHandleProfileImage = () => {
         console.log(userState, "userState")
         const { email } = userState.info
 
-        fetch("http://localhost:8001/api/v1/users/image", {
+        fetch(`${process.env.REACT_APP_API}/api/v1/users/image`, {
             headers: {
                 "Content-Type": "application/json"
             },

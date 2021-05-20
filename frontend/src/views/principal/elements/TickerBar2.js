@@ -9,7 +9,7 @@ export const TickerBar2 = () => {
     const {tickerMove} = useUILayer()
     useEffect(() => {
         const fechar = () => {
-            fetch("http://localhost:8001/api/v1/recurringTasks/direct_json?field=topactives")
+            fetch(`${process.env.REACT_APP_API}/api/v1/recurringTasks/direct_json?field=topactives`)
                 .then(res => res.json())
                 .then(res => { setData(JSON.parse(res.alldata)) })
                 // //if there's error,won't show
