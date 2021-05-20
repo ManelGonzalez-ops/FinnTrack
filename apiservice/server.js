@@ -1,5 +1,6 @@
 const express = require("express");
-
+const PORT = process.env.PORT || 8001;
+module.exports = { PORT }
 const app = express();
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -71,7 +72,7 @@ app.post("/uploads/single", upload.single("image"), (req, res) => {
   res.status(200).send("single image upload success");
 });
 
-app.get("/", (req, res)=>{
+app.get("/", (req, res) => {
   res.status(400).send("welcome to finnTrack backend");
 })
 
@@ -121,7 +122,7 @@ app.use((err, res, next) => {
   handleError(err, res);
 });
 
-const PORT = process.env.PORT || 8001
+
 app.listen(PORT, () => {
   console.log("essto funca, running port ", PORT);
 });

@@ -148,6 +148,7 @@ const sendIndexPrices = (req, res, next) => {
     if (error) {
       next(error);
     }
+    console.log(data, "indexes data");
     res.send({ data: JSON.parse(data.toString()), modo: "readed" });
   });
 };
