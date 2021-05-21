@@ -1,21 +1,23 @@
 const mysql = require("mysql");
 
-// const db_config = {
-//   host: "localhost",
-//   user: "root",
-//   password: "123456",
-//   timezone: "gmt",
-// };
-
-const db = mysql.createPool({
-  max_user_connections: 20,
-  host: "db4free.net",
-  user: "financeapp",
-  password: "mameluco787",
+const db_config = {
+  host: "localhost",
+  user: "root",
+  password: "123456",
   timezone: "gmt",
-  database: "financeappdb",
-  acquireTimeout: 50000
-})
+};
+
+const db = mysql.createConnection(db_config)
+
+// const db = mysql.createPool({
+//   max_user_connections: 20,
+//   host: "db4free.net",
+//   user: "financeapp",
+//   password: "mameluco787",
+//   timezone: "gmt",
+//   database: "financeappdb",
+//   acquireTimeout: 50000
+// })
 
 
 
@@ -46,19 +48,19 @@ let connection;
 
 //const db = handleDisconnect();
 
-// db.connect((err) => {
-//   if (err) console.log(err);
-//   console.log("mysql connected");
-// });
+db.connect((err) => {
+  if (err) console.log(err);
+  console.log("mysql connected");
+});
 
-// db.query("create database if not exists financeappdb", (err) => {
-//   if (err) throw err;
-//   console.log("success");
-// });
+db.query("create database if not exists financeappdb", (err) => {
+  if (err) throw err;
+  console.log("success");
+});
 
-// db.query("use financeappdb", (err) => {
-//   if (err) throw err;
-//   console.log("using finance app");
-// });
+db.query("use financeappdb", (err) => {
+  if (err) throw err;
+  console.log("using finance app");
+});
 
 module.exports = db;
