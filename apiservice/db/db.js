@@ -53,12 +53,12 @@ db.connect((err) => {
   console.log("mysql connected");
 });
 
-db.query("create database if not exists financeappdb", (err) => {
+db.query("create database if not exists financeapp", (err) => {
   if (err) throw err;
   console.log("success");
 });
 
-db.query("use financeappdb", (err) => {
+db.query("use financeapp", (err) => {
   if (err) throw err;
   console.log("using finance app");
 });
