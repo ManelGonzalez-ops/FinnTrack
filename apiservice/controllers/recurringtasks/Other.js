@@ -31,6 +31,7 @@ const storeGeneralDataScheduled = async (field) => {
   } catch (err) {
     console.log(err, "erruraso")
     fs.writeFileSync("scheduledtasks-erors.txt", err);
+    throw err
   }
 };
 const getGeneralData = async (req, res) => {
