@@ -18,4 +18,4 @@ const wakeUpDyno = (url, interval = 25) => {
   }, milliseconds);
 };
 
-module.exports = {wakeUpDyno};
+module.exports = { wakeUpDyno };

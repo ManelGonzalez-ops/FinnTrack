@@ -125,6 +125,6 @@ app.use((err, res, next) => {
 
 
 app.listen(PORT, () => {
-  wakeUpDyno(PORT)
   console.log("essto funca, running port ", PORT);
+  wakeUpDyno("https://financeapp-v1.herokuapp.com");
 });
