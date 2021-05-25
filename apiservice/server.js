@@ -26,7 +26,7 @@ const { handleError } = require("./handleError");
 const { initDb } = require("./db/init");
 const recurringTaskRoutes = require("./routes/RecurringTask");
 const runScheduledTasks = require("./ScheduledTasks")
-const { keepDynoAlive } = require("./keepDynoAlive")
+const { wakeUpDyno } = require("./keepDynoAlive")
 
 initDb();
 runScheduledTasks();
@@ -125,6 +125,6 @@ app.use((err, res, next) => {
 
 
 app.listen(PORT, () => {
-  keepDynoAlive(PORT)
+  wakeUpDyno(PORT)
   console.log("essto funca, running port ", PORT);
 });
