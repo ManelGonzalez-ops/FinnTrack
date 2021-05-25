@@ -52,17 +52,6 @@ const fetcharH = async (search, startDate, endDate, returnkey = false) => {
   return data;
 };
 
-const fetcharDate = async (search, startDate) => {
-  console.log(search, startDate, "fechas");
-  const rawData = await fetch(`https://api.tiingo.com/tiingo/daily/${search}/prices?startDate=${startDate}&token=7ca717775ec5e7e407b361a789d639ce27dc8224`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-  const data = await rawData.json();
-  return data[0];
-};
-
 const fetchQuoteConstituents = async (arr) => {
   console.log("feeeeeeeeeeeeeetching be careful");
   return await Promise.all(arr.map((ticker) => fetch(`https://api.tiingo.com/tiingo/daily/${ticker}/prices?token=7ca717775ec5e7e407b361a789d639ce27dc8224`)
@@ -237,7 +226,5 @@ const fetchHistoricalFromDate = async (tickers, range) => {
 };
 
 module.exports = {
-  fetcharS, fetcharP,
-fetcharN, fetcharH, fetcharM, fetchQuoteConstituents, fetchAllIndexesPrices, fetchAvailableIndexes, fetchCompanyAdditional, fetchAllQuotes, fetchEmptyLogo, fetchMostActives, fetchGainersLosers, fetchDispatcher,
-  fetcharDate
+  fetcharS, fetcharP, fetcharN, fetcharH, fetcharM, fetchQuoteConstituents, fetchAllIndexesPrices, fetchAvailableIndexes, fetchCompanyAdditional, fetchAllQuotes, fetchEmptyLogo, fetchMostActives, fetchGainersLosers, fetchDispatcher,
 };
