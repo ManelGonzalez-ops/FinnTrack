@@ -1,8 +1,10 @@
 const express = require("express");
 const PORT = process.env.PORT || 8001;
 module.exports = { PORT }
-const app = express();
 const cors = require("cors");
+const app = express();
+app.use(cors());
+
 const bodyParser = require("body-parser");
 const fs = require("fs");
 const path = require("path");
@@ -28,9 +30,11 @@ const recurringTaskRoutes = require("./routes/RecurringTask");
 const runScheduledTasks = require("./ScheduledTasks")
 const { wakeUpDyno } = require("./keepDynoAlive")
 
+
+
 initDb();
 runScheduledTasks();
-app.use(cors());
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true,
