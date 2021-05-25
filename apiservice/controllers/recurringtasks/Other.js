@@ -22,7 +22,7 @@ const storeGeneralDataScheduled = async (field) => {
   const validDbDate = convertUnixToHuman(Date.now());
   try {
     const data = await fetchDispatcher(field);
-    //console.log(data, "thee datau");
+    console.log(data, "thee datau");
     if (data.length > 0) {
       await storeGeneralData(field, validDbDate, data);
     } else {

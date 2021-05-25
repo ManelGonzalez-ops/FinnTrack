@@ -23,12 +23,13 @@ router.route("/register")
 
 router.route("/oauth/facebook")
     .get(passport.authenticate("facebook", {
-        session: false, scope: ["email",
+        session: false, scope: ["email"
             //"user_birthday",
             //'user_gender',
             //'user_location',
             //'user_posts',
             //'user_friends']
+    ]
     }))
 
 router.route('/facebook/callback')
