@@ -43,6 +43,7 @@ import Cookie from "js-cookie"
 import { RssFeedTwoTone } from "@material-ui/icons";
 import { useSocialAuth } from "./utils/useSocialAuth";
 import { CSSTransition, Transition, TransitionGroup } from "react-transition-group";
+import { Policy } from "twilio/lib/jwt/taskrouter/TaskRouterCapability";
 
 
 
@@ -294,6 +295,9 @@ const App = () => {
             <AuthMiddleware>
               <UpdateInfoView />
             </AuthMiddleware>
+          </Route>
+          <Route path="/privacy_policy">
+            <Policy />
           </Route>
           <Route path="/">
             <Principal setSelection={setSelection} />
