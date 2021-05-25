@@ -43,9 +43,7 @@ import Cookie from "js-cookie"
 import { RssFeedTwoTone } from "@material-ui/icons";
 import { useSocialAuth } from "./utils/useSocialAuth";
 import { CSSTransition, Transition, TransitionGroup } from "react-transition-group";
-import { Policy } from "twilio/lib/jwt/taskrouter/TaskRouterCapability";
-
-
+import { Policy } from "./views/Policy"
 
 const useStyles = makeStyles((theme) => ({
   root: {

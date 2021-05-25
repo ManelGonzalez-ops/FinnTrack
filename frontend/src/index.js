@@ -4,7 +4,7 @@ import './index.css';
 import "./styles/main.css"
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { HashRouter, Route } from "react-router-dom";
+import { BrowserRouter, Route } from "react-router-dom";
 import { ContextProvider } from './Context';
 import { UIProvider } from './ContextUI';
 import { UserContext } from './UserContext';
@@ -15,9 +15,9 @@ ReactDOM.render(
     <UserContext>
       <ContextProvider>
         <UIProvider>
-          <HashRouter>
+          <BrowserRouter>
             <App />
-          </HashRouter>
+          </BrowserRouter>
         </UIProvider>
       </ContextProvider>
     </UserContext>
