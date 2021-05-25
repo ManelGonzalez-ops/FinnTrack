@@ -33,7 +33,7 @@ export const useCompaniesChangePersona = ({ generatedSeries, portfolioHistory, c
                 Object.keys(portfolioHistory[date]).forEach(ticker => {
                     const wasInPort = generatedSeries.dates[date].positions.find(item => ticker === item.ticker)
                     if (wasInPort) {
-                        console.log(wasInPort, "wasInport")
+                        //console.log(wasInPort, "wasInport")
                         const { close } = portfolioHistory[date][ticker]
                         const prevDayPrice = result[ticker] && result[ticker].length > 0 && result[ticker][result[ticker].length - 1][2]
                         if (prevDayPrice) {

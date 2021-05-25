@@ -25,7 +25,7 @@ const usersRoutes = require("./routes/Users");
 const { handleError } = require("./handleError");
 const { initDb } = require("./db/init");
 const recurringTaskRoutes = require("./routes/RecurringTask");
-const runScheduledTasks = require("./ScheduledTasks")
+const {runScheduledTasks} = require("./ScheduledTasks")
 
 initDb();
 runScheduledTasks();

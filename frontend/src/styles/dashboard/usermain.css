@@ -164,20 +164,6 @@ g .principal > header {
   grid-area: secondary;
 }
 
-.secondary > *:first-child {
-  position: relative;
-}
-
-.secondary > *:first-child:before {
-  content: "";
-  background: crimson;
-  position: absolute;
-  width: 120%;
-  height: 140%;
-  z-index: -1;
-  top: -40%;
-}
-
 .lateral-section > header {
   text-align: center;
 }

@@ -73,6 +73,19 @@ module.exports = {
         console.log("success baby");
       });
   }),
+  storeOperationsBulk: (operations, userId) => new Promise((resolve, reject) => {
+    const readyBulk = operations.map(item=> [item.operationType, item.date, item.ticker, item.amount, item.price, item.isFirstOperation, item.assetType, userId])
+    console.log(operations, "poeration");
+    db.query(`insert into operations (operationtype, opdate, ticker, amount, price, isFirstOperation, assetType, userId) values ?`,
+        [readyBulk], (err) => {
+          if (err) {
+          reject(err);
+            console.log(err, "errur 2");
+          }
+          resolve();
+          console.log("success baby");
+        });
+  }),
   // se supone que el usurio está ya autentificado
   getOperations: (email) => new Promise((resolve, reject) => {
     db.query("SELECT * from operations where userId = (select userId from users where email = ?)", [email], (err, data) => {

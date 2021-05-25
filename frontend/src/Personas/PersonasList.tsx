@@ -1,5 +1,5 @@
 import { LinearProgress } from '@material-ui/core'
-import React, { useEffect, useReducer } from 'react'
+import React, {useEffect, useReducer, useState} from 'react'
 import { PeopleItem } from './interfaces'
 import { UserItem } from './UserItem.js'
 
@@ -39,7 +39,9 @@ const reducer = (state: userMain, action: State) => {
 export const PersonasList = () => {
 
     const [state, dispatch] = useReducer(reducer, { data: null, loading: true, error: "" })
-
+    const [currentPage, setCurrentPage] = useState(1)
+    const [resultsXPage, setResultsXPage] = useState(10)
+    const [order, setOrder] = useState("no order")
     const { data, loading, error } = state
     const getPeople = () => {
         return fetch(`${process.env.REACT_APP_API}/api/v1/people/main`)

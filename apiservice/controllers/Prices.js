@@ -1,3 +1,4 @@
+const {fetcharDate} = require("../controller");
 const { fetcharH, fetcharM } = require("../controller")
 const { getUserByUsername, getPortfoliosByIds, proba } = require("../db/services")
 
@@ -94,6 +95,38 @@ const getTickerPrices = async (req, res) => {
         }
     } catch (err) {
         res.status(404).send({ err });
+    }
+}
+
+const getDateRange = async (req, res, next) => {
+    const { ticker } = req.body
+    try {
+
+        const metadata = await fetcharM(ticker)
+        if (metadata) {
+            // console.log(metaData, "comeee nena")
+            const { startDate, endDate } = metadata;
+            res.status(200).send({ startDate, endDate })
+        }
+        else {
+            res.status(400).send({ err: "no emtadata" })
+        }
+    }
+    catch (err) {
+        console.log(err)
+        res.status(400).send(err.message)
+    }
+}
+const getDateTickerPrice =async(req, res, next)=>{
+    const {ticker, date} = req.body
+    console.log("aquiuu")
+    try{
+        const data = await fetcharDate(ticker, date)
+        console.log(data, "ladatau")
+        return res.status(200).send(data)
+    }
+    catch(err){
+        res.status(400).send(err.message)
     }
 }
 //not in routes
@@ -307,5 +340,7 @@ module.exports = {
     PriceService,
     getAllTickerPrices,
     pruebaPort,
-    getTickerPrices
+    getTickerPrices,
+    getDateRange,
+    getDateTickerPrice
 }

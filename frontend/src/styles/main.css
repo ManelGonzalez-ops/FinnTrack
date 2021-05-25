@@ -661,20 +661,6 @@ g .principal > header {
   grid-area: secondary;
 }
 
-.secondary > *:first-child {
-  position: relative;
-}
-
-.secondary > *:first-child:before {
-  content: "";
-  background: crimson;
-  position: absolute;
-  width: 120%;
-  height: 140%;
-  z-index: -1;
-  top: -40%;
-}
-
 .lateral-section > header {
   text-align: center;
 }
@@ -1101,6 +1087,10 @@ g .principal > header {
   z-index: -1;
   border-radius: 10px;
   height: 100%;
+}
+
+.admin {
+  min-height: calc(100vh - 56px);
 }
 
 .wrapper-reference {

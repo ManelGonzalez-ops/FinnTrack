@@ -42,4 +42,4 @@ const writeAllIndexPrices = async (req, res) => {
   }
 };
 
-module.exports = runScheduledTasks
+module.exports = {runScheduledTasks, writeAllIndexPrices}

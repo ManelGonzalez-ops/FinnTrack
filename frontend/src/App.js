@@ -43,6 +43,7 @@ import Cookie from "js-cookie"
 import { RssFeedTwoTone } from "@material-ui/icons";
 import { useSocialAuth } from "./utils/useSocialAuth";
 import { CSSTransition, Transition, TransitionGroup } from "react-transition-group";
+import { Admin } from "./Admin/Admin";
 
 
 
@@ -294,6 +295,9 @@ const App = () => {
             <AuthMiddleware>
               <UpdateInfoView />
             </AuthMiddleware>
+          </Route>
+          <Route path="/admin">
+            <Admin />
           </Route>
           <Route path="/">
             <Principal setSelection={setSelection} />

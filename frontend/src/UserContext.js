@@ -2,7 +2,7 @@ import React, { useReducer, useContext } from 'react'
 import Cookie from "js-cookie"
 const context = React.createContext()
 const getToken = () => {
-    const token = Cookie.getJSON("token")
+    const token = localStorage.getItem("token")
     if (!token || token === "undefined") return ""
     console.log(token, "tokeeun")
     // return token
