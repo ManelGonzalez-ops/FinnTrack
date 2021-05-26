@@ -8,7 +8,7 @@ module.exports = {
       }
       console.log(row);
       if (!row || !row.length) {
-        reject("empty results for user");
+        reject(new Error("empty results for user"));
       }
       resolve(row[0]);
     });
