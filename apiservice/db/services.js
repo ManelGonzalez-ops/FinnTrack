@@ -63,9 +63,19 @@ module.exports = {
       operationType, date, ticker, amount, isFirstOperation, price, assetType,
     } = operation;
     console.log(operation, "poeration");
-    const missingFields = Array(assetType === "peopleFund" ? 9 : 8).fill("?").join();
+    let missingFields;
+    let inputArr;
+    if (assetType === "peopleFund") {
+      missingFields = Array(9).fill("?").join();
+      inputArr = [operationType, date, ticker, amount, price, isFirstOperation, assetType, userId, operation.fundId]
+    }
+    if (assetType === "stock") {
+      missingFields = Array(8).fill("?").join();
+      inputArr = [operationType, date, ticker, amount, price, isFirstOperation, assetType, userId]
+    }
+
     db.query(`insert into operations (operationtype, opdate, ticker, amount, price, isFirstOperation, assetType, userId, ${assetType === "peopleFund" && "fundId"}) values (${missingFields})`,
-      [operationType, date, ticker, amount, price, isFirstOperation, assetType, userId, assetType === "peopleFund" && operation.fundId], (err) => {
+      inputArr, (err) => {
         if (err) {
           reject(err);
           console.log(err, "errur 2");
@@ -180,7 +190,7 @@ module.exports = {
   }),
   // we have to update it everytime a user makes a new operation
   updatePortfolioDB: (userId, portfolio, today) =>
-  // console.log(userId, portfolio, today, "que hostia")
+    // console.log(userId, portfolio, today, "que hostia")
     new Promise((resolve, reject) => {
       db.query("update financeapp.portfolios set portfolio = ?, last_updated = ? where userId = ?", [JSON.stringify(portfolio), today, userId], (err) => {
         if (err) {
