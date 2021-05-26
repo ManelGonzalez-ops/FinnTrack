@@ -2,12 +2,14 @@ const db = require("../db");
 
 const fakeInterests = ["kaka", "culo", "pedo"];
 module.exports = {
-  createInterestTable: () => new Promise((resolve, reject) => db.query("create table if not exists interests (username char(50), interests_arr json, primary key (username), foreign key (username) references users (username))", (err, success) => {
-    if (err) {
-      reject(err);
-    }
-    resolve();
-  })),
+  createInterestTable: () => new Promise((resolve, reject) => {
+    db.query("create table if not exists interests (username char(50), interests_arr json, primary key (username), foreign key (username) references users (username))", (err, success) => {
+      if (err) {
+        reject(err);
+      }
+      resolve();
+    });
+  }),
 
   getUserInterests: (email) => {
     // ojo a esta query
