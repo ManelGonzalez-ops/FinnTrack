@@ -8,13 +8,14 @@ const mysql = require("mysql");
 // };
 
 const db = mysql.createPool({
-  max_user_connections: 20,
-  host: "db4free.net",
-  user: "financeapp",
-  password: "mameluco787",
+  host: "db-mysql-finntrack-do-user-9258613-0.b.db.ondigitalocean.com",
+  user: "doadmin",
+  password: "pt2n37ft4c7paszw ",
   timezone: "gmt",
-  database: "financeappdb",
-  acquireTimeout: 50000
+  database: "defaultdb",
+  port: 25060,
+  ssl: true
+  //acquireTimeout: 50000
 })
 
 
