@@ -7,61 +7,16 @@ const { createUserDetails } = require("./services/UserService");
 
 
 const initDb = async() => {
-  await getMaxConections()
-  createUserTable((err) => {
-    console.log("que concha1");
-    if (err) {
-      console.log(err, "error al crear usuarios");
-    }
-  });
-  createOperationTable((err) => {
-    console.log("que conchu2");
-    if (err) {
-      console.log(err, "error al crear usuarios");
-    }
-  });
-  createCompanyInfo((err) => {
-    console.log("que conchu3");
-    if (err) {
-      console.log(err, "error al crear usuarios");
-    }
-  });
-  createCompaniesJsonTable((err) => {
-    console.log("que conchu");
-    if (err) {
-      console.log(err, "error al crear usuarios");
-    }
-  });
-  createPortfolioTable((err) => {
-    console.log("que conchu");
-    if (err) {
-      console.log(err, "error al crear portfolios");
-    }
-  });
-  createInterestTable((err) => {
-    console.log("que conchu");
-    if (err) {
-      console.log(err, "error al crear portfolios");
-    }
-  });
-  createPostRegister((err) => {
-    console.log("que conchu");
-    if (err) {
-      console.log(err, "error al crear portfolios");
-    }
-  });
-  createPostStructure((err) => {
-    console.log("que conchu");
-    if (err) {
-      console.log(err, "error al crear portfolios");
-    }
-  });
-  createUserDetails((err) => {
-    console.log("que conchu");
-    if (err) {
-      console.log(err, "error al crear portfolios");
-    }
-  });
+  await getMaxConections();
+  await createUserTable();
+  await createOperationTable();
+  await createCompanyInfo();
+  await createCompaniesJsonTable();
+  await createPortfolioTable();
+  await createInterestTable();
+  await createPostRegister();
+  await createPostStructure();
+  await createUserDetails();
 };
 
 module.exports = { initDb };

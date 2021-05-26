@@ -8,13 +8,13 @@ module.exports = {
       resolve();
     });
   }),
-  createUserTable: (cb) => {
+  createUserTable: () => new Promise((resolve, reject) => {
     db.query("create table if not exists users (userId int auto_increment, hashedPwd char(100), email char(50) not null unique, username char(50) unique, method char(15), socialId varchar(50), portfolioInitial date, primary key(userId))", (err) => {
-      if (err) cb(err);
+      if (err) reject(err);
 
-      cb(false);
+      resolve();
     });
-  },
+  }),
 
   // este creo que ya no lo usamos
   addNewUser: (user, username) => new Promise((resolve, reject) => {
@@ -28,14 +28,14 @@ module.exports = {
       });
   }),
 
-  createOperationTable: (cb) => {
+  createOperationTable: () => new Promise((resolve, reject) => {
     db.query("create table if not exists operations (orderId int auto_increment, opdate date, operationtype char(30), ticker char(30), amount int, price int, isFirstOperation boolean, assetType char(20), fundId int, userId int, primary key (orderId), foreign key (userId) references users (userId))", (err) => {
       if (err) {
-        cb(err);
+        reject(err);
       }
-      cb(false);
+      resolve();
     });
-  },
+  }),
   findUser: (email) => new Promise((resolve, reject) => {
     db.query("select userId from users where email = ?",
       [email], (err, data) => {
@@ -112,12 +112,12 @@ module.exports = {
       reject(new Error("no operation found for userId ", id));
     });
   }),
-  createCompanyInfo: (cb) => {
+  createCompanyInfo: () => new Promise((resolve, reject) => {
     db.query("create table if not exists companyinfo (ticker char(30), company_name varchar(100), logourl varchar(100), weburl varchar(100), primary key(ticker))", (err) => {
-      if (err) cb(err);
-      cb(false);
+      if (err) reject(err);
+      resolve();
     });
-  },
+  }),
   addCompanyInfo: (valArr) => {
     const bulkValues = valArr.map((item) => [item.ticker, item.response.logo, item.response.weburl, item.response.name]);
     return new Promise((resolve, reject) => {
@@ -134,9 +134,14 @@ module.exports = {
       resolve(data);
     });
   }),
-  createCompaniesJsonTable: () => {
-    db.query("create table if not exists companiesjsondata (field char(30), fecha date, alldata JSON, primary key(field)) ");
-  },
+  createCompaniesJsonTable: () => new Promise((resolve, reject) => {
+    db.query("create table if not exists companiesjsondata (field char(30), fecha date, alldata JSON, primary key(field)) ", (err) => {
+      if (err) {
+        reject();
+      }
+      resolve();
+    });
+  }),
   getGeneralDataJson: (field, fecha) => new Promise((resolve, reject) => {
     db.query("select * from companiesjsondata where field = ? and fecha = ?", [field, fecha], (err, data) => {
       if (err) {

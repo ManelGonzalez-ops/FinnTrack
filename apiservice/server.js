@@ -47,8 +47,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.json());
 
-initDb();
-runScheduledTasks();
+const initApp = async () => {
+  await initDb();
+  runScheduledTasks();
+}
+
+initApp()
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
