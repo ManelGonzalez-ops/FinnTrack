@@ -63,7 +63,8 @@ module.exports = {
       operationType, date, ticker, amount, isFirstOperation, price, assetType,
     } = operation;
     console.log(operation, "poeration");
-    db.query(`insert into operations (operationtype, opdate, ticker, amount, price, isFirstOperation, assetType, userId, ${assetType === "peopleFund" && "fundId"}) values (?,?,?,?,?,?,?,?${assetType === "peopleFund" && ",?"})`,
+    const missingFields = Array(assetType === "peopleFund" ? 9 : 8).fill("?").join();
+    db.query(`insert into operations (operationtype, opdate, ticker, amount, price, isFirstOperation, assetType, userId, ${assetType === "peopleFund" && "fundId"}) values (${missingFields})`,
       [operationType, date, ticker, amount, price, isFirstOperation, assetType, userId, assetType === "peopleFund" && operation.fundId], (err) => {
         if (err) {
           reject(err);
