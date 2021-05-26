@@ -12,7 +12,6 @@ const signToken = (userid) => {
     }, config.JWT_SECRET)
 }
 const login = async (req, res) => {
-
     console.log("received")
     if (req.error) {
         return res.status(400).send(req.error)

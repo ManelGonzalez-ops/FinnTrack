@@ -8,7 +8,16 @@ const passportJWT = passport.authenticate("jwt", { session: false })
 const passportLocal = passport.authenticate("local", { session: false })
 
 router.route("/login")
-    .post(passportLocal, login)
+    .post(
+        (req, res, next) => {
+            passport.authenticate("local", { session: false }, (err, user, info) => {
+                if (err) {
+                    return res.status(404).send(err)
+                }
+                next()
+            })
+        }(req, res, next)
+        , login)
 
 router.use("/post", unpackToken)
 router.route("/post")
@@ -22,14 +31,16 @@ router.route("/register")
     .post(register)
 
 router.route("/oauth/facebook")
-    .get(passport.authenticate("facebook", { session: false, scope: 
-        ["email"
-        // "user_birthday",
-        //  'user_gender', 
-        //  'user_location', 
-        //  'user_posts', 
-        //  'user_friends'
-        ] }))
+    .get(passport.authenticate("facebook", {
+        session: false, scope:
+            ["email"
+                // "user_birthday",
+                //  'user_gender', 
+                //  'user_location', 
+                //  'user_posts', 
+                //  'user_friends'
+            ]
+    }))
 
 router.route('/facebook/callback')
     .get(passport.authenticate('facebook', {
