@@ -71,16 +71,20 @@ module.exports = {
     console.log(operation, "poeration");
     let missingFields;
     let inputArr;
-    if (assetType === "peopleFund") {
-      missingFields = Array(9).fill("?").join();
-      inputArr = [operationType, date, ticker, amount, price, isFirstOperation, assetType, userId, operation.fundId];
-    }
+    let query
     if (assetType === "stock") {
+      query = "operationtype, opdate, ticker, amount, price, isFirstOperation, assetType, userId";
       missingFields = Array(8).fill("?").join();
       inputArr = [operationType, date, ticker, amount, price, isFirstOperation, assetType, userId];
     }
+    if (assetType === "peopleFund") {
+      query = "operationtype, opdate, ticker, amount, price, isFirstOperation, assetType, userId, fundId";
+      missingFields = Array(9).fill("?").join();
+      inputArr = [operationType, date, ticker, amount, price, isFirstOperation, assetType, userId, operation.fundId];
+    }
 
-    db.query(`insert into operations (operationtype, opdate, ticker, amount, price, isFirstOperation, assetType, userId, ${assetType === "peopleFund" && "fundId"}) values (${missingFields})`,
+
+    db.query(`insert into operations (${query}) values (${missingFields})`,
       inputArr, (err) => {
         if (err) {
           reject(err);
