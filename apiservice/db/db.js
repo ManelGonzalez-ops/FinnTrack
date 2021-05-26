@@ -10,7 +10,7 @@ const mysql = require("mysql");
 const db = mysql.createPool({
   host: "db-mysql-finntrack-do-user-9258613-0.b.db.ondigitalocean.com",
   user: "doadmin",
-  password: "xj59jtjwszxwpfri  ",
+  password: "xj59jtjwszxwpfri",
   timezone: "gmt",
   database: "defaultdb",
   port: 25060,
