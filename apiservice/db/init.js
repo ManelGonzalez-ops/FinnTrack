@@ -7,6 +7,7 @@ const { createUserDetails } = require("./services/UserService");
 
 
 const initDb = () => {
+  
   createUserTable((err) => {
     console.log("que concha1");
     if (err) {

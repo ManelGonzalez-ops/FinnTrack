@@ -2,6 +2,12 @@ const db = require("./db");
 
 module.exports = {
   // if method is local, socialId will be null
+  getMaxConections: () => new Promise((resolve) => {
+    db.query("SELECT @@max_connections", (err, data) => {
+      console.log(err, data, "cuandtas max");
+      resolve();
+    });
+  }),
   createUserTable: (cb) => {
     db.query("create table if not exists users (userId int auto_increment, hashedPwd char(100), email char(50) not null unique, username char(50) unique, method char(15), socialId varchar(50), portfolioInitial date, primary key(userId))", (err) => {
       if (err) cb(err);
@@ -67,11 +73,11 @@ module.exports = {
     let inputArr;
     if (assetType === "peopleFund") {
       missingFields = Array(9).fill("?").join();
-      inputArr = [operationType, date, ticker, amount, price, isFirstOperation, assetType, userId, operation.fundId]
+      inputArr = [operationType, date, ticker, amount, price, isFirstOperation, assetType, userId, operation.fundId];
     }
     if (assetType === "stock") {
       missingFields = Array(8).fill("?").join();
-      inputArr = [operationType, date, ticker, amount, price, isFirstOperation, assetType, userId]
+      inputArr = [operationType, date, ticker, amount, price, isFirstOperation, assetType, userId];
     }
 
     db.query(`insert into operations (operationtype, opdate, ticker, amount, price, isFirstOperation, assetType, userId, ${assetType === "peopleFund" && "fundId"}) values (${missingFields})`,
