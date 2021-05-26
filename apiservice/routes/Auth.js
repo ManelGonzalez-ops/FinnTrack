@@ -12,17 +12,7 @@ const passportJWT = passport.authenticate("jwt", { session: false });
 const passportLocal = passport.authenticate("local", { session: false });
 
 router.route("/login")
-    .post(
-        (req, res, next) => {
-            passport.authenticate("local", { session: false }, (err, user, info) => {
-                if (err) {
-                    return res.status(404).send(err);
-                }
-                next();
-            });
-        },
-        login,
-    )
+    .post(passportLocal, login)
 
 router.use("/post", unpackToken);
 router.route("/post")
