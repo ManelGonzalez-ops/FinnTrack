@@ -3,6 +3,7 @@ const db = require("../db");
 module.exports = {
   getUser: (email) => new Promise((resolve, reject) => {
     db.query("select * from users where email = ?", [email], (err, row) => {
+      console.log(row, "the roww")
       if (err) {
         reject(err);
       }
@@ -10,6 +11,7 @@ module.exports = {
       if (!row || !row.length) {
         reject(new Error("empty results for user"));
       }
+      console.log(row, "tharow")
       resolve(row[0]);
     });
   }),
