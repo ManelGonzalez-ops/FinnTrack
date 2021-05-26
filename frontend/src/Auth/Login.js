@@ -33,8 +33,7 @@ export const Login = () => {
         fetch(`${process.env.REACT_APP_API}/api/v1/auth/login`, {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
-            method: "POST",
-            credentials: 'include'
+            method: "POST"
         })
             .then(res => {
                 if (!res.ok) throw new Error("error in passport middleware");
