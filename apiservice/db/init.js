@@ -8,7 +8,9 @@ const { createUserDetails } = require("./services/UserService");
 
 const initDb = async() => {
   await getMaxConections();
+  console.log("done1")
   await createUserTable();
+  console.log("done2")
   await createOperationTable();
   await createCompanyInfo();
   await createCompaniesJsonTable();
@@ -16,6 +18,7 @@ const initDb = async() => {
   await createInterestTable();
   await createPostRegister();
   await createPostStructure();
+  console.log("done3")
   await createUserDetails();
 };
 
