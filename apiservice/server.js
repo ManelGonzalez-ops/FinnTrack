@@ -3,20 +3,20 @@ const PORT = process.env.PORT || 8001;
 module.exports = { PORT }
 const cors = require("cors");
 const app = express();
-//app.use(cors());
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE");
-  res.header("Access-Control-Allow-Credentials", true); 
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(204);
-  }
-  next();
-});
+app.use(cors());
+// app.use(function(req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept"
+//   );
+//   res.header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE");
+//   res.header("Access-Control-Allow-Credentials", true); 
+//   if (req.method === "OPTIONS") {
+//     return res.sendStatus(204);
+//   }
+//   next();
+// });
 
 const bodyParser = require("body-parser");
 const fs = require("fs");
