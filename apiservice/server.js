@@ -43,15 +43,12 @@ const recurringTaskRoutes = require("./routes/RecurringTask");
 const runScheduledTasks = require("./ScheduledTasks")
 const { wakeUpDyno } = require("./keepDynoAlive")
 
-
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.json());
 
 initDb();
 runScheduledTasks();
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-  extended: true,
-}));
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -64,9 +61,7 @@ const fileStorage = multer.diskStorage({
 
 const upload = multer({ storage: fileStorage });
 // añadidos al hacer lo del okta
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.json());
+
 // app.use(express.json())
 
 app.use(passport.initialize());
