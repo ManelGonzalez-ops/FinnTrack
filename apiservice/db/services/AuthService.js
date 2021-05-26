@@ -9,7 +9,8 @@ module.exports = {
       }
       console.log(row);
       if (!row || !row.length) {
-        reject(new Error("empty results for user"));
+        console.log("entering in reject")
+       return reject(new Error("empty results for user"));
       }
       console.log(row, "tharow")
       resolve(row[0]);
