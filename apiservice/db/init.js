@@ -12,13 +12,19 @@ const initDb = async() => {
   await createUserTable();
   console.log("done2")
   await createOperationTable();
-  await createCompanyInfo();
-  await createCompaniesJsonTable();
-  await createPortfolioTable();
-  await createInterestTable();
-  await createPostRegister();
-  await createPostStructure();
   console.log("done3")
+  await createCompanyInfo();
+  console.log("done4")
+  await createCompaniesJsonTable();
+  console.log("done5")
+  await createPortfolioTable();
+  console.log("done6")
+  await createInterestTable();
+  console.log("done7")
+  await createPostRegister();
+  console.log("done8")
+  await createPostStructure();
+  console.log("done9")
   await createUserDetails();
 };
 
