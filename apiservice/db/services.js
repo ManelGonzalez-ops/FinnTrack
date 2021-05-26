@@ -62,8 +62,9 @@ module.exports = {
     const {
       operationType, date, ticker, amount, isFirstOperation, price, assetType,
     } = operation;
+    const missingFields = Array(assetType === "peopleFund" ? 9 : 8).fill("?").join();
     console.log(operation, "poeration");
-    db.query(`insert into operations (operationtype, opdate, ticker, amount, price, isFirstOperation, assetType, userId, ${assetType === "peopleFund" && "fundId"}) values (?,?,?,?,?,?,?,?${assetType === "peopleFund" && ",?"})`,
+    db.query(`insert into operations (operationtype, opdate, ticker, amount, price, isFirstOperation, assetType, userId, ${assetType === "peopleFund" && "fundId"}) values (${missingFields})`,
       [operationType, date, ticker, amount, price, isFirstOperation, assetType, userId, assetType === "peopleFund" && operation.fundId], (err) => {
         if (err) {
           reject(err);
@@ -74,17 +75,17 @@ module.exports = {
       });
   }),
   storeOperationsBulk: (operations, userId) => new Promise((resolve, reject) => {
-    const readyBulk = operations.map(item=> [item.operationType, item.date, item.ticker, item.amount, item.price, item.isFirstOperation, item.assetType, userId])
+    const readyBulk = operations.map(item => [item.operationType, item.date, item.ticker, item.amount, item.price, item.isFirstOperation, item.assetType, userId])
     console.log(operations, "poeration");
     db.query(`insert into operations (operationtype, opdate, ticker, amount, price, isFirstOperation, assetType, userId) values ?`,
-        [readyBulk], (err) => {
-          if (err) {
+      [readyBulk], (err) => {
+        if (err) {
           reject(err);
-            console.log(err, "errur 2");
-          }
-          resolve();
-          console.log("success baby");
-        });
+          console.log(err, "errur 2");
+        }
+        resolve();
+        console.log("success baby");
+      });
   }),
   // se supone que el usurio está ya autentificado
   getOperations: (email) => new Promise((resolve, reject) => {
@@ -192,7 +193,7 @@ module.exports = {
   }),
   // we have to update it everytime a user makes a new operation
   updatePortfolioDB: (userId, portfolio, today) =>
-  // console.log(userId, portfolio, today, "que hostia")
+    // console.log(userId, portfolio, today, "que hostia")
     new Promise((resolve, reject) => {
       db.query("update financeapp.portfolios set portfolio = ?, last_updated = ? where userId = ?", [JSON.stringify(portfolio), today, userId], (err) => {
         if (err) {
