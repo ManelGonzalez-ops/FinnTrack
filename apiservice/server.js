@@ -4,13 +4,19 @@ module.exports = { PORT }
 const cors = require("cors");
 const app = express();
 app.use(cors());
-// app.use(function (req, res, next) {
-//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//   res.header("Access-Control-Allow-Methods", "POST,DELETE,PUT,GET,OPTIONS");
-//   res.header("Access-Control-Allow-Headers", req.headers['access-control-request-headers']);
-//   res.header("Access-Control-Request-Method", req.headers['access-control-request-method']);
-//   next();
-// });
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "https://nervous-keller-e654f2.netlify.app");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE");
+  res.header("Access-Control-Allow-Credentials", true); 
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+  next();
+});
 
 const bodyParser = require("body-parser");
 const fs = require("fs");
