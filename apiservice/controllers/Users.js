@@ -1,17 +1,33 @@
 const path = require("path")
 const { findUser } = require("../db/services")
 const { uploadImage, addContactInfo, getUserDetailsDB, getUserImageDB } = require("../db/services/UserService")
-const uploadImg = async (req, res, next) => {
+const uploadImgMulter = async (req, res, next) => {
     const { email } = req.body
     if (!req.file) {
         next(new Error("server received no image"))
     }
     try {
         const userId = await findUser(email)
-        await uploadImage(userId, req.file)
-        // console.log(path.join(__dirname, "../", req.file.path), "diirname")
+        await uploadImage(userId, req.file.path)
         res.status(200).sendFile(path.join(__dirname, "../", req.file.path))
-        // res.status(200).send("image uploaded succesfully to database")
+    }
+    catch (err) {
+        next(new Error(err))
+    }
+}
+
+const uploadImg = async (req, res, next) => {
+    const { email } = req.body
+    console.log(email)
+    if (!req.imageUrl) {
+        next(new Error("server received no image"))
+    }
+    try {
+        const userId = await findUser(email)
+        await uploadImage(userId, req.imageUrl)
+        //just for multer
+        //res.status(200).sendFile(path.join(__dirname, "../", req.file.path))
+        return res.status(200).json(req.imageUrl)
     }
     catch (err) {
         next(new Error(err))
@@ -93,7 +109,9 @@ class UserInfo {
         try {
             const imagePath = await getUserImageDB(userId)
             console.log("imagePath", imagePath)
-            return this.res.status(200).sendFile(path.join(__dirname, "../", imagePath))
+            // this was for multer
+            // return this.res.status(200).sendFile(path.join(__dirname, "../", imagePath))
+            return this.res.status(200).json(imagePath)
         }
         catch (err) {
             return this.res.status(400).json(err.message)

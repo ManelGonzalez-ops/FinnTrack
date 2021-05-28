@@ -12,10 +12,10 @@ module.exports = {
             })
         })
     },
-    uploadImage: (userId, image) => {
+    uploadImage: (userId, imagePath) => {
         //if user was authenticated with social login and changes img we have to set static_image to change the picture flow
         return new Promise((resolve, reject) => {
-            db.query("insert into userDetails (userId, image, static_image) values(?,?,?) on duplicate key update image = values(image), static_image = values(static_image)", [userId, image.path, true], (err, row) => {
+            db.query("insert into userDetails (userId, image, static_image) values(?,?,?) on duplicate key update image = values(image), static_image = values(static_image)", [userId, imagePath, true], (err, row) => {
                 if (err) {
                     reject(err)
                 }

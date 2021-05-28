@@ -10,7 +10,7 @@ import { CustomCircularProgress } from '../../components/components/CustomCircul
 
 
 
-const Post = ({ message, selectPost, selectImg, isSelected = false }) => {
+const Post = ({ message, selectPost, isSelected = false }) => {
     const [{ conversationData, error, loading }, setConversationData] = useState({ conversationData: null, error: null, loading: true })
     const { user, created_at } = message
     const time = useRef(time_ago(new Date(created_at).getTime()))
@@ -22,7 +22,6 @@ const Post = ({ message, selectPost, selectImg, isSelected = false }) => {
 
     const getRandomNum = () => {
         const randomLike = [0, 0, 1, 3, Math.round(Math.random() * 10)]
-        //console.log(randomLike, "la arr")
         return randomLike[Math.round(Math.random() * 4)]
     }
     const randomNum = useRef(getRandomNum())
@@ -40,8 +39,6 @@ const Post = ({ message, selectPost, selectImg, isSelected = false }) => {
         }
     }, [])
     useEffect(() => {
-        //if (!isSelected) return;
-        console.log("mounting again")
         setConversationData(prev => ({ ...prev, loading: true }))
         fetch(`https://api.stocktwits.com/api/2/streams/conversation/${message.id}.json`)
             .then(res => res.json())
@@ -84,7 +81,7 @@ const Post = ({ message, selectPost, selectImg, isSelected = false }) => {
                         <Chip
                             size="small"
                             label={message.entities.sentiment.basic}
-                            style={{marginRight: "1rem"}}
+                            style={{ marginRight: "1rem" }}
                         />
                         : null
                     }
@@ -97,10 +94,6 @@ const Post = ({ message, selectPost, selectImg, isSelected = false }) => {
                 </p>
                 {chart && <img src={chart.original} alt="chart caption"
                     className={isSelected ? "body-img bigger" : "body-img"}
-                    onClick={(e) => {
-                        e.stopPropagation()
-                        selectImg(chart.original)
-                    }}
                 />
                 }
                 {giphy && <Giff {...{ gifUrl, gifLoading, gifError }} />}
@@ -130,7 +123,7 @@ const Post = ({ message, selectPost, selectImg, isSelected = false }) => {
 
                 </div>
                 <div
-                    
+
                 >
 
                     <Transition
@@ -147,7 +140,7 @@ const Post = ({ message, selectPost, selectImg, isSelected = false }) => {
 
                                 <div
 
-                                className="post-reply-list"
+                                    className="post-reply-list"
                                 >
                                     {conversationData && conversationData.messages && conversationData.messages.map((msg) => <Reply message={msg} key={msg.user.username} />)}
 
@@ -193,7 +186,7 @@ const Reply = ({ message }) => {
     const { user, created_at } = message
     return (
         <div
-        className="post-reply"
+            className="post-reply"
         >
             <div className="post-avatar">
                 <img className="avatar" src={user.avatar_url} alt={user.username} />

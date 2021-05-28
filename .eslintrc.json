@@ -19,7 +19,11 @@
         "linebreak-style": "off",
         "no-plusplus": "off",
         "max-len": "off",
-        "no-use-before-define":"warn"
+        "no-use-before-define":"warn",
+        "no-return-await": "off",
+        "camelcase": "off",
+        "indent":"off",
+        "no-unused-vars": "warn"
     },
     "ignorePatterns":["./src"]
 }

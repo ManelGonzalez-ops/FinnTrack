@@ -13,7 +13,6 @@ export const useHandleProfileImage = () => {
             //we already habe handled the image in the useEffect of above
             return
         }
-        console.log(userState, "userState")
         const { email } = userState.info
 
         fetch(`${process.env.REACT_APP_API}/api/v1/users/image`, {
@@ -28,7 +27,7 @@ export const useHandleProfileImage = () => {
                 if (!res.ok) throw new Error("no image, is not really an error")
                 return res
             })
-            .then(res => res.blob())
+            .then(res => res.json())
             .then(res => { userDispatch({ type: "UPDATE_IMAGE", payload: res }) })
             .catch(err => { alert(err.message) })
 

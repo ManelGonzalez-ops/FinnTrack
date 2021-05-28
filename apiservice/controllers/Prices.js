@@ -1,6 +1,10 @@
 const { fetcharH, fetcharM } = require("../controller")
 const { getUserByUsername, getPortfoliosByIds, proba } = require("../db/services")
 
+//resivar mañana heroku log
+// 2021-05-27T18:25:34.946058+00:00 app[web.1]: 2021-05-26 fecha inicio
+// 2021-05-27T18:25:34.946233+00:00 app[web.1]: AMZN 2021-05-26 2021-05-26 fechas
+// 2021-05-27T18:25:38.954171+00:00 app[web.1]: [ [ { AMZN: [Array] } ], [] ] acabaaao
 const getAllTickerPrices = async (req, res) => {
     const possesions = req.body
     console.log(possesions, "posesionses ostia")

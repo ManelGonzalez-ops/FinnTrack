@@ -114,7 +114,7 @@ const App = () => {
           })
 
           if (res.userData) {
-            //we extract all keys but the image as it will be handled separately
+            
             const { image, ...rest } = res.userData
             res.userData.static_image ?
               userDispatch({ type: "ADD_USER_INFO", payload: rest })

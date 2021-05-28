@@ -23,10 +23,11 @@ export const PortfolioPriceChart = ({ datos }) => {
     const chart = useRef(null)
     const chart2 = useRef(null)
     useChartReflow(chart.current)
-    const { state: { addFirstSerie } } = useDataLayer()
+    const { state: { addFirstSerie = false } } = useDataLayer()
     const [dataset, setDataset] = useState("")
     const [availableTomorrow, setAvailableTomorrow] = useState(false)
     const [isLoaded, setIsLoaded] = useState(false)
+    const [loading, setIsLoading] = useState(true)
     useRemoveCredits(isLoaded)
 
     //la fecha de la grafica siempre es un dia menos respecto a las generatedseries
@@ -138,16 +139,21 @@ export const PortfolioPriceChart = ({ datos }) => {
         <Paper
             className="portfolio-chart"
         >
-            {availableTomorrow && <p>Data is not available untill next day after you submited a operation, if you submited in weekend wait till monday</p>}
-            {
-                dataset &&
-                <HighchartsReact
-                    //ref={chart2}
-                    highcharts={Highcharts}
-                    options={options}
-                    constructorType={"stockChart"}
+            {loading ?
+                <p>loading...</p>
+                :
+                availableTomorrow ? <p>Data is not available untill next day after you submited a operation, if you submited in weekend wait till monday</p>
+                    :
+                    dataset &&
+                    <HighchartsReact
+                        //ref={chart2}
+                        highcharts={Highcharts}
+                        options={options}
+                        constructorType={"stockChart"}
 
-                />}
+                    />
+            }
+
         </Paper>
     )
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 //import { usercontext, useUserLayer } from '../../UserContext'
 import Post from './Post'
 import gsap from "gsap"
-import { Backdrop, Button, Dialog, IconButton } from '@material-ui/core'
+import { Backdrop, Button, Dialog, IconButton, makeStyles } from '@material-ui/core'
 import RefreshIcon from '@material-ui/icons/Refresh';
 import CloseIcon from '@material-ui/icons/Close';
 export class FollowingDispatcher extends React.Component {
@@ -18,8 +18,7 @@ export class FollowingDispatcher extends React.Component {
         responseType: null,
         backdropOpen: false,
         selectedPost: null,
-        rotatingIcon: false,
-        imgSelected: null
+        rotatingIcon: false
     }
     // messageRef = React.createRef()
     // timeline = gsap.timeline()
@@ -118,22 +117,12 @@ export class FollowingDispatcher extends React.Component {
         { this.setState({ backdropOpen: false, selectedPost: null }) }
     }
 
-    selectImg = (url) => {
-        console.log("selectIMG fired")
 
-        this.setState(prev => ({
-            ...prev,
-            imgSelected: url
-        }))
-    }
 
-    unselectImg = () => {
-        this.setState(prev => ({ ...prev, imgSelected: null }))
-    }
     render() {
         console.log(this.props.valores.userState, "wopo")
         //console.log(this.context.userState.info, "los proops")
-        const { data, loading, responseType, backdropOpen, selectedPost, rotatingIcon, imgSelected } = this.state
+        const { data, loading, responseType, backdropOpen, selectedPost, rotatingIcon } = this.state
         console.log(data, "lo dataa")
         const { currentChunk } = this.props
         if (loading) {
@@ -149,7 +138,6 @@ export class FollowingDispatcher extends React.Component {
                                 console.log(chunk, "qe collons chu")
                                 return (<PostChunk key={index} {...{ chunk }}
                                     selectPost={this.selectPost}
-                                    selectImg={this.selectImg}
                                 />
                                 )
                             }
@@ -159,18 +147,10 @@ export class FollowingDispatcher extends React.Component {
                     {selectedPost &&
                         <ModalSelection
                             isOpen={backdropOpen}
-                            unselectPost={this.unselectPost}>
+                            unselectPost={this.unselectPost}
+                        >
                             <Post message={selectedPost} selectPost={this.selectPost} isSelected={true} />
                         </ModalSelection>
-                    }
-                    {
-                        imgSelected &&
-                        <ModalImg
-                            open={!!imgSelected}
-                            unselectImg={this.unselectImg}
-                        >
-                            <img src={imgSelected} alt="image" />
-                        </ModalImg>
                     }
 
                 </>
@@ -208,11 +188,26 @@ export class FollowingDispatcher extends React.Component {
     }
 }
 
+// border-top-right-radius: 20px;
+//         border-bottom-right-radius: 20px;
+//         border-bottom-left-radius: 20px;
+
+const useStyles = makeStyles({
+    dialogPaper: {
+        borderTopRightRadius: "20px",
+        borderBottomLeftRadius: "20px",
+        borderBottomRightRadius: "20px",
+        background: "none"
+    }
+})
+
 const ModalSelection = ({ unselectPost, children, isOpen }) => {
+    const classes = useStyles()
     return (
         <Dialog open={isOpen}
             onClick={unselectPost}
             //style={{ zIndex: 100 }}
+            classes={{paper: classes.dialogPaper}}
             maxWidth={false}
         //fullScreen
         >
@@ -222,29 +217,6 @@ const ModalSelection = ({ unselectPost, children, isOpen }) => {
     )
 }
 
-const ModalImg = ({ children, open, unselectImg }) => {
-
-    return (
-        <Dialog
-            open={open}
-            onClose={unselectImg}
-            maxWidth="lg"
-        >
-            <div
-                style={{ position: "relative" }}
-            >
-                {children}
-                <IconButton
-                    onClick={unselectImg}
-                >
-                    <CloseIcon
-                        style={{ position: "absolute", right: "0", top: "0", fontSize: "35px" }}
-                    />
-                </IconButton>
-            </div>
-        </Dialog>
-    )
-}
 
 const GsapFadeInStagger = ({ children }) => {
     const chunkRef = useRef(null)
@@ -265,11 +237,11 @@ const GsapFadeInStagger = ({ children }) => {
     )
 }
 
-const PostChunk = ({ chunk, selectPost, selectImg }) => {
+const PostChunk = ({ chunk, selectPost }) => {
 
     return <GsapFadeInStagger>
         {chunk.map((message, index) => (
-            <Post key={message.id} {...{ message, selectPost, selectImg }} />
+            <Post key={message.id} {...{ message, selectPost }} />
         ))}
     </GsapFadeInStagger>
 }

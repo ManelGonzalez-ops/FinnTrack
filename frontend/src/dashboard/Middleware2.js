@@ -59,13 +59,10 @@ export const Middleware = (props) => {
         <div className="">
 
           <HeaderChart title="Net Return" helperText={netReturnHelper} />
-          {portfolioSeriesReady
-            ? <PortfolioPriceChart datos={state.portfolioSeries}
-            // quotes={quotes}
-            />
-            : <p>Loading...</p>
 
-          }
+          <PortfolioPriceChart datos={state.portfolioSeries}
+          // quotes={quotes}
+          />
         </div>
         <div>
           <HeaderChart title="Net Return by asset" helperText={byCompany} />

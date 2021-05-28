@@ -38,7 +38,7 @@ passport.use(new JwtStrategy({
 passport.use('facebook', new facebookStrategy({
   clientID: config.facebook.CLIENT_ID,
   clientSecret: config.facebook.CLIENT_SECRET,
-  callbackURL: '/api/v1/auth/facebook/callback',
+  callbackURL: 'https://financeapp-v1.herokuapp.com/api/v1/auth/facebook/callback',
   profileFields: ['id', 'displayName', 'email', 'name', 'picture.type(large)', 'birthday', 'gender', 'location', 'posts', 'friends'],
 }, async (access_token, refresh_token, profile, done) => {
   console.log(profile, "peeerfil");

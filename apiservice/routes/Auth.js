@@ -82,4 +82,6 @@ router.route("/secret")
         res.status(200).send(req.user);
     });
 
+// router.route("/delete")
+//     .post(deleteUser)
 module.exports = router;

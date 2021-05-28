@@ -65,14 +65,13 @@ const userReducer = (state, action) => {
                 token: token
             }
         case "UPDATE_IMAGE":
-            console.log("mmaaariccon")
-            console.log(action.payload, "qe cojoeee")
-            console.log(URL.createObjectURL(action.payload), "qe cojoeee2")
+
+            //console.log(URL.createObjectURL(action.payload), "qe cojoeee2")
             return {
                 ...state,
                 info: {
                     ...state.info,
-                    imageUrl: URL.createObjectURL(action.payload)
+                    imageUrl: action.payload
                 }
             }
         default:

@@ -51,15 +51,17 @@ export const ImageUploader = () => {
         }
         const imageData = new FormData()
         imageData.append("image", imageUpload)
+		// replace this with your upload preset name
+		imageData.append('upload_preset', 'ml_default');
         imageData.append("email", info.email)
         setLoading(true)
         fetch(`${process.env.REACT_APP_API}/api/v1/users/upload`, {
             body: imageData,
             method: "POST"
         })
-            .then(res => res.blob())
-            .then(image => {
-                userDispatch({ type: "UPDATE_IMAGE", payload: image })
+            .then(res => res.json())
+            .then(imageUrl => {
+                userDispatch({ type: "UPDATE_IMAGE", payload: imageUrl })
                 setLoading(false)
             })
             .catch(err => { setResponse(JSON.stringify(err)) })

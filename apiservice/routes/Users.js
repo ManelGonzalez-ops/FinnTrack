@@ -1,9 +1,10 @@
 const express = require("express")
 const { uploadImg, completeInfo, getUserInfo, getUserImage } = require("../controllers/Users")
-const {upload} = require("../middlewares/imageUpload")
+const {upload, updloadCloud} = require("../middlewares/imageUpload")
 const router = express.Router()
 
-router.use("/upload", upload.single("image"))
+//router.use("/upload", upload.single("image"))
+router.use("/upload", upload.single("image"), updloadCloud)
 router.route("/upload")
 .post(uploadImg)
 
