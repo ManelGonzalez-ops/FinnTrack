@@ -19,12 +19,17 @@ const listPeople = (req, res) => {
 
 const makePortfolio = async () => {
   console.log("ejecutao 1");
+  const initialTime = Date.now()
   try {
     const logicInstance = new Logic();
     return await logicInstance.initAll();
   } catch (err) {
     fs.writeFileSync("scheduledtasks-erors.txt", err);
     // res.status(400).send(err.message)
+    throw err
+  }
+  finally {
+    console.log((Date.now() - initialTime) / 1000, "seconds")
   }
 };
 

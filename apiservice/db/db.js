@@ -53,14 +53,14 @@ const db = mysql.createPool({
 //   console.log("mysql connected");
 // });
 
-db.query("create database if not exists financeapp", (err) => {
-  if (err) throw err;
-  console.log("success");
-});
+// db.query("create database if not exists financeapp", (err) => {
+//   if (err) throw err;
+//   console.log("success");
+// });
 
-db.query("use financeapp", (err) => {
-  if (err) throw err;
-  console.log("using finance app");
-});
+// db.query("use financeapp", (err) => {
+//   if (err) throw err;
+//   console.log("using finance app");
+// });
 
 module.exports = db;

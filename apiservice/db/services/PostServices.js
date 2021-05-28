@@ -63,7 +63,7 @@ module.exports = {
     const tusmuertos = JSON.stringify({ mierda: "mucha maricon" });
     // const puta = JSON.stringify(updatedStructure)
     return new Promise((resolve, reject) => {
-      db.query("update financeapp.postStructure set structure = ? where ancestorId = ?", [JSON.stringify(updatedStructure), ancestorId], (err, row) => {
+      db.query("update postStructure set structure = ? where ancestorId = ?", [JSON.stringify(updatedStructure), ancestorId], (err, row) => {
         if (err) {
           reject(err);
         }

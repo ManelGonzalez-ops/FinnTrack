@@ -221,7 +221,7 @@ module.exports = {
   updatePortfolioDB: (userId, portfolio, today) =>
     // console.log(userId, portfolio, today, "que hostia")
     new Promise((resolve, reject) => {
-      db.query("update financeapp.portfolios set portfolio = ?, last_updated = ? where userId = ?", [JSON.stringify(portfolio), today, userId], (err) => {
+      db.query("update portfolios set portfolio = ?, last_updated = ? where userId = ?", [JSON.stringify(portfolio), today, userId], (err) => {
         if (err) {
           reject(err);
         }
