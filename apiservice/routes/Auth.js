@@ -1,10 +1,10 @@
 const express = require("express");
+const passport = require("passport");
 const {
     login, protectedRoute, unpackToken, register, checkCredentials, handleSocialLogin, signToken,
 } = require("../controllers/Auth");
 
 const router = express.Router();
-const passport = require("passport");
 const passportConf = require("../passport");
 const config = require("../config");
 

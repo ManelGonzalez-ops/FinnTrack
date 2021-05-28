@@ -1,11 +1,11 @@
+const {storeOperationsBulk} = require("../db/services");
 const {
-  getOperations, findUser, addPortfolioDB, updatePortfolioDB, portfolioExists, addOperation, getUsername, getUserFromUsername
+  getOperations, findUser, addPortfolioDB, updatePortfolioDB, portfolioExists, addOperation, getUsername, getUserFromUsername,
 } = require("../db/services");
 const { getUserInterests } = require("../db/services/interestsService");
 const { setPortfolio, getPortfolioInitialDay, getUserDetailsDBEmail } = require("../db/services/UserService");
 const { prepareStoredOperations, setInitialPossesions } = require("../dataPreparation");
 const { convertUnixToHuman } = require("../dataUtils");
-
 
 const getReadyOperations = async (req, res) => {
   const { email } = req.body;
@@ -64,7 +64,9 @@ const registerPortfolio = async (email, date) => {
 };
 const addOperationDB = async (req, res, next) => {
   const email = req.body.user;
-  const { isFirstOperation, date, assetType, ticker } = req.body.order;
+  const {
+    isFirstOperation, date, assetType, ticker,
+  } = req.body.order;
 
   if (isFirstOperation) {
     try {
@@ -81,15 +83,40 @@ const addOperationDB = async (req, res, next) => {
     .then(async (userId) => {
       console.log(userId, "el poto id");
       if (assetType === "peopleFund") {
-        //in that case fundId won't be null
-        console.log("aquiuiuu")
-        //const user = await getUserFromUsername(ticker)
-        console.log("heyeye")
+        // in that case fundId won't be null
+        console.log("aquiuiuu");
+        // const user = await getUserFromUsername(ticker)
+        console.log("heyeye");
         return addOperation(req.body.order, userId);
       }
       return addOperation(req.body.order, userId);
     })
     // if this sends success, will update context api state
+    .then(() => res.status(200).json("success"))
+    .catch((err) => res.status(400).send(err.message));
+};
+
+const addOperationsBulk = async (req, res, next) => {
+  const email = req.body.user;
+  const firstDate = req.body.orders.sort((x,y)=>new Date(x.date).getTime() > new Date(y.date).getTime());
+  console.log(firstDate)
+  try {
+    await registerPortfolio(email, firstDate[0].date);
+  } catch (err) {
+    return next(err);
+  }
+
+  console.log(req.body.user, "la faking user");
+  console.log(req.body.orders, "la faking order");
+  // const {operationType, ticker, amount, price} = req.body.order
+  findUser(email)
+    .then(async (userId) => {
+      await addPortfolioDB(userId, [], firstDate[0].date)
+      console.log(userId, "el poto id");
+      Object.keys(req.body.orders[0]).forEach(key=>{console.log(key)})
+      return storeOperationsBulk(req.body.orders, userId);
+    })
+  // if this sends success, will update context api state
     .then(() => res.status(200).json("success"))
     .catch((err) => res.status(400).send(err.message));
 };
@@ -102,5 +129,9 @@ const getPortfolioInitialDate = async (req, res) => {
 };
 
 module.exports = {
-  getReadyOperations, updatePortfolio, addOperationDB, getPortfolioInitialDate,
+  getReadyOperations,
+  updatePortfolio,
+  addOperationDB,
+  getPortfolioInitialDate,
+  addOperationsBulk,
 };

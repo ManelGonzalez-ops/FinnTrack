@@ -1,6 +1,7 @@
 const express = require("express");
+const {getDateTickerPrice} = require("../controllers/Prices");
 const { getAllTickerPrices } = require("../controllers/Prices");
-const { getTickerPrices, pruebaPort } = require("../controllers/Prices");
+const { getTickerPrices, pruebaPort, getDateRange } = require("../controllers/Prices");
 
 const router = express.Router();
 
@@ -12,4 +13,11 @@ router.route("/prueba")
 
 router.route("/ticker/:ticker")
   .get(getTickerPrices);
+
+router.route("/dates")
+  .post(getDateRange);
+
+router.route("/")
+    .post(getDateTickerPrice)
+
 module.exports = router;

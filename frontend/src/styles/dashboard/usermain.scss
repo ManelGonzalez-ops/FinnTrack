@@ -112,16 +112,7 @@
     width: 100%;
     grid-area: secondary;
     & > *:first-child {
-        position: relative;
-        &:before {
-            content: "";
-            background: crimson;
-            position: absolute;
-            width: 120%;
-            height: 140%;
-            z-index: -1;
-            top: -40%
-        }
+
     }
 }
 .lateral-section {

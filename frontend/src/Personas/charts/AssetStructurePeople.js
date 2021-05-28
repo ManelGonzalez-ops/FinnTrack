@@ -10,9 +10,10 @@ export const AssetStructurePeople = ({ portfolioHistory, currentPossesions }) =>
     const getMarketValueByStock = () => {
         let arrByCompany = []
         let totalMarketVal = 0
-        const dates = Object.keys(portfolioHistory)
+        const dates = Object.keys(portfolioHistory).reverse()
         const lastDate = dates[dates.length - 1]
         Object.entries(portfolioHistory[lastDate]).forEach(([key, price]) => {
+            console.log(key, price, "keyprice")
             const asset = currentPossesions.find(asset => asset.ticker === key)
             if (asset) {
                 const amount = asset.amount

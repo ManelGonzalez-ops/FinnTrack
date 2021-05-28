@@ -40,11 +40,14 @@ export const Middleware = (props) => {
       search: "?redirect=portfolio",
     }} />;
   }
-  if (!state.areHistoricPricesReady) {
-    return <p>Initializing...</p>
+  if(!state.setPruebaReady){
+    return <p>fetching stats...</p>
   }
   if (!state.stockLibrary.length) {
     return <NoUnitsDialog />;
+  }
+  if (!state.areHistoricPricesReady) {
+    return <p>Initializing...</p>
   }
   return (
     // tenemos que crear un useEngine para generar el portfolioHistory

@@ -28,7 +28,7 @@ export const PortfolioChartPeople = ({ datos, title, setCurrentPerformance = () 
         let cleanData = [];
         let firstDate
         Object.keys(datos).forEach((date, index) => {
-            console.log(date, "duuta")
+            //console.log(date, "duuta")
             const actualDate = date.split("-").map((val) => parseInt(val));
             const formatedDate = new Date(
                 actualDate[0],

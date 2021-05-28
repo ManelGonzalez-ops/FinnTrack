@@ -204,7 +204,7 @@ class Portfolio {
                 lastLiquidativeValue = 1000
             } else {
                 lastDate = validDates[validDates.length - 1]
-                console.log(validDates, lastDate, "ka ous")
+                //console.log(validDates, lastDate, "ka ous")
                 lastLiquidativeValue = masterSerie[lastDate].liquidativeValue
             }
 

@@ -27,6 +27,7 @@ export const Register = () => {
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [open, setOpen] = useState(true)
     const [rpassword, setRpassword] = useState("")
     const { userDispatch } = useUserLayer()
     const [serverError, setServerError] = useState(null)
@@ -69,7 +70,7 @@ export const Register = () => {
     const history = useHistory()
     console.log(history, "historyya")
     const redirect = history.location.search ? history.location.search.split("=")[1] : ""
-
+    console.log(redirect, "redirect")
 
     useEffect(() => {
         if (!debouncedUsername) {
@@ -155,8 +156,8 @@ export const Register = () => {
                 userDispatch({ type: "SET_TOKEN", payload: res.token })
                 userDispatch({ type: "SET_USER", payload: { email } })
                 localStorage.setItem("token", JSON.stringify(res.token))
-                history.push("/")
                 setSuccess(true)
+                setOpen(false)
             })
             .catch(err => { setServerError(err.message) })
     }
@@ -164,7 +165,7 @@ export const Register = () => {
     const styles = useStyles()
     if (success) {
         //this is not working properly
-        return <Redirect to={`/${redirect}`} />
+        return <Redirect to={{ pathname: `/${redirect}` }}/>
     }
     if (serverError) {
         return <p>{serverError}</p>
@@ -206,7 +207,7 @@ export const Register = () => {
                             onChange={(e) => { setEmail(e.target.value) }}
                             styles={styles}
                             validation={validatedFields.email}
-                            type="text"
+                            type="email"
                         />
                         <VisibilityToggler>
                             {(visible, toggletVisibility) => {
