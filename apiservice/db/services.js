@@ -68,7 +68,6 @@ module.exports = {
     const {
       operationType, date, ticker, amount, isFirstOperation, price, assetType,
     } = operation;
-    const missingFields = Array(assetType === "peopleFund" ? 9 : 8).fill("?").join();
     console.log(operation, "poeration");
     let missingFields;
     let inputArr;
