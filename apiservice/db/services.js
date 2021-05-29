@@ -263,7 +263,7 @@ module.exports = {
           reject(err);
         }
         if (!rows) {
-          reject("no rows found");
+          reject(new Error("no rows found"));
         }
         resolve(rows);
       });
@@ -276,7 +276,7 @@ module.exports = {
         reject(err);
       }
       if (!rows || !rows.length) {
-        reject("no rows found");
+        reject(new Error("no rows found"));
       }
       console.log(rows, "la data proba");
     });
@@ -298,7 +298,7 @@ module.exports = {
         reject(err);
       }
       if (!row || !row.length) {
-        reject("no usernme found for given email");
+        reject(new Error("no usernme found for given email"));
       }
       resolve(row[0].username);
     });

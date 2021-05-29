@@ -1,8 +1,9 @@
 const fs = require("fs");
-const { getAllOperations, getOperationsByUserId } = require("../db/services");
+const { getAllOperations, getOperationsByUserId, getAllPortfoliosDB } = require("../db/services");
 const Logic = require("../logic/state.js");
 const { prepareStoredOperations, setInitialPossesions } = require("../dataPreparation");
-const { getFundImage } = require("../db/services/PeopleService");
+const { getFundImage, getAllUserInfoById } = require("../db/services/PeopleService");
+
 
 const listPeople = (req, res) => {
   console.log("ejecutao 4");
@@ -42,6 +43,28 @@ const sendPortfolios = async (req, res, next) => {
     // res.status(400).send(err.message)
   }
 };
+
+const getPortfolios = async (req, res, next) => {
+  const portfolios = await getAllPortfoliosDB()
+  const promiseArr = portfolios.map(port => getAllUserInfoById(port.userId))
+  const usersData = (await Promise.all(promiseArr)).flatMap(item=>item)
+  console.log(usersData)
+  const matchData = () => {
+    const data = [];
+    usersData.forEach(user => {
+      portfolios.forEach(port => {
+        //console.log(port.userId, user)
+        if (port.userId === user.userId) {
+          data.push({ user, portfolio: port.portfolio })
+        }
+      })
+    })
+    return data
+  }
+  const readyData = matchData()
+  return res.status(200).send(readyData)
+
+}
 
 const showUsers = (req, res) => {
   console.log("ejecutao 2");
@@ -89,5 +112,5 @@ const getImage = async (req, res, next) => {
 
 module.exports = {
   listPeople, makePortfolio, showUsers, showUser, sendPortfolios,
-  getImage
+  getImage, getPortfolios
 };

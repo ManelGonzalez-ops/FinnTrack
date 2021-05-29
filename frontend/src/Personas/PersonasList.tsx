@@ -44,7 +44,7 @@ export const PersonasList = () => {
     const [order, setOrder] = useState("no order")
     const { data, loading, error } = state
     const getPeople = () => {
-        return fetch(`${process.env.REACT_APP_API}/api/v1/people/main`)
+        return fetch(`${process.env.REACT_APP_API}/api/v1/people/send`)
             .then(res => res.json())
             .then(res => {
                 return res.map((item: any) => {

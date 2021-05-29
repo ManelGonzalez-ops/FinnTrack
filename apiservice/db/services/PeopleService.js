@@ -13,5 +13,13 @@ module.exports = {
                 resolve(row[0])
             })
         })
-    }
+    },
+    getAllUserInfoById: (userId) => new Promise((resolve, reject) => {
+        db.query("SELECT * FROM users inner join userdetails on users.userId = userdetails.userId where users.userId = ?", [userId], (err, data) => {
+            if (err) {
+                reject(err)
+            }
+            resolve(data)
+        });
+    }),
 }
