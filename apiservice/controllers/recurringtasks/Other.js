@@ -1,7 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const { fetcharS } = require("../../controller");
-const { storeGeneralData } = require("../../db/services");
+const { storeGeneralData, getGeneralDataJsonUrgent } = require("../../db/services");
 const { fetchDispatcher } = require("../../controller");
 const { deletePreviousDateRecord } = require("../../db/services");
 const { getGeneralDataJson } = require("../../db/services");
@@ -56,6 +56,17 @@ const getGeneralData = async (req, res) => {
   }
 };
 
+const sendDailyMarketData = async (req, res, next) => {
+  const { field } = req.query
+  try {
+    const data = await getGeneralDataJsonUrgent(field)
+    res.status(200).send(data)
+  }
+  catch (err) {
+    next(err)
+  }
+}
+
 const getSearchResults = async (req, res) => {
   console.log(req.params.word);
   try {
@@ -72,5 +83,5 @@ const getSearchResults = async (req, res) => {
 };
 
 module.exports = {
-  getCountriesPopulation, getGeneralData, getSearchResults, storeGeneralDataScheduled,
+  getCountriesPopulation, getGeneralData, getSearchResults, storeGeneralDataScheduled,sendDailyMarketData
 };

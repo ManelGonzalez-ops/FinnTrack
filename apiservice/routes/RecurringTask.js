@@ -1,5 +1,5 @@
 const express = require("express");
-const { getSearchResults, getGeneralData } = require("../controllers/recurringtasks/Other");
+const { getSearchResults, getGeneralData, sendDailyMarketData } = require("../controllers/recurringtasks/Other");
 const { getCountriesPopulation } = require("../controllers/recurringtasks/Other");
 const { getCompaniesInfo, getCompanyQuoteInfo } = require("../controllers/recurringtasks/companiesInfo");
 const { getIndexConstituents, sendIndexPrices } = require("../controllers/recurringtasks/Indexes");
@@ -18,7 +18,7 @@ router.route("/indexes/allprices")
   .get(sendIndexPrices);
 
 router.route("/direct_json")
-  .get(getGeneralData);
+  .get(sendDailyMarketData);
 
 router.route("/other/countriesPopulation")
   .get(getCountriesPopulation);

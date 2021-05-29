@@ -167,6 +167,15 @@ module.exports = {
       resolve(data);
     });
   }),
+  getGeneralDataJsonUrgent: (field) => new Promise((resolve, reject) => {
+    console.log(field, "field")
+    db.query("select * from companiesjsondata where field = ?", [field], (err, data) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(data[0]);
+    });
+  }),
   storeGeneralData: (field, validDate, jsonArr) => new Promise((resolve, reject) => {
     db.query("insert into companiesjsondata (field, fecha, alldata) values (?,?,?) on duplicate key update fecha = values(fecha), alldata = values(alldata)", [field, validDate, JSON.stringify(jsonArr)], (err) => {
       if (err) {
