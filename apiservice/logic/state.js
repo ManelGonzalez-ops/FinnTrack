@@ -154,7 +154,7 @@ class Logic {
     async getGeneratedPossesions(userActivity) {
         const possesionsSeries = new PossesionsSeries(userActivity)
         this.posessionsSeries = await possesionsSeries.init()
-        console.log(this.posessionsSeries, "posssuu")
+        //console.log(this.posessionsSeries, "posssuu")
     }
 
     getPortfolioSeries() {

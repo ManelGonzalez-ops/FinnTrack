@@ -65,9 +65,6 @@ class Portfolio {
         const change = (stockPrice - lastPrice) / lastPrice
 
         const koko = relativeSize * change
-        if (asset.ticker === "MRNA") {
-            console.log(stockPrice, lastPrice, change, koko, lastDate, "mrana")
-        }
         return koko
     }
 
@@ -138,7 +135,7 @@ class Portfolio {
                         }
                         //else we continue as we should have polyfilled price already set
                     }
-                    console.log(date, "fechaau")
+                    //console.log(date, "fechaau")
                     if (this.portfolioHistory[date]) {
                         stockRegister = this.portfolioHistory[date][asset.ticker.toUpperCase()]
                         stockClosePrice = stockRegister.close
@@ -185,10 +182,10 @@ class Portfolio {
         let liquidativeValue
         let companiesPerformanceImpact = {}
         let validDates = []
-        console.log(this.generatedSeries, "q cullons")
+        //console.log(this.generatedSeries, "q cullons")
         const dateKeys = Object.keys(this.generatedSeries.dates)
         const masterInfo = this.getPortfolioStats()
-        console.log(masterInfo, "masterInnnfo")
+        //console.log(masterInfo, "masterInnnfo")
         const impactHelper = new ImpactHelper(masterInfo)
         dateKeys.forEach(date => {
 
@@ -232,7 +229,7 @@ class Portfolio {
                 if (this.isToday()) {
                     return
                 }
-                console.log(impactHelper.valueIncrement, "valincre")
+                //console.log(impactHelper.valueIncrement, "valincre")
                 liquidativeValue = lastLiquidativeValue * (1 + impactHelper.valueIncrement)
 
                 masterSerie = {
@@ -250,7 +247,7 @@ class Portfolio {
             impactHelper.resetValueIncrement()
 
             validDates = [...validDates, date]
-            console.log("tus muelos")
+            //console.log("tus muelos")
             //console.log(masterSerie, "masterSeries")
         })
         return { masterSerie: masterSerie, companiesPerformanceImpact: companiesPerformanceImpact }
@@ -284,9 +281,6 @@ class Portfolio {
 
             // aportacion = isFirstRecord ? 0 : this.calculadorMedia(asset, stockClosePrice, lastDate, portfolioValue)
             const aportacion = this.calculadorMedia(asset, stockClosePrice, lastDate, portfolioValue)
-            if (asset.ticker === "MRNA") {
-                console.log(stockClosePrice, portfolioValue, this.date, aportacion, "qa wabs")
-            }
 
             this.addRelativePerformance(companiesPerformanceImpact, this.date, aportacion, asset)
             //
