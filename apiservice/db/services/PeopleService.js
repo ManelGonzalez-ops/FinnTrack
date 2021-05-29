@@ -3,7 +3,7 @@ const db = require("../db")
 module.exports = {
     getFundImage: (fundId) => {
         return new Promise((resolve, reject) => {
-            db.query("select image from userDetails where userId = ?", [fundId], (err, row) => {
+            db.query("select image from userdetails where userId = ?", [fundId], (err, row) => {
                 if (err) {
                     reject(err)
                 }

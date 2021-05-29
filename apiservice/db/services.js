@@ -202,7 +202,7 @@ module.exports = {
     });
   }),
   getAllUsers: () => new Promise((resolve, reject) => {
-    db.query("select * from userDetails right join users on users.userId = userDetails.userId", (err, data) => {
+    db.query("select * from userdetails right join users on users.userId = userdetails.userId", (err, data) => {
       if (err) {
         reject(err);
       }

@@ -4,7 +4,7 @@ module.exports = {
     createUserDetails: () =>
         // ojo si cambiamos el idioma, quiz-as "masculino" en moro es larguisimoo
         new Promise((resolve, reject) => {
-            db.query("create table if not exists userDetails (userId int auto_increment, country char(50), image char(150), static_image boolean not null default 1, firstName char(30), lastName char(30), gender char(20), nacimiento date, primary key (userId), foreign key (userId) references users (userId))", (err, row) => {
+            db.query("create table if not exists userdetails (userId int auto_increment, country char(50), image char(150), static_image boolean not null default 1, firstName char(30), lastName char(30), gender char(20), nacimiento date, primary key (userId), foreign key (userId) references users (userId))", (err, row) => {
                 if (err) {
                     reject(err);
                 }
@@ -14,7 +14,7 @@ module.exports = {
     uploadImage: (userId, imagePath) =>
         // if user was authenticated with social login and changes img we have to set static_image to change the picture flow
         new Promise((resolve, reject) => {
-            db.query("insert into userDetails (userId, image, static_image) values(?,?,?) on duplicate key update image = values(image), static_image = values(static_image)", [userId, imagePath, true], (err, row) => {
+            db.query("insert into userdetails (userId, image, static_image) values(?,?,?) on duplicate key update image = values(image), static_image = values(static_image)", [userId, imagePath, true], (err, row) => {
                 if (err) {
                     reject(err);
                 }
@@ -50,7 +50,7 @@ module.exports = {
         const values = [...Array(fieldKeys.length + 1).fill("?")];
         const update = fieldKeys.map((key) => `${key}=values(${key})`);
         const inputs = fieldKeys.map((key) => fieldsObj[key]);
-        const query = `insert into userDetails (${fields}) values(${values}) on duplicate key update ${update}`;
+        const query = `insert into userdetails (${fields}) values(${values}) on duplicate key update ${update}`;
         console.log(query, "aver query");
         return new Promise((resolve, reject) => {
             db.query(query, [userId, ...inputs], (err, row) => {
@@ -73,7 +73,7 @@ module.exports = {
     },
     // initial state of User details view
     getUserDetailsDB: (userId) => new Promise((resolve, reject) => {
-        db.query("select * from userDetails where userId = ?", [userId], (err, row) => {
+        db.query("select * from userdetails where userId = ?", [userId], (err, row) => {
             if (err) {
                 return reject(err);
             }
@@ -84,7 +84,7 @@ module.exports = {
         });
     }),
     getUserDetailsDBEmail: (email) => new Promise((resolve, reject) => {
-        db.query("select * from userDetails where userId = (select userId from users where email = ?) ", [email], (err, row) => {
+        db.query("select * from userdetails where userId = (select userId from users where email = ?) ", [email], (err, row) => {
             if (err) {
                 return reject(err);
             }
@@ -95,7 +95,7 @@ module.exports = {
         });
     }),
     getUserImageDB: (userId) => new Promise((resolve, reject) => {
-        db.query("select image from userDetails where userId = ?", [userId], (err, row) => {
+        db.query("select image from userdetails where userId = ?", [userId], (err, row) => {
             if (err) {
                 return reject(err);
             }
