@@ -4,6 +4,7 @@ import HighchartsReact from "highcharts-react-official";
 import { useDataLayer } from '../Context';
 import { convertHumanToUnixInit, convertUnixToHuman, milisencondsInADay } from '../utils/datesUtils';
 import { Paper } from '@material-ui/core';
+import { Skeleton } from '@material-ui/lab';
 
 
 export const PerformanceStructureB = () => {
@@ -113,7 +114,7 @@ export const PerformanceStructureB = () => {
     }
     return (
         <Paper>
-            {loading && <p>Loading...</p>}
+            {loading && <Skeleton height="400px" variant="rect" animation="wave"/>}
             {availableTomorrow && <p>Data is not available untill next day after you submited a operation, if you submited in weekend wait till monday</p>}
 
             { chartData && <HighchartsReact

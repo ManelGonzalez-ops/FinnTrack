@@ -5,6 +5,7 @@ import { useDataLayer } from '../Context';
 import { convertHumanToUnixInit, convertUnixToHuman, milisencondsInADay } from '../utils/datesUtils';
 import { rounder } from '../utils/numFormatter';
 import { Paper } from '@material-ui/core';
+import { Skeleton } from '@material-ui/lab';
 
 
 export const PerformanceStructure = ({ available, loading }) => {
@@ -91,7 +92,7 @@ export const PerformanceStructure = ({ available, loading }) => {
     }
 
     if (loading) {
-        return <p>loading...</p>
+        return <Skeleton height="400px" variant="rect" animation="wave"/>
     }
     return (
         <Paper className="performance-chart1">

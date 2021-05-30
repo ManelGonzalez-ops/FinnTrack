@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 import React, {
   useEffect, useReducer, useRef, useState,
 } from 'react';
@@ -12,6 +13,7 @@ import { useDataLayer } from '../Context';
 import { Sorter } from './Sorter';
 import { SearcherPositions } from './SearcherPositions';
 import { CustomCircularProgress } from '../components/components/CustomCircularProgress';
+import { Skeleton } from '@material-ui/lab';
 
 const logoReducer = (state, action) => {
   switch (action.type) {
@@ -186,7 +188,7 @@ export default () => {
   return (
     <Paper className="positions">
       {loading
-        ? <CustomCircularProgress />
+        ? <Skeleton height="100%" variant="rect" animation="wave"/>
         : <>
           <header>
             <h3>My Assets</h3>

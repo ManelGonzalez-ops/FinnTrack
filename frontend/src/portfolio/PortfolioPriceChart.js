@@ -6,6 +6,7 @@ import { Paper } from '@material-ui/core';
 import { useDataLayer } from '../Context';
 import { convertUnixToHuman } from '../utils/datesUtils';
 import { useRemoveCredits } from '../utils/useRemoveCredits';
+import { Skeleton } from '@material-ui/lab';
 
 Highcharts.setOptions({
     global: {
@@ -33,6 +34,7 @@ export const PortfolioPriceChart = ({ datos }) => {
     //la fecha de la grafica siempre es un dia menos respecto a las generatedseries
 
     const prepareData = () => {
+        console.log("ejectuuuu")
         let cleanData = [];
         let firstDate
         Object.keys(datos).forEach((date, index) => {
@@ -74,16 +76,21 @@ export const PortfolioPriceChart = ({ datos }) => {
     useEffect(() => {
         //console.log(chart2.current, "chaart222")
         console.log(chart.current, "chaart2221")
+        console.log(datos, addFirstSerie, "datasos")
         if (datos) {
             if (addFirstSerie) {
                 simulateSerie()
+                setIsLoading(false)
                 return
             }
             prepareData(datos)
+            setIsLoading(false)
+            setAvailableTomorrow(false)
 
         } else {
             setAvailableTomorrow(true)
         }
+
 
     }, [datos])
 
@@ -134,13 +141,13 @@ export const PortfolioPriceChart = ({ datos }) => {
             },
         ],
     };
-
+    const loding = true
     return (
         <Paper
             className="portfolio-chart"
         >
             {loading ?
-                <p>loading...</p>
+                <Skeleton height="400px" variant="rect" animation="wave"/>
                 :
                 availableTomorrow ? <p>Data is not available untill next day after you submited a operation, if you submited in weekend wait till monday</p>
                     :

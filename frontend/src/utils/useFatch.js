@@ -29,6 +29,9 @@ export const useFatch = (url, ticker, field, options) => {
             dir = `${url}/${query}`
           }
           const rawData = await fetch(dir);
+          if(!rawData.ok){
+            throw new Error("Service providers can't deliver data right now")
+          }
           const data = await rawData.json();
           dispatch({ type: "SET_INDEXES", payload: { ticker: ticker, field: field, value: data } })
 
