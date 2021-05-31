@@ -84,7 +84,7 @@ router.route("/secret")
 
 
 router.route("/facebook/delete")
-.get(deleteUser)
+.post(deleteUser)
 // router.route("/delete")
 //     .post(deleteUser)
 module.exports = router;
