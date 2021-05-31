@@ -54,7 +54,6 @@ export const PerformanceStructure = ({ available, loading }) => {
                 type: "column",
                 name: ticker,
                 data,
-                // centerInCategory: true
             }]
         })
         return readyData

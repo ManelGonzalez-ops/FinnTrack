@@ -145,7 +145,7 @@ export const Navbar = () => {
               onClick={() => { history.push("/login", { background: location }) }}
             >login</Button>
             {isAuthenticated && <Button variant="contained" color="primary"
-              onClick={() => { logout(() => history.push("/login")) }}
+              onClick={() => { logout(() => history.push("/")) }}
             >Logout</Button>}
             { isAuthenticated && <Typography>
               {formatter.format(state.currentPossesions.userCash)} $

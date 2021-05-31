@@ -44,7 +44,7 @@ export const IndexesGeneral = () => {
             const indexPrincesCopy = [...allIndexPrices]
             console.log(indexPrincesCopy, "papapapa")
             return indexPrincesCopy
-                .filter(index => index.prices)
+                .filter(index => index && index.prices)
                 .map(index => {
                     console.log(index)
                     return { name: index.symbol, prices: index.prices[index.prices.length - 1] }

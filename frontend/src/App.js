@@ -44,6 +44,7 @@ import { RssFeedTwoTone } from "@material-ui/icons";
 import { useSocialAuth } from "./utils/useSocialAuth";
 import { CSSTransition, Transition, TransitionGroup } from "react-transition-group";
 import { Policy } from "./views/Policy"
+import { DeletionStatus } from "./Auth/DeletionStatus";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -114,7 +115,7 @@ const App = () => {
           })
 
           if (res.userData) {
-            
+
             const { image, ...rest } = res.userData
             res.userData.static_image ?
               userDispatch({ type: "ADD_USER_INFO", payload: rest })
@@ -150,7 +151,7 @@ const App = () => {
 
   }, [userState.isAuthenticated, userState.email])
 
-  
+
 
   const saveTokenInLocalstorage = () => {
     const token = Cookie.getJSON("token")
@@ -297,6 +298,9 @@ const App = () => {
           </Route>
           <Route path="/privacy_policy">
             <Policy />
+          </Route>
+          <Route path="oauth-status">
+            <DeletionStatus />
           </Route>
           <Route path="/">
             <Principal setSelection={setSelection} />

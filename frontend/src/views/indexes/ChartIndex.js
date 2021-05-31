@@ -19,7 +19,7 @@ export const ChartIndex = ({ category, categorySan }) => {
                 : error ?
                     <p>{error}</p>
                     :
-                    datos && Object.keys(datos).length > 0 && <IndexesChart datos={datos} />
+                    datos && Object.keys(datos).length > 0 && <IndexesChart datos={datos} name={categorySan[0]}/>
             }
         </>
     )

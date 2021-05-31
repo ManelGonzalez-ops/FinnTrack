@@ -1,7 +1,7 @@
 const express = require("express");
 const passport = require("passport");
 const {
-    login, protectedRoute, unpackToken, register, checkCredentials, handleSocialLogin, signToken,
+    login, protectedRoute, unpackToken, register, checkCredentials, handleSocialLogin, signToken, deleteUser,
 } = require("../controllers/Auth");
 
 const router = express.Router();
@@ -82,6 +82,9 @@ router.route("/secret")
         res.status(200).send(req.user);
     });
 
+
+router.route("facebook/delete")
+.get(deleteUser)
 // router.route("/delete")
 //     .post(deleteUser)
 module.exports = router;

@@ -1,17 +1,22 @@
 .grid--indexes {
-  display: grid;
-  width: 100%;
-  gap: 1rem;
-  grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  grid-template-areas: "chart chart components components components components";
+  display: flex;
+  flex-direction: column;
 }
 
-.grid--indexes .chart {
-  grid-area: chart;
-  height: 400px;
-}
-
-.grid--indexes .constituents {
-  grid-area: components;
+@media (min-width: 1000px) {
+  .grid--indexes {
+    display: grid;
+    width: 100%;
+    gap: 1rem;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-template-areas: "chart chart chart components components components";
+  }
+  .grid--indexes .chart {
+    grid-area: chart;
+    height: 400px;
+  }
+  .grid--indexes .constituents {
+    grid-area: components;
+  }
 }

@@ -7,9 +7,13 @@ class ErrorHandler extends Error {
 }
 
 const handleError = (err, res) => {
-  const { statusCode = 500, message } = err;
-  console.log(statusCode,message, "errorse");
-  res.status(statusCode).json({
+  //destructuing default value only works when key is undefined.
+  let { statusCode = 500, message } = err;
+
+  //we need to avoid statusCode when it's null
+  
+  console.log(statusCode, message, "errorse");
+  res.status(statusCode).send({
     status: "error",
     statusCode,
     message

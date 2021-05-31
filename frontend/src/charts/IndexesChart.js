@@ -5,7 +5,7 @@ import { useUILayer } from "../ContextUI";
 import { useChartReflow } from "../utils/useChartReflow";
 
 
-export const IndexesChart = ({ datos }) => {
+export const IndexesChart = ({ datos, name }) => {
     const chart = useRef(null)
     const [dataset, setDataset] = useState("")
     //useChartReflow(chart.current)
@@ -88,7 +88,7 @@ export const IndexesChart = ({ datos }) => {
         },
 
         title: {
-            text: "My chart",
+            text: name,
             zoomType: "x",
         },
         rangeSelector: {

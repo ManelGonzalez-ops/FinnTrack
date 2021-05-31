@@ -89,6 +89,7 @@ export const PortfolioPriceChart = ({ datos }) => {
 
         } else {
             setAvailableTomorrow(true)
+            setIsLoading(false)
         }
 
 

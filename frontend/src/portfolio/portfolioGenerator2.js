@@ -133,7 +133,7 @@ export const usePortfolioGenerator = () => {
         }
     }
     const fetchQuotes = (cb) => {
-        return fetch(`${process.env.REACT_APP_API}/api/portfolio/quotes`, {
+        return fetch(`${process.env.REACT_APP_API}/api/v1/recurringTasks/companiesInfo/quotes`, {
             headers: {
                 "Content-Type": "application/json"
             },

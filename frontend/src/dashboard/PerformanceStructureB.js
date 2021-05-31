@@ -48,6 +48,7 @@ export const PerformanceStructureB = () => {
     const prepareForChart = (data, cb) => {
         let readySeries = []
         Object.entries(data).forEach(assetData => {
+            console.log(assetData, "assetData")
             const ticker = assetData[0]
             const data = assetData[1]
             readySeries = [...readySeries,
