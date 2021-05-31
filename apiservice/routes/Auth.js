@@ -83,7 +83,7 @@ router.route("/secret")
     });
 
 
-router.route("facebook/delete")
+router.route("/facebook/delete")
 .get(deleteUser)
 // router.route("/delete")
 //     .post(deleteUser)
