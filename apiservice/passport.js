@@ -64,7 +64,7 @@ passport.use('facebook', new facebookStrategy({
       firstName: profile._json.first_name,
       lastName: profile._json.last_name,
       image: profile.photos[0].value,
-      country: profile._json.location.name.split(",")[1].trim(),
+      //country: profile._json.location.name.split(",")[1].trim(),
     });
     console.log(userDetails, "userDetails");
     const userId = userOkPacket.insertId;
