@@ -103,15 +103,18 @@ const deleteUser = (req, res, next) => {
 
     const data = parseSignedRequest(signed_request, config.facebook.CLIENT_SECRET)
     const { userId } = data
-    const confirmationSecret = "pumpitup777";
+    const confirmation_code = getConfirmationCode();
     const checkUrl = `https://nervous-keller-e654f2.netlify.app/oauth_deletion_status?id=${confirmationSecret}`
 
     res.status(200).send({
         url: checkUrl,
-        confirmation_code: confirmationSecret
+        confirmation_code
     })
 }
 
+function getConfirmationCode() {
+    return crypto.randomBytes(10).toString('hex')
+}
 
 function base64decode(data) {
     while (data.length % 4 !== 0) {
