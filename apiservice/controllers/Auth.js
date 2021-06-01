@@ -97,9 +97,21 @@ const register = async (req, res) => {
 //     bcrypt.hash()
 // };
 
-const deleteUser =(req, res, next)=>{
+const deleteUser = (req, res, next) => {
     console.log(req.body, "er facebook body")
+    const { signed_request } = req.body
+
+    const data = parseSignedRequest(signed_request, config.facebook.CLIENT_SECRET)
+    const { userId } = data
+    const confirmationSecret = "pumpitup777";
+    const checkUrl = `https://nervous-keller-e654f2.netlify.app/oauth_deletion_status?id=${confirmationSecret}`
+
+    res.status(200).send({
+        url: checkUrl,
+        confirmation_code: confirmationSecret
+    })
 }
+
 
 function base64decode(data) {
     while (data.length % 4 !== 0) {
@@ -128,5 +140,5 @@ function parseSignedRequest(signedRequest, secret) {
 }
 
 module.exports = {
-    login, protectedRoute, unpackToken, register, checkCredentials, signToken, comparePassword,deleteUser
+    login, protectedRoute, unpackToken, register, checkCredentials, signToken, comparePassword, deleteUser
 };

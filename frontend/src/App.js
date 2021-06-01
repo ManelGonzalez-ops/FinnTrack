@@ -299,7 +299,7 @@ const App = () => {
           <Route path="/privacy_policy">
             <Policy />
           </Route>
-          <Route path="oauth-status">
+          <Route path="oauth_deletion_status">
             <DeletionStatus />
           </Route>
           <Route path="/">
