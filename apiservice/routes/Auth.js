@@ -53,7 +53,7 @@ router.route('/facebook/callback')
         // console.log(req.session.passport.user, "el user")
         const token = signToken(req.user.idDB);
         res.cookie("token", token);
-        return res.redirect(`${config.FRONTEND_HOST}/?token=${token}`);
+        return res.redirect(`${config.FRONTEND_HOST}?token=${token}`);
     });
 
 router.route('/oauth/google')
