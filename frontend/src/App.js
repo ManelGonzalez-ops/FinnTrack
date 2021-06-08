@@ -83,14 +83,16 @@ const App = () => {
   //useSocialAuth()
   useEngine()
 
-  const history = useHistory()
-  const { token } = useParams()
+  const history = useHistory()ç
   const location = useLocation()
   console.log(history, location, "a ver diferencias")
-  console.log(token, "el tokennenene")
+  
   useEffect(() => {
-    if (token) {
+    //it will be true when we have the token as (when oauth redirect)
+    if (location.search) {
       const getUserInfo = async () => {
+        const token = location.search.split("=")[1]
+        console.log(token, "el tokennenene")
         const req = await fetch(`${process.env.REACT_APP_API}/api/v1/auth/get_creadentials/${token}`)
         return await req.json()
       }
