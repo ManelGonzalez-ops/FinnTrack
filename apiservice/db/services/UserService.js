@@ -105,4 +105,15 @@ module.exports = {
             resolve(row[0].image);
         });
     }),
+    getUserByField: (fieldKey, value) => new Promise((resolve, reject) => {
+            db.query(`select * from users where ${fieldKey} = ${value}`, (err, row) => {
+                if (err) {
+                    reject(err);
+                }
+                if (!row || !row[0]) {
+                    reject(new Error("no user returned"));
+                }
+                resolve(row[0]);
+            });
+        }),
 };

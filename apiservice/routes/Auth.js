@@ -1,7 +1,7 @@
 const express = require("express");
 const passport = require("passport");
 const {
-    login, protectedRoute, unpackToken, register, checkCredentials, handleSocialLogin, signToken, deleteUser,
+    login, protectedRoute, unpackToken, register, checkCredentials, handleSocialLogin, signToken, deleteUser, loginSocialLastStep,
 } = require("../controllers/Auth");
 
 const router = express.Router();
@@ -53,7 +53,7 @@ router.route('/facebook/callback')
         // console.log(req.session.passport.user, "el user")
         const token = signToken(req.user.idDB);
         res.cookie("token", token);
-        return res.redirect(`${config.FRONTEND_HOST}`);
+        return res.redirect(`${config.FRONTEND_HOST}/${token}`);
     });
 
 router.route('/oauth/google')
@@ -87,4 +87,7 @@ router.route("/facebook/delete")
 .post(deleteUser)
 // router.route("/delete")
 //     .post(deleteUser)
+
+router.route("/get_creadentials/:token")
+.get(loginSocialLastStep)
 module.exports = router;

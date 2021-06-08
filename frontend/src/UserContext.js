@@ -1,16 +1,34 @@
 import React, { useReducer, useContext } from 'react'
 import Cookie from "js-cookie"
 const context = React.createContext()
+function readCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+}
+  
 const getToken = () => {
-    const token = localStorage.getItem("token")
-    if (!token || token === "undefined") return ""
-    console.log(token, "tokeeun")
+    let token;
+    token = localStorage.getItem("token")
+    console.log(token, "localstorage token")
+    //we need to see in the cookies for the social auth redirect
+    console.log(readCookie("token"), "token3")
+    token = token? token : readCookie("token");
+    if (!token) return ""
     // return token
     try {
+        console.log("dentra", token)
         const readyToken = JSON.parse(token)
+        console.log("dentra2", token)
         return readyToken
     }
     catch (err) {
+        console.log(err.message, "erur")
         return token
     }
 

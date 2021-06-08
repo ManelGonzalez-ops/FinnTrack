@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 //import {HashRouter, Route, Switch} from "react-dom"
 
-import { Route, Switch, useHistory, useLocation } from "react-router-dom";
+import { Route, Switch, useHistory, useLocation, useParams } from "react-router-dom";
 
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -82,6 +82,25 @@ const date = convertUnixToHuman(Date.now())
 const App = () => {
   //useSocialAuth()
   useEngine()
+
+  const history = useHistory()
+  const { token } = useParams()
+  const location = useLocation()
+  console.log(history, location, "a ver diferencias")
+
+  useEffect(() => {
+    if (token) {
+      const getUserInfo = async () => {
+        const req = await fetch(`${process.env.REACT_APP_API}/api/v1/auth/get_creadentials/${token}`)
+        return await req.json()
+      }
+      getUserInfo()
+        .then(userInfo => {
+          userDispatch({ type: "ADD_USER_INFO", payload: userInfo })
+        })
+        .catch(err => { throw err })
+    }
+  }, [])
 
   const { loading } = useIAuthh()
   //const loading = false
@@ -169,9 +188,7 @@ const App = () => {
     }
   }, [])
 
-  const history = useHistory()
-  const location = useLocation()
-  console.log(history, location, "a ver diferencias")
+
 
   const [selection, setSelection] = useState("");
   const { setSidebarOpen, showOverlay } = useUILayer()

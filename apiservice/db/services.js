@@ -9,7 +9,7 @@ module.exports = {
     });
   }),
   createUserTable: () => new Promise((resolve, reject) => {
-    db.query("create table if not exists users (userId int auto_increment, hashedPwd char(100), email char(50) not null unique, username char(50) unique, method char(15), socialId varchar(50), portfolioInitial date, primary key(userId))", (err) => {
+    db.query("create table if not exists users (userId int auto_increment, hashedPwd char(100), email char(50) not null unique, username char(50) unique, method char(15), socialId varchar(50), token char(100), portfolioInitial date, primary key(userId))", (err) => {
       if (err) reject(err);
 
       resolve();

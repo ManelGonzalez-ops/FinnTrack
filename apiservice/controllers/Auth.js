@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const crypto = require('crypto');
 const { getUser, storeNewUser } = require("../db/services/AuthService");
+const { getUserByField } = require("../db/services/UserService");
 const config = require("../config");
 
 const signToken = (userid) => jwt.sign({
@@ -98,22 +99,22 @@ const register = async (req, res) => {
 // };
 
 const deleteUser = (req, res, next) => {
-    console.log(req.body, "er facebook body")
-    const { signed_request } = req.body
+    console.log(req.body, "er facebook body");
+    const { signed_request } = req.body;
 
-    const data = parseSignedRequest(signed_request, config.facebook.CLIENT_SECRET)
-    const { userId } = data
+    const data = parseSignedRequest(signed_request, config.facebook.CLIENT_SECRET);
+    const { userId } = data;
     const confirmation_code = getConfirmationCode();
-    const checkUrl = `https://nervous-keller-e654f2.netlify.app/oauth_deletion_status?id=${confirmationSecret}`
+    const checkUrl = `https://nervous-keller-e654f2.netlify.app/oauth_deletion_status?id=${confirmationSecret}`;
 
     res.status(200).send({
         url: checkUrl,
-        confirmation_code
-    })
-}
+        confirmation_code,
+    });
+};
 
 function getConfirmationCode() {
-    return crypto.randomBytes(10).toString('hex')
+    return crypto.randomBytes(10).toString('hex');
 }
 
 function base64decode(data) {
@@ -142,6 +143,24 @@ function parseSignedRequest(signedRequest, secret) {
     return data;
 }
 
+// only needed in social auth, as we can't read cross domain cookies in the client
+const loginSocialLastStep = async (req, res, next) => {
+    const { token } = req.params;
+    const user = await getUserByField("token", token);
+    jwt.verify(user.token, config.JWT_SECRET, (err, decoded) => {
+        if (err) {
+            console.log(err, "errr")
+            return next(err);
+        }
+        res.cookie("token", token)
+        console.log(token, "tokeun")
+        return res.status(200).send(user)
+    });
+
+    // we have to deliver the token inside in a cookie
+    // and send profile information
+};
+
 module.exports = {
-    login, protectedRoute, unpackToken, register, checkCredentials, signToken, comparePassword, deleteUser
+    login, protectedRoute, unpackToken, register, checkCredentials, signToken, comparePassword, deleteUser,loginSocialLastStep
 };

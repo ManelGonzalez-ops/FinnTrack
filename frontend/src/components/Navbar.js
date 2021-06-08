@@ -104,7 +104,8 @@ export const Navbar = () => {
   const logout = (cb) => {
 
     dispatch({ type: "REINITILIZE" })
-    Cookie.remove("token")
+    Cookie.remove("token", { path: "/", domain: "financeapp-v1.herokuapp.com" })
+    localStorage.removeItem("token")
     userDispatch({ type: "SET_USER_NULL" })
     cb()
   }
@@ -147,7 +148,7 @@ export const Navbar = () => {
             {isAuthenticated && <Button variant="contained" color="primary"
               onClick={() => { logout(() => history.push("/")) }}
             >Logout</Button>}
-            { isAuthenticated && <Typography>
+            {isAuthenticated && <Typography>
               {formatter.format(state.currentPossesions.userCash)} $
             </Typography>}
           </div>
