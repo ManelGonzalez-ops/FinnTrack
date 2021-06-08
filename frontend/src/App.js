@@ -87,7 +87,7 @@ const App = () => {
   const { token } = useParams()
   const location = useLocation()
   console.log(history, location, "a ver diferencias")
-
+  console.log(token, "el tokennenene")
   useEffect(() => {
     if (token) {
       const getUserInfo = async () => {
