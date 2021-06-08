@@ -83,7 +83,7 @@ const App = () => {
   //useSocialAuth()
   useEngine()
 
-  const history = useHistory()ç
+  const history = useHistory()
   const location = useLocation()
   console.log(history, location, "a ver diferencias")
   
