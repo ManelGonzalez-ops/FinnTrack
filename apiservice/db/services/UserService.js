@@ -106,17 +106,17 @@ module.exports = {
         });
     }),
     getUserByField: (fieldKey, value) => new Promise((resolve, reject) => {
-            db.query(`select * from users where ${fieldKey} = ${value}`, (err, row) => {
-                if (err) {
-                    return reject(err);
-                }
-                console.log(row, "rouu")
-                if (!row || !row[0]) {
-                    console.log("dentruu error")
-                    return reject(new Error("no user returned"));
-                }
-                console.log(row, "que coño")
-                resolve(row[0]);
-            });
-        }),
+        db.query(`select * from users where ${fieldKey} = ?`, [value], (err, row) => {
+            if (err) {
+                return reject(err);
+            }
+            console.log(row, "rouu")
+            if (!row || !row[0]) {
+                console.log("dentruu error")
+                return reject(new Error("no user returned"));
+            }
+            console.log(row, "que coño")
+            resolve(row[0]);
+        });
+    }),
 };
