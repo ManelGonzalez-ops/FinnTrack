@@ -146,7 +146,7 @@ function parseSignedRequest(signedRequest, secret) {
 // only needed in social auth, as we can't read cross domain cookies in the client
 const loginSocialLastStep = async (req, res, next) => {
     const { token } = req.params;
-    const user = await getUserByField("token", token).catch((err) => { next(err); });
+    const user = await getUserByField("token", token).catch((err) => next(err));
     jwt.verify(user.token, config.JWT_SECRET, (err, decoded) => {
         if (err) {
             console.log(err, "errr");
