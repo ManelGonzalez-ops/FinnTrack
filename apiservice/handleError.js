@@ -13,7 +13,7 @@ const handleError = (err, res) => {
   //we need to avoid statusCode when it's null
   
   console.log(statusCode, message, "errorse");
-  res.status(statusCode).send({
+  return res.status(statusCode).send({
     status: "error",
     statusCode,
     message
