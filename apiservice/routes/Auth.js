@@ -7,6 +7,7 @@ const {
 const router = express.Router();
 const passportConf = require("../passport");
 const config = require("../config");
+const { addToken } = require("../db/services/AuthService");
 
 const passportJWT = passport.authenticate("jwt", { session: false });
 const passportLocal = passport.authenticate("local", { session: false });
@@ -42,7 +43,7 @@ router.route('/facebook/callback')
     .get(passport.authenticate('facebook', {
         session: false,
         failureRedirect: `${config.FRONTEND_HOST}/error`,
-    }), (req, res) => {
+    }), async (req, res, next) => {
         // this is not a normal req, it got added other keys
         // console.log(req, "el bodyy de la sucess callback")
         // console.log(req.session.passport.user, "session passport user")
@@ -52,6 +53,7 @@ router.route('/facebook/callback')
         console.log(req.user, "el userr");
         // console.log(req.session.passport.user, "el user")
         const token = signToken(req.user.idDB);
+        await addToken(req.user.idDB, token).catch(err => next(err))
         res.cookie("token", token);
         return res.redirect(`${config.FRONTEND_HOST}?token=${token}`);
     });
@@ -84,10 +86,10 @@ router.route("/secret")
 
 
 router.route("/facebook/delete")
-.post(deleteUser)
+    .post(deleteUser)
 // router.route("/delete")
 //     .post(deleteUser)
 
 router.route("/get_creadentials/:token")
-.get(loginSocialLastStep)
+    .get(loginSocialLastStep)
 module.exports = router;

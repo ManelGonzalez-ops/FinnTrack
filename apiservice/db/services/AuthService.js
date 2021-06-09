@@ -10,7 +10,7 @@ module.exports = {
       console.log(row);
       if (!row || !row.length) {
         console.log("entering in reject")
-       return reject(new Error("empty results for user"));
+        return reject(new Error("empty results for user"));
       }
       console.log(row, "tharow")
       resolve(row[0]);
@@ -44,4 +44,13 @@ module.exports = {
       resolve(okPacket);
     });
   }),
+  addToken: (userId, token) => new Promise((resolve, reject) => {
+    db.query("update users set token = ? where userId = ?", [token, userId], (err, row) => {
+      if (err) {
+        return reject(err)
+      }
+      console.log(row, "rowaw")
+      resolve()
+    })
+  })
 };
